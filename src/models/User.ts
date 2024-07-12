@@ -3,9 +3,9 @@ export interface UserDB {
     name: string;
     email: string;
     password: string;
+    birthdate: string;
     role: USER_ROLES;
     created_at: string;
-    birthdate: string;
     address: string;
     number: string;
     neighborhood: string;
@@ -18,15 +18,6 @@ export interface UserDB {
     number: string;
     type: string;
   }
-
-// export interface UserDB {
-//   id: string,
-//   name: string,
-//   email: string,
-//   password: string,
-//   role: USER_ROLES,
-//   created_at: string
-// }
 
 export enum USER_ROLES {
     NORMAL = "NORMAL",
@@ -43,9 +34,9 @@ export interface TokenPayload {
         private name: string,
         private email: string,
         private password: string,
+        private birthdate: string,
         private role: USER_ROLES,
         private createdAt: string,
-        private birthdate: string,
         private address: string,
         private number: string,
         private neighborhood: string,
@@ -155,7 +146,7 @@ export interface TokenPayload {
     }
 
     public setGender(value: string): void {
-        this.gender = value;
+        this.gender = value.toUpperCase();
     }
 }
 

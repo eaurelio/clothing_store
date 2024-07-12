@@ -14,8 +14,8 @@ CREATE TABLE users (
     name TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
-    created_at TEXT DEFAULT (DATETIME()) NOT NULL,
     role TEXT NOT NULL DEFAULT 'NORMAL',
+    created_at TEXT DEFAULT (DATETIME()) NOT NULL,
     birthdate TEXT NOT NULL,
     address TEXT NOT NULL,
     number TEXT NOT NULL,
@@ -25,22 +25,19 @@ CREATE TABLE users (
     gender TEXT NOT NULL
 );
 
+
+select * from users;
+PRAGMA table_info(users);
+
+drop table phones;
 CREATE TABLE phones (
-    id TEXT PRIMARY KEY UNIQUE NOT NULL,
+    phone_id TEXT PRIMARY KEY UNIQUE NOT NULL,
     user_id TEXT NOT NULL,
-    phone_number TEXT NOT NULL,
+    number TEXT NOT NULL,
+    type TEXT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 
+select * from phones;
 
-INSERT INTO users (id, name, email, password, role)
-VALUES
-	('u001', 'Fulano', 'fulano@email.com', 'fulano123', 'NORMAL'),
-	('u002', 'Beltrana', 'beltrana@email.com', 'beltrana00', 'NORMAL');
-
-
-select * from users;
-
-
-eyJ1c2VySWQiOiI0YTgyNTdiMS0yOTgwLTQ1NWQtYmJlMS00OGQ3YjBlNzJkNzgiLCJjcmVhdGVkQXQiOjE3MjA1ODA4MDYzNTgsImV4cGlyZXNBdCI6MTcyMDY2NzIwNjM1OH0=.mszXPcAKtOzIzXAGdSVUx13ZqjIK0PQB+hq/l243soM=
