@@ -1,4 +1,4 @@
-import { UserDB } from "../models/User";
+import { Phone, UserDB } from "../models/User";
 import { BaseDatabase } from "./BaseDatabase";
 
 export class UserDatabase extends BaseDatabase {
@@ -47,10 +47,21 @@ export class UserDatabase extends BaseDatabase {
       .insert(newUserDB)
   }
 
-  public async insertPhone(userId: string, phone: string): Promise<void> {
+  public async insertPhone(userId: string, phone: Phone): Promise<void> {
+    await BaseDatabase
+      .connection('phones')
+      .insert({
+        user_id: userId,
+        number: phone.number,
+        type: phone.type
+      });
+  }  
+
+  public async deletePhonesByUserId(userId: string): Promise<void> {
     await BaseDatabase
       .connection(UserDatabase.TABLE_PHONES)
-      .insert({ userId, phone });
+      .where({ user_id: userId })
+      .delete();
   }
 
   public async updateUser(idToEdit: string, updatedUserDB: UserDB) {

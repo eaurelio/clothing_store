@@ -14,6 +14,11 @@ export interface UserDB {
     gender: string;
   }
 
+  export interface Phone {
+    number: string;
+    type: string;
+  }
+
 // export interface UserDB {
 //   id: string,
 //   name: string,

@@ -52,20 +52,21 @@ public createUser = async (input: CreateUserInputDTO): Promise<CreateUserOutputD
     password: newUser.getPassword(),
     role: newUser.getRole(),
     created_at: newUser.getCreatedAt(),
-    birthdate: newUser.birthdate(),
-    address: newUser.address(),
-    number: newUser.number(),
-    neighborhood: newUser.neighborhood(),
-    city: newUser.city(),
-    country: newUser.country(),
-    gender: newUser.gender()
+    birthdate: newUser.getBirthdate(),
+    address: newUser.getAddress(),
+    number: newUser.getNumber(),
+    neighborhood: newUser.getNeighborhood(),
+    city: newUser.getCity(),
+    country: newUser.getCountry(),
+    gender: newUser.getGender()
   };
 
   await this.userDatabase.insertUser(newUserDB);
 
   if (input.phones && input.phones.length > 0) {
     for (const phone of input.phones) {
-      await this.userDatabase.insertPhone(newUser.getId(), phone.number);
+      const { number, type } = phone;
+      await this.userDatabase.insertPhone(newUser.getId(), { number, type });
     }
   }
 
@@ -90,44 +91,40 @@ public createUser = async (input: CreateUserInputDTO): Promise<CreateUserOutputD
 public login = async (
   input: LoginInputDTO
 ): Promise<LoginOutputDTO> => {
-  const { email, password } = input
+  const { email, password } = input;
 
-  const userDB = await this.userDatabase.findUserByEmail(email)
+  // Verificar se o usuário existe no banco de dados
+  const userDB = await this.userDatabase.findUserByEmail(email);
 
   if (!userDB) {
-    throw new NotFoundError("'email' não encontrado")
+    throw new NotFoundError("'email' não encontrado");
   }
 
-  const hashedPassword = userDB.password
-  const isPasswordCorrect = await this.hashManager.compare(password, hashedPassword)
+  // Verificar se a senha está correta
+  const hashedPassword = userDB.password;
+  const isPasswordCorrect = await this.hashManager.compare(password, hashedPassword);
 
   if (!isPasswordCorrect) {
-    throw new BadRequestError("'email' ou 'password' incorretos")
+    throw new BadRequestError("'email' ou 'password' incorretos");
   }
 
-  const user = new User(
-    userDB.id,
-    userDB.name,
-    userDB.email,
-    userDB.password,
-    userDB.role,
-    userDB.created_at
-  )
+  // Gerar token JWT
+  const token = this.tokenService.generateToken(userDB.id);
 
-  const token = this.tokenService.generateToken(user.getId())
-
+  // Preparar resposta de saída
   const output: LoginOutputDTO = {
     message: "Login realizado com sucesso",
     user: {
-      id: user.getId(),
-      name: user.getName(),
-      email: user.getEmail(),
+      id: userDB.id,
+      name: userDB.name,
+      email: userDB.email,
       token: token
     }
-  }
+  };
 
-  return output
+  return output;
 }
+
 
 // ------------------------------------------------------------------------------------------------------------------
   
@@ -163,55 +160,85 @@ public login = async (
 
 // ------------------------------------------------------------------------------------------------------------------
 
-  public editUser = async (idToEdit: any, input: CreateUserInputDTO) : Promise<CreateUserOutputDTO> => {
-    const id = idToEdit;
-    const {name, email, password } = input
+  public editUser = async (idToEdit: string, input: CreateUserInputDTO): Promise<CreateUserOutputDTO> => {
+    const {
+      name,
+      email,
+      password,
+      birthdate,
+      address,
+      number,
+      neighborhood,
+      city,
+      country,
+      gender,
+      phones
+    } = input;
 
     if (typeof idToEdit !== "string") {
-      throw new BadRequestError("id a ser editado é obrigatório e deve ser string")
+      throw new BadRequestError("id a ser editado é obrigatório e deve ser string");
     }
 
-    const userDB = await this.userDatabase.findUserById(idToEdit)
+    const userDB = await this.userDatabase.findUserById(idToEdit);
 
     if (!userDB) {
-      throw new NotFoundError("id a ser editado não existe")
+      throw new NotFoundError("id a ser editado não existe");
     }
 
-    const user = new User(
-      userDB.id,
-      userDB.name,
-      userDB.email,
-      userDB.password,
-      userDB.role,
-      userDB.created_at
-    ) // yyyy-mm-ddThh:mm:sssZ
+    const hashedPassword = password ? await this.hashManager.hash(password) : userDB.password;
 
-    id && user.setId(id)
-    name && user.setName(name)
-    email && user.setEmail(email)
-    password && user.setPassword(password)
+    const updatedUser = new User(
+      userDB.id,
+      name || userDB.name,
+      email || userDB.email,
+      hashedPassword,
+      userDB.role,
+      userDB.created_at,
+      birthdate || userDB.birthdate,
+      address || userDB.address,
+      number || userDB.number,
+      neighborhood || userDB.neighborhood,
+      city || userDB.city,
+      country || userDB.country,
+      gender || userDB.gender
+    );
 
     const updatedUserDB: UserDB = {
-      id: user.getId(),
-      name: user.getName(),
-      email: user.getEmail(),
-      password: user.getPassword(),
-      role: user.getRole(),
-      created_at: user.getCreatedAt()
-    }
+      id: updatedUser.getId(),
+      name: updatedUser.getName(),
+      email: updatedUser.getEmail(),
+      password: updatedUser.getPassword(),
+      role: updatedUser.getRole(),
+      created_at: updatedUser.getCreatedAt(),
+      birthdate: updatedUser.getBirthdate(),
+      address: updatedUser.getAddress(),
+      number: updatedUser.getNumber(),
+      neighborhood: updatedUser.getNeighborhood(),
+      city: updatedUser.getCity(),
+      country: updatedUser.getCountry(),
+      gender: updatedUser.getGender()
+    };
 
-    await this.userDatabase.updateUser(idToEdit, updatedUserDB)
+    await this.userDatabase.updateUser(idToEdit, updatedUserDB);
 
-    const output : CreateUserOutputDTO= {
-      message: "Edição realizada com sucesso",
-      user: {
-        id: user.getId(),
-        name: user.getName(),
-        email: user.getEmail(),
-        createdAt: user.getCreatedAt()
+    if (phones && phones.length > 0) {
+      await this.userDatabase.deletePhonesByUserId(idToEdit);
+      for (const phone of phones) {
+        await this.userDatabase.insertPhone(idToEdit, phone);
       }
     }
 
-    return output
-  }
+    const output: CreateUserOutputDTO = {
+      message: "Edição realizada com sucesso",
+      user: {
+        id: updatedUser.getId(),
+        name: updatedUser.getName(),
+        email: updatedUser.getEmail(),
+        createdAt: updatedUser.getCreatedAt()
+      }
+    };
+
+    return output;
+  };
+
 }
