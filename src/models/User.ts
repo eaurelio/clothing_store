@@ -35,7 +35,7 @@ export class User {
     constructor(
         private id: string,
         private personalId: string,
-        private entityType: EntityType, // Corrigido para utilizar o enum EntityType
+        private entityType: EntityType,
         private name: string,
         private email: string,
         private password: string,

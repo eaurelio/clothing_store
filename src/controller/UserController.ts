@@ -4,7 +4,6 @@ import { BaseError } from "../errors/BaseError"
 import { CreateUserInputDTO, CreateUserSchema } from "../dtos/users/createUser.dto"
 import {ZodError} from 'zod'
 import { LoginSchema } from "../dtos/users/login"
-// import { HashManager } from "../services/HashManager"
 
 export class UserController {
   constructor(
@@ -92,7 +91,11 @@ export class UserController {
 
   public editUser = async (req: Request, res: Response) => {
     try {
-      const idToEdit = req.params.id;
+      const token = req.headers.authorization as string;
+      const idToEdit = req.headers.id as string;
+
+      console.log('id to edit', idToEdit)
+
       const input: CreateUserInputDTO = {
         personal_id: req.body.personal_id,
         entity_type: req.body.entity_type,
@@ -109,7 +112,7 @@ export class UserController {
         phones: req.body.phones // Verifique se o corpo da requisição possui o campo phones
       };
   
-      const output = await this.userBusiness.editUser(idToEdit, input);
+      const output = await this.userBusiness.editUser(idToEdit, input, token);
   
       res.status(200).send(output);
     } catch (error) {
@@ -122,6 +125,27 @@ export class UserController {
       } else {
         res.status(500).send("Erro inesperado");
       }
+    }
+  };
+
+  public toggleUserRole = async (req: Request, res: Response) => {
+    try {
+        const token = req.headers.authorization as string;
+        const idToToggle = req.params.id;
+
+        const output = await this.userBusiness.toggleUserRole(idToToggle, token);
+
+        res.status(200).send(output);
+    } catch (error) {
+        console.log(error);
+
+        if (error instanceof ZodError) {
+            res.status(400).send(error.issues);
+        } else if (error instanceof BaseError) {
+            res.status(error.statusCode).send(error.message);
+        } else {
+            res.status(500).send("Erro inesperado");
+        }
     }
   };
   
