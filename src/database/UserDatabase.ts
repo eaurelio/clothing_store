@@ -1,4 +1,4 @@
-import { IdGenerator } from './../services/idGenerator';
+// import { IdGenerator } from './../services/idGenerator';
 import { Phone, UserDB } from "../models/User";
 import { BaseDatabase } from "./BaseDatabase";
 
@@ -49,7 +49,6 @@ export class UserDatabase extends BaseDatabase {
   }
 
   public async insertPhone(phone_id: string, userId: string, phone: Phone): Promise<void> {
-    console.log('--------------------------------------------')
     await BaseDatabase
       .connection('phones')
       .insert({
