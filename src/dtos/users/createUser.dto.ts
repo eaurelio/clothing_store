@@ -1,7 +1,10 @@
 import z from 'zod';
 
 export interface CreateUserInputDTO {
+  personal_id: string;
+  entity_type: string;
   name: string;
+  gender: string; 
   email: string;
   password: string;
   birthdate: string; 
@@ -10,13 +13,11 @@ export interface CreateUserInputDTO {
   neighborhood: string; 
   city: string; 
   country: string; 
-  gender: string; 
   phones: {
     number: string;
     type: string;
   }[];
 }
-
 
 export interface CreateUserOutputDTO {
   message: string;
@@ -37,7 +38,10 @@ export interface CreateUserOutputDTO {
 }
 
 export const CreateUserSchema = z.object({
+  personal_id: z.string().min(2).max(16),
+  entity_type: z.string().min(8),
   name: z.string().min(2),
+  gender: z.string().min(1),
   email: z.string().email(),
   password: z.string().min(8).max(12),
   birthdate: z.string(),
@@ -46,12 +50,5 @@ export const CreateUserSchema = z.object({
   neighborhood: z.string().min(2).max(20),
   city: z.string().min(2).max(20),
   country: z.string().min(2).max(20),
-  gender: z.string().min(1),
 }).transform(data => data as CreateUserInputDTO);
 
-// export const CreateUserSchema = z.object({
-//   // id: z.string().min(1),
-//   name: z.string().min(2),
-//   email: z.string().email(),
-//   password: z.string().min(8).max(12)
-// }).transform(data => data as CreateUserInputDTO)

@@ -14,6 +14,8 @@ export class UserController {
   public createUser = async (req: Request, res: Response) => {
     try {
       const input: CreateUserInputDTO = {
+        personal_id: req.body.personal_id,
+        entity_type: req.body.entity_type,
         name: req.body.name,
         email: req.body.email,
         password: req.body.password,
@@ -92,6 +94,8 @@ export class UserController {
     try {
       const idToEdit = req.params.id;
       const input: CreateUserInputDTO = {
+        personal_id: req.body.personal_id,
+        entity_type: req.body.entity_type,
         name: req.body.name,
         email: req.body.email,
         password: req.body.password,
