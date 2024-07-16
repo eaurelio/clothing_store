@@ -127,26 +127,5 @@ export class UserController {
       }
     }
   };
-
-  public toggleUserRole = async (req: Request, res: Response) => {
-    try {
-        const token = req.headers.authorization as string;
-        const idToToggle = req.params.id;
-
-        const output = await this.userBusiness.toggleUserRole(idToToggle, token);
-
-        res.status(200).send(output);
-    } catch (error) {
-        console.log(error);
-
-        if (error instanceof ZodError) {
-            res.status(400).send(error.issues);
-        } else if (error instanceof BaseError) {
-            res.status(error.statusCode).send(error.message);
-        } else {
-            res.status(500).send("Erro inesperado");
-        }
-    }
-  };
-  
+ 
 }

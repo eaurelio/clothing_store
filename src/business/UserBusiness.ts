@@ -99,14 +99,14 @@ public login = async (
 ): Promise<LoginOutputDTO> => {
   const { email, password } = input;
 
-  // Verificar se o usuário existe no banco de dados
+  // Check if the user exists in the database
   const userDB = await this.userDatabase.findUserByEmail(email);
 
   if (!userDB) {
     throw new NotFoundError("'User' not registered");
   }
 
-  // Verificar se a senha está correta
+  // Check if the password is correct
   const hashedPassword = userDB.password;
   const isPasswordCorrect = await this.hashManager.compare(password, hashedPassword);
 
@@ -114,11 +114,11 @@ public login = async (
     throw new BadRequestError("incorrect 'email' or 'password'");
   }
 
-  // Gerar token JWT
+  // enerate token
   const token = this.tokenService.generateToken(userDB.id, userDB.role);
 
 
-  // Preparar resposta de saída
+  // Prepare output
   const output: LoginOutputDTO = {
     message: "Login has been successfully",
     user: {
@@ -142,7 +142,7 @@ public login = async (
         throw new BadRequestError("Token is missing");
     }
 
-    // Validar o token e obter o papel do usuário a partir dele
+    // Validate the token and get the user role from it
     const userId = this.tokenService.getUserIdFromToken(token);
     const userDB = await this.userDatabase.findUserById(userId as string);
     const authorizedUser = this.tokenService.verifyToken(token)
@@ -173,119 +173,134 @@ public login = async (
 
 // ------------------------------------------------------------------------------------------------------------------
 
-  public editUser = async (idToEdit: string, input: UpdateUserInputDTO, token: string): Promise<UpdateUserOutputDTO> => {
-    if (typeof idToEdit !== "string") {
-        throw new BadRequestError("'ID' is required");
-    }
+public editUser = async (idToEdit: string, input: UpdateUserInputDTO, token: string): Promise<UpdateUserOutputDTO> => {
+  if (typeof idToEdit !== "string") {
+      throw new BadRequestError("'ID' is required");
+  }
 
-    const userIdFromToken = this.tokenService.getUserIdFromToken(token);
+  const userIdFromToken = this.tokenService.getUserIdFromToken(token);
 
-    // Verifica se o ID do usuário do token corresponde ao ID fornecido na requisição
-    if (userIdFromToken !== idToEdit) {
-        throw new UnauthorizedError("You have not access to change this user");
-    }
+  // Checks that the token's user ID matches the ID provided in the request
+  if (userIdFromToken !== idToEdit) {
+      throw new UnauthorizedError("You have not access to change this user");
+  }
 
-    const userDB = await this.userDatabase.findUserById(idToEdit);
+  const userDB = await this.userDatabase.findUserById(idToEdit);
 
-    if (!userDB) {
-        throw new NotFoundError("'UserId' not found");
-    }
+  if (!userDB) {
+      throw new NotFoundError("'UserId' not found");
+  }
 
-    // Verifica se há senha para hash ou mantém a senha existente
-    const hashedPassword = input.password ? await this.hashManager.hash(input.password) : userDB.password;
+  // Checks for hashed password or keeps existing password
+  const hashedPassword = input.password ? await this.hashManager.hash(input.password) : userDB.password;
 
-    // Atualiza apenas os campos fornecidos em `input`
-    const updatedUser: UserDB = {
-      ...userDB, // Copia todos os campos existentes do usuário do banco de dados
-      personal_id: input.personal_id !== undefined ? input.personal_id : userDB.personal_id,
-      entity_type: input.entity_type !== undefined ? (input.entity_type as EntityType) : userDB.entity_type,
-      name: input.name !== undefined ? input.name : userDB.name,
-      email: input.email !== undefined ? input.email : userDB.email,
-      password: hashedPassword,
-      birthdate: input.birthdate !== undefined ? input.birthdate : userDB.birthdate,
-      address: input.address !== undefined ? input.address : userDB.address,
-      number: input.number !== undefined ? input.number : userDB.number,
-      neighborhood: input.neighborhood !== undefined ? input.neighborhood : userDB.neighborhood,
-      city: input.city !== undefined ? input.city : userDB.city,
-      country: input.country !== undefined ? input.country : userDB.country,
-      gender: input.gender !== undefined ? input.gender : userDB.gender,
-      role: userDB.role, // Mantém o papel existente do usuário
-      created_at: userDB.created_at // Mantém a data de criação original
+  // Updates only the fields provided in `input`
+  const updatedUser: UserDB = {
+    ...userDB, // Copia todos os campos existentes do usuário do banco de dados
+    personal_id: input.personal_id !== undefined ? input.personal_id : userDB.personal_id,
+    entity_type: input.entity_type !== undefined ? (input.entity_type as EntityType) : userDB.entity_type,
+    name: input.name !== undefined ? input.name : userDB.name,
+    email: input.email !== undefined ? input.email : userDB.email,
+    password: hashedPassword,
+    birthdate: input.birthdate !== undefined ? input.birthdate : userDB.birthdate,
+    address: input.address !== undefined ? input.address : userDB.address,
+    number: input.number !== undefined ? input.number : userDB.number,
+    neighborhood: input.neighborhood !== undefined ? input.neighborhood : userDB.neighborhood,
+    city: input.city !== undefined ? input.city : userDB.city,
+    country: input.country !== undefined ? input.country : userDB.country,
+    gender: input.gender !== undefined ? input.gender : userDB.gender,
+    phones: input.phones !== undefined ? input.phones : userDB.phones, // Adiciona atualização de telefones
+    role: userDB.role, // Mantém o papel existente do usuário
+    created_at: userDB.created_at // Mantém a data de criação original
+};
+
+  // Updates the user in the database with the updated fields
+  await this.userDatabase.updateUser(idToEdit, updatedUser);
+
+  // Returns updated user data
+  const updatedUserData = await this.userDatabase.findUserById(idToEdit);
+
+  // Check if `updatedUserData` is defined before accessing its properties
+  if (!updatedUserData) {
+      throw new NotFoundError("It was not possible to find the updated user data after editing.");
+  }
+
+  const output: UpdateUserOutputDTO = {
+      message: "Editing completed successfully",
+      user: {
+          id: updatedUserData.id,
+          name: updatedUserData.name,
+          email: updatedUserData.email,
+          createdAt: updatedUserData.created_at
+      }
   };
 
-
-    // Atualiza o usuário no banco de dados com os campos atualizados
-    await this.userDatabase.updateUser(idToEdit, updatedUser);
-
-    // Retorna os dados atualizados do usuário
-    const updatedUserData = await this.userDatabase.findUserById(idToEdit);
-
-    // Verifica se `updatedUserData` é definido antes de acessar suas propriedades
-    if (!updatedUserData) {
-        throw new NotFoundError("It was not possible to find the updated user data after editing.");
-    }
-
-    const output: UpdateUserOutputDTO = {
-        message: "Edição realizada com sucesso",
-        user: {
-            id: updatedUserData.id,
-            name: updatedUserData.name,
-            email: updatedUserData.email,
-            createdAt: updatedUserData.created_at
-        }
-    };
-
-    return output;
-  };
+  return output;
+};
 
 
-public toggleUserRole = async (idToToggle: string, token: string): Promise<UpdateUserOutputDTO> => {
-    if (typeof idToToggle !== "string") {
-        throw new BadRequestError("O ID a ser alterado é obrigatório e deve ser uma string");
-    }
+  // public editUser = async (idToEdit: string, input: UpdateUserInputDTO, token: string): Promise<UpdateUserOutputDTO> => {
+  //   if (typeof idToEdit !== "string") {
+  //       throw new BadRequestError("'ID' is required");
+  //   }
 
-    const userIdFromToken = this.tokenService.getUserIdFromToken(token);
-    const userFromToken = await this.userDatabase.findUserById(userIdFromToken as string);
+  //   const userIdFromToken = this.tokenService.getUserIdFromToken(token);
 
-    if (!userFromToken) {
-        throw new NotFoundError("Usuário não encontrado");
-    }
+  //   // Checks that the token's user ID matches the ID provided in the request
+  //   if (userIdFromToken !== idToEdit) {
+  //       throw new UnauthorizedError("You have not access to change this user");
+  //   }
 
-    if (userFromToken.role !== USER_ROLES.ADMIN) {
-        throw new UnauthorizedError("Apenas administradores podem alterar o papel de outros usuários");
-    }
+  //   const userDB = await this.userDatabase.findUserById(idToEdit);
 
-    const userToToggle = await this.userDatabase.findUserById(idToToggle);
+  //   if (!userDB) {
+  //       throw new NotFoundError("'UserId' not found");
+  //   }
 
-    if (!userToToggle) {
-        throw new NotFoundError("'UserId' não encontrado");
-    }
+  //   // Checks for hashed password or keeps existing password
+  //   const hashedPassword = input.password ? await this.hashManager.hash(input.password) : userDB.password;
 
-    userToToggle.role = userToToggle.role === USER_ROLES.ADMIN ? USER_ROLES.NORMAL : USER_ROLES.ADMIN;
+  //   // Updates only the fields provided in `input`
+  //   const updatedUser: UserDB = {
+  //     ...userDB, // Copia todos os campos existentes do usuário do banco de dados
+  //     personal_id: input.personal_id !== undefined ? input.personal_id : userDB.personal_id,
+  //     entity_type: input.entity_type !== undefined ? (input.entity_type as EntityType) : userDB.entity_type,
+  //     name: input.name !== undefined ? input.name : userDB.name,
+  //     email: input.email !== undefined ? input.email : userDB.email,
+  //     password: hashedPassword,
+  //     birthdate: input.birthdate !== undefined ? input.birthdate : userDB.birthdate,
+  //     address: input.address !== undefined ? input.address : userDB.address,
+  //     number: input.number !== undefined ? input.number : userDB.number,
+  //     neighborhood: input.neighborhood !== undefined ? input.neighborhood : userDB.neighborhood,
+  //     city: input.city !== undefined ? input.city : userDB.city,
+  //     country: input.country !== undefined ? input.country : userDB.country,
+  //     gender: input.gender !== undefined ? input.gender : userDB.gender,
+  //     role: userDB.role, // Mantém o papel existente do usuário
+  //     created_at: userDB.created_at // Mantém a data de criação original
+  // };
 
-    await this.userDatabase.updateUser(idToToggle, userToToggle);
+  //   // Updates the user in the database with the updated fields
+  //   await this.userDatabase.updateUser(idToEdit, updatedUser);
 
-    const updatedUserData = await this.userDatabase.findUserById(idToToggle);
+  //   // Returns updated user data
+  //   const updatedUserData = await this.userDatabase.findUserById(idToEdit);
 
-    if (!updatedUserData) {
-        throw new NotFoundError("Não foi possível encontrar os dados atualizados do usuário após a alteração");
-    }
+  //   // Check if `update User Data` is defined before accessing its properties
+  //   if (!updatedUserData) {
+  //       throw new NotFoundError("It was not possible to find the updated user data after editing.");
+  //   }
 
-    const output: UpdateUserOutputDTO = {
-        message: `Papel do usuário alterado com sucesso para ${updatedUserData.role}`,
-        user: {
-            id: updatedUserData.id,
-            name: updatedUserData.name,
-            email: updatedUserData.email,
-            createdAt: updatedUserData.created_at
-        }
-    };
+  //   const output: UpdateUserOutputDTO = {
+  //       message: "Editing completed successfully",
+  //       user: {
+  //           id: updatedUserData.id,
+  //           name: updatedUserData.name,
+  //           email: updatedUserData.email,
+  //           createdAt: updatedUserData.created_at
+  //       }
+  //   };
 
-    return output;
-  };
-
-
-
-
+  //   return output;
+  // };
 
 }
