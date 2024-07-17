@@ -18,7 +18,9 @@ const userController = new UserController(
 )
 
 userRouter.post("/createUser", userController.createUser)
-userRouter.post("/getUsers", userController.getUsers)
+userRouter.post("/getUserData", userController.getUserData)
+userRouter.post("/getAllUsers", userController.getAllUsers)
 userRouter.post("/login", userController.login)
 userRouter.patch("/:id", userController.editUser)
+userRouter.put("/updatephone:id", userController.updatePhone)
 

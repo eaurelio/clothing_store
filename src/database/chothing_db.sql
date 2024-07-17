@@ -21,7 +21,7 @@ CREATE TABLE users (
 select * from users;
 PRAGMA table_info(users);
 
-drop table phones;
+
 CREATE TABLE phones (
     phone_id TEXT PRIMARY KEY UNIQUE NOT NULL,
     user_id TEXT NOT NULL,
