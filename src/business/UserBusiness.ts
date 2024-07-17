@@ -7,9 +7,9 @@ import { NotFoundError } from "../errors/NotFoundError"
 import { UnauthorizedError } from '../errors/UnauthorizedError'
 import { User, UserDB, USER_ROLES, EntityType, UserDBOutput} from "../models/User"
 import { IdGenerator } from "../services/idGenerator"
-import TokenService from "../services/TokenService"
 import { UpdateUserInputDTO, UpdateUserOutputDTO } from '../dtos/users/updateUser.dto';
-import { PhoneInputDTO, PhoneOutputDTO, } from '../dtos/users/phone';
+import { PhoneDeleteDTO, PhoneInputDTO, PhoneOutputDTO, } from '../dtos/users/phone';
+import TokenService from "../services/TokenService"
 
 export class UserBusiness {
   constructor(
@@ -18,6 +18,8 @@ export class UserBusiness {
     private tokenService: TokenService,
     private hashManager: HashManager
   ){}
+
+// USERS
 
 public createUser = async (input: CreateUserInputDTO): Promise<CreateUserOutputDTO> => {
   const { personal_id, entity_type, name, email, password, birthdate, address, number, neighborhood, city, country, gender, phones } = input;
@@ -133,7 +135,6 @@ public login = async (
   return output;
 }
 
-
 // ------------------------------------------------------------------------------------------------------------------
   
 public getUserData = async (input: any): Promise<UserDBOutput> => {
@@ -147,8 +148,6 @@ public getUserData = async (input: any): Promise<UserDBOutput> => {
   const userId = this.tokenService.getUserIdFromToken(token);
   const userDB = await this.userDatabase.findUserById(userId as string);
   const authorizedUser = this.tokenService.verifyToken(token)
-
-  // console.log(userId)
 
   if (authorizedUser?.userId !== id) {
     throw new UnauthorizedError('User not authorized')
@@ -226,7 +225,7 @@ public getAllUsers = async (input: any): Promise<UserDB[]> => {
 
     // Updates only the fields provided in `input`
     const updatedUser: UserDB = {
-      ...userDB, // Copia todos os campos existentes do usuário do banco de dados
+      ...userDB,
       personal_id: input.personal_id !== undefined ? input.personal_id : userDB.personal_id,
       entity_type: input.entity_type !== undefined ? (input.entity_type as EntityType) : userDB.entity_type,
       name: input.name !== undefined ? input.name : userDB.name,
@@ -239,9 +238,8 @@ public getAllUsers = async (input: any): Promise<UserDB[]> => {
       city: input.city !== undefined ? input.city : userDB.city,
       country: input.country !== undefined ? input.country : userDB.country,
       gender: input.gender !== undefined ? input.gender : userDB.gender,
-      // phones: input.phones !== undefined ? input.phones : userDB.phones, // Adiciona atualização de telefones
-      role: userDB.role, // Mantém o papel existente do usuário
-      created_at: userDB.created_at // Mantém a data de criação original
+      role: userDB.role, // Maintains the user's existing role
+      created_at: userDB.created_at // Keeps the original creation date
   };
 
     // Updates the user in the database with the updated fields
@@ -267,6 +265,47 @@ public getAllUsers = async (input: any): Promise<UserDB[]> => {
 
     return output;
   };
+
+  // PHONES
+
+  public addPhone = async (input: PhoneInputDTO): Promise<PhoneOutputDTO> => {
+    const { userId, token, number, type } = input;
+
+    // Verify the token and get the user ID from it
+    const userIdFromToken = this.tokenService.getUserIdFromToken(token);
+
+    // Validate the token
+    const authorizedUser = this.tokenService.verifyToken(token);
+    if (!authorizedUser || authorizedUser.userId !== userIdFromToken) {
+      throw new UnauthorizedError("Unauthorized user");
+    }
+
+    // Check if the user exists
+    const userDB = await this.userDatabase.findUserById(userId);
+    if (!userDB) {
+      throw new NotFoundError("User not found");
+    }
+
+    // Create a new phone
+    const phoneId = await this.idGenerator.generate()
+    await this.userDatabase.insertPhone(phoneId, userId, { number, type });
+
+    // Prepare output data
+    const updatedPhone = await this.userDatabase.findPhoneById(phoneId);
+
+    if (!updatedPhone) {
+        throw new NotFoundError("Failed to retrieve updated phone data");
+    }
+
+    const output: PhoneOutputDTO = {
+      message: "Phone updated successfully",
+      phones: [updatedPhone]
+    };
+
+    return output;
+  };
+
+// ------------------------------------------------------------------------------------------------------------------
 
   public updatePhone = async (input: PhoneInputDTO): Promise<PhoneOutputDTO> => {
     const { userId, token, phoneId, number, type } = input;
@@ -308,8 +347,47 @@ public getAllUsers = async (input: any): Promise<UserDB[]> => {
     };
 
     return output;
-};
+  };
 
+// ------------------------------------------------------------------------------------------------------------------
 
+  public deletePhone = async (input: PhoneDeleteDTO): Promise<PhoneOutputDTO> => {
+    const { userId, token, phoneId } = input;
+
+    // Verify the token and get the user ID from it
+    const userIdFromToken = this.tokenService.getUserIdFromToken(token);
+
+    // Validate the token
+    const authorizedUser = this.tokenService.verifyToken(token);
+    if (!authorizedUser || authorizedUser.userId !== userIdFromToken) {
+      throw new UnauthorizedError("Unauthorized user");
+    }
+
+    // Check if the user exists
+    const userDB = await this.userDatabase.findUserById(userId);
+    if (!userDB) {
+      throw new NotFoundError("User not found");
+    }
+
+    // Check if the phone exists for the user
+    const phoneDB = await this.userDatabase.findPhoneById(phoneId);
+    if (!phoneDB || phoneDB.user_id !== userId) {
+      throw new NotFoundError("Phone not found or does not belong to the user");
+    }
+
+    await this.userDatabase.deletePhoneById(phoneId);
+
+    // Retrieve updated phone list for the user
+    const updatedPhones = await this.userDatabase.getPhones(userId);
+
+    const output: PhoneOutputDTO = {
+      message: "Phone deleted successfully",
+      phones: updatedPhones
+    };
+
+    return output;
+  };
 
 }
+
+
