@@ -5,7 +5,7 @@ import { LoginInputDTO, LoginOutputDTO } from "../dtos/users/login"
 import { BadRequestError } from "../errors/BadRequestError"
 import { NotFoundError } from "../errors/NotFoundError"
 import { UnauthorizedError } from '../errors/UnauthorizedError'
-import { User, UserDB, USER_ROLES, EntityType} from "../models/User"
+import { User, UserDB, USER_ROLES, EntityType, UserDBOutput} from "../models/User"
 import { IdGenerator } from "../services/idGenerator"
 import TokenService from "../services/TokenService"
 import { UpdateUserInputDTO, UpdateUserOutputDTO } from '../dtos/users/updateUser.dto';
@@ -114,7 +114,7 @@ public login = async (
     throw new BadRequestError("incorrect 'email' or 'password'");
   }
 
-  // enerate token
+  // Generate token
   const token = this.tokenService.generateToken(userDB.id, userDB.role);
 
 
@@ -135,49 +135,78 @@ public login = async (
 
 // ------------------------------------------------------------------------------------------------------------------
   
-  public getUsers = async (input: any): Promise<UserDB[]> => {
-    const { q, token } = input;
+public getUserData = async (input: any): Promise<UserDBOutput> => {
+  const { id, token } = input;
 
-    if (!token) {
-        throw new BadRequestError("Token is missing");
-    }
+  if (!token) {
+      throw new BadRequestError("Token is missing");
+  }
 
-    // Validate the token and get the user role from it
-    const userId = this.tokenService.getUserIdFromToken(token);
-    const userDB = await this.userDatabase.findUserById(userId as string);
-    const authorizedUser = this.tokenService.verifyToken(token)
+  // Validate the token and get the user role from it
+  const userId = this.tokenService.getUserIdFromToken(token);
+  const userDB = await this.userDatabase.findUserById(userId as string);
+  const authorizedUser = this.tokenService.verifyToken(token)
 
-    if (authorizedUser?.role !== 'ADMIN') {
-      throw new UnauthorizedError('User not authorized')
-    }
+  // console.log(userId)
 
-    if (!userDB) {
-        throw new NotFoundError("User not found");
-    }
+  if (authorizedUser?.userId !== id) {
+    throw new UnauthorizedError('User not authorized')
+  }
 
-    // Only admin users can get all users from database
-    if (userDB.role !== USER_ROLES.ADMIN) {
-        throw new UnauthorizedError("Unauthorized user");
-    }
+  if (!userDB) {
+      throw new NotFoundError("User not found");
+  }
 
-    const usersDB = await this.userDatabase.findUsers(q);
+  const userFromDatabase = await this.userDatabase.findUserById(id);
+  const phonesFromDatabase = await this.userDatabase.getPhones(id)
+  const {password, ...userOutput} = userFromDatabase as UserDB
 
+  userOutput.phones = phonesFromDatabase;
 
-    const usersOutput = usersDB.map(userDB => {
-        const { password, ...userWithoutPassword } = userDB;
-        return userWithoutPassword as UserDB;
-    });
+  return userOutput;
+}
 
-    return usersOutput;
+public getAllUsers = async (input: any): Promise<UserDB[]> => {
+  const { q, token } = input;
+
+  if (!token) {
+      throw new BadRequestError("Token is missing");
+  }
+
+  // Validate the token and get the user role from it
+  const userId = this.tokenService.getUserIdFromToken(token);
+  const userDB = await this.userDatabase.findUserById(userId as string);
+  const authorizedUser = this.tokenService.verifyToken(token);
+
+  if (authorizedUser?.role !== 'ADMIN') {
+      throw new UnauthorizedError('User not authorized');
+  }
+
+  if (!userDB) {
+      throw new NotFoundError("User not found");
+  }
+
+  // Only admin users can get all users from database
+  if (userDB.role !== USER_ROLES.ADMIN) {
+      throw new UnauthorizedError("Unauthorized user");
+  }
+
+  const usersDB = await this.userDatabase.findUsers(q);
+
+  // Map through each user and fetch phones for each user
+  const usersOutput = await Promise.all(usersDB.map(async (userDB) => {
+      const phonesFromDatabase = await this.userDatabase.getPhones(userDB.id);
+      const { password, ...userWithoutPassword } = userDB;
+      userWithoutPassword.phones = phonesFromDatabase; // Assign phones to each user
+      return userWithoutPassword as UserDB;
+  }));
+
+  return usersOutput;
 }
 
 // ------------------------------------------------------------------------------------------------------------------
 
 public editUser = async (idToEdit: string, input: UpdateUserInputDTO, token: string): Promise<UpdateUserOutputDTO> => {
-  if (typeof idToEdit !== "string") {
-      throw new BadRequestError("'ID' is required");
-  }
-
   const userIdFromToken = this.tokenService.getUserIdFromToken(token);
 
   // Checks that the token's user ID matches the ID provided in the request
@@ -209,7 +238,7 @@ public editUser = async (idToEdit: string, input: UpdateUserInputDTO, token: str
     city: input.city !== undefined ? input.city : userDB.city,
     country: input.country !== undefined ? input.country : userDB.country,
     gender: input.gender !== undefined ? input.gender : userDB.gender,
-    phones: input.phones !== undefined ? input.phones : userDB.phones, // Adiciona atualização de telefones
+    // phones: input.phones !== undefined ? input.phones : userDB.phones, // Adiciona atualização de telefones
     role: userDB.role, // Mantém o papel existente do usuário
     created_at: userDB.created_at // Mantém a data de criação original
 };

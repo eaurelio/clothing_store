@@ -1,6 +1,7 @@
 import z from 'zod';
 
 export interface UpdateUserInputDTO {
+  id: string;
   personal_id?: string;
   entity_type?: string;
   name?: string;
@@ -39,6 +40,7 @@ export interface UpdateUserOutputDTO {
 }
 
 export const UpdateUserSchema = z.object({
+  id: z.string(),
   personal_id: z.string().min(6),
   entity_type: z.string().min(6),
   name: z.string().min(2),
@@ -52,8 +54,3 @@ export const UpdateUserSchema = z.object({
   country: z.string().min(2).max(20),
   gender: z.string().min(1),
 }).transform(data => data as UpdateUserInputDTO);
-
-
-
-  // personal_id TEXT UNIQUE NOT NULL,
-  // entity_type TEXT NOT NULL,

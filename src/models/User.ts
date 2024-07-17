@@ -20,6 +20,28 @@ export interface UserDB {
     }[];
 }
 
+export interface UserDBOutput {
+    id: string;
+    personal_id: string;
+    entity_type: EntityType;
+    name: string;
+    email: string;
+    // password: string;
+    birthdate: string;
+    role: USER_ROLES;
+    created_at: string;
+    address: string;
+    number: string;
+    neighborhood: string;
+    city: string;
+    country: string;
+    gender: string;
+    phones?: {
+        number: string;
+        type: string;
+    }[];
+}
+
 
 export interface Phone {
     number: string;

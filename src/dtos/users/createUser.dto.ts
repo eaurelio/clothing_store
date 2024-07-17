@@ -13,7 +13,7 @@ export interface CreateUserInputDTO {
   neighborhood: string; 
   city: string; 
   country: string; 
-  phones: {
+  phones?: {
     number: string;
     type: string;
   }[];

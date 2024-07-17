@@ -48,21 +48,36 @@ export class UserDatabase extends BaseDatabase {
       .insert(newUserDB)
   }
 
-  public async insertPhone(phone_id: string, userId: string, phone: Phone): Promise<void> {
+  public async getPhones(user_id: string) {
+    const phones =
     await BaseDatabase
-      .connection('phones')
+      .connection(UserDatabase.TABLE_PHONES)
+      .where({user_id})
+    return phones;
+  }
+
+  public async insertPhone(phone_id: string, user_id: string, phone: Phone): Promise<void> {
+    await BaseDatabase
+      .connection(UserDatabase.TABLE_PHONES)
       .insert({
-        phone_id: phone_id,
-        user_id: userId,
+        phone_id,
+        user_id,
         number: phone.number,
         type: phone.type
       });
-  }  
+  }
 
-  public async deletePhonesByUserId(userId: string): Promise<void> {
+  // public async updatePhoneById(phone_id: string): Promise<void> {
+  //   await BaseDatabase
+  //     .connection(UserDatabase.TABLE_PHONES)
+  //     .update(number, type);
+  //     .where({ phone_id })
+  // }
+
+  public async deletePhonesById(phone_id: string): Promise<void> {
     await BaseDatabase
       .connection(UserDatabase.TABLE_PHONES)
-      .where({ user_id: userId })
+      .where({ phone_id })
       .delete();
   }
 
