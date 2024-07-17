@@ -22,5 +22,5 @@ userRouter.post("/getUserData", userController.getUserData)
 userRouter.post("/getAllUsers", userController.getAllUsers)
 userRouter.post("/login", userController.login)
 userRouter.patch("/:id", userController.editUser)
-userRouter.patch("/updatephone:id", userController.updatePhone)
+userRouter.put("/updatephone:id", userController.updatePhone)
 

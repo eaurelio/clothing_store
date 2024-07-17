@@ -9,6 +9,7 @@ import { User, UserDB, USER_ROLES, EntityType, UserDBOutput} from "../models/Use
 import { IdGenerator } from "../services/idGenerator"
 import TokenService from "../services/TokenService"
 import { UpdateUserInputDTO, UpdateUserOutputDTO } from '../dtos/users/updateUser.dto';
+import { PhoneInputDTO, PhoneOutputDTO, } from '../dtos/users/phone';
 
 export class UserBusiness {
   constructor(
@@ -206,130 +207,109 @@ public getAllUsers = async (input: any): Promise<UserDB[]> => {
 
 // ------------------------------------------------------------------------------------------------------------------
 
-public editUser = async (idToEdit: string, input: UpdateUserInputDTO, token: string): Promise<UpdateUserOutputDTO> => {
-  const userIdFromToken = this.tokenService.getUserIdFromToken(token);
+  public editUser = async (idToEdit: string, input: UpdateUserInputDTO, token: string): Promise<UpdateUserOutputDTO> => {
+    const userIdFromToken = this.tokenService.getUserIdFromToken(token);
 
-  // Checks that the token's user ID matches the ID provided in the request
-  if (userIdFromToken !== idToEdit) {
-      throw new UnauthorizedError("You have not access to change this user");
-  }
+    // Checks that the token's user ID matches the ID provided in the request
+    if (userIdFromToken !== idToEdit) {
+        throw new UnauthorizedError("You have not access to change this user");
+    }
 
-  const userDB = await this.userDatabase.findUserById(idToEdit);
+    const userDB = await this.userDatabase.findUserById(idToEdit);
 
-  if (!userDB) {
-      throw new NotFoundError("'UserId' not found");
-  }
+    if (!userDB) {
+        throw new NotFoundError("'UserId' not found");
+    }
 
-  // Checks for hashed password or keeps existing password
-  const hashedPassword = input.password ? await this.hashManager.hash(input.password) : userDB.password;
+    // Checks for hashed password or keeps existing password
+    const hashedPassword = input.password ? await this.hashManager.hash(input.password) : userDB.password;
 
-  // Updates only the fields provided in `input`
-  const updatedUser: UserDB = {
-    ...userDB, // Copia todos os campos existentes do usuário do banco de dados
-    personal_id: input.personal_id !== undefined ? input.personal_id : userDB.personal_id,
-    entity_type: input.entity_type !== undefined ? (input.entity_type as EntityType) : userDB.entity_type,
-    name: input.name !== undefined ? input.name : userDB.name,
-    email: input.email !== undefined ? input.email : userDB.email,
-    password: hashedPassword,
-    birthdate: input.birthdate !== undefined ? input.birthdate : userDB.birthdate,
-    address: input.address !== undefined ? input.address : userDB.address,
-    number: input.number !== undefined ? input.number : userDB.number,
-    neighborhood: input.neighborhood !== undefined ? input.neighborhood : userDB.neighborhood,
-    city: input.city !== undefined ? input.city : userDB.city,
-    country: input.country !== undefined ? input.country : userDB.country,
-    gender: input.gender !== undefined ? input.gender : userDB.gender,
-    // phones: input.phones !== undefined ? input.phones : userDB.phones, // Adiciona atualização de telefones
-    role: userDB.role, // Mantém o papel existente do usuário
-    created_at: userDB.created_at // Mantém a data de criação original
-};
-
-  // Updates the user in the database with the updated fields
-  await this.userDatabase.updateUser(idToEdit, updatedUser);
-
-  // Returns updated user data
-  const updatedUserData = await this.userDatabase.findUserById(idToEdit);
-
-  // Check if `updatedUserData` is defined before accessing its properties
-  if (!updatedUserData) {
-      throw new NotFoundError("It was not possible to find the updated user data after editing.");
-  }
-
-  const output: UpdateUserOutputDTO = {
-      message: "Editing completed successfully",
-      user: {
-          id: updatedUserData.id,
-          name: updatedUserData.name,
-          email: updatedUserData.email,
-          createdAt: updatedUserData.created_at
-      }
+    // Updates only the fields provided in `input`
+    const updatedUser: UserDB = {
+      ...userDB, // Copia todos os campos existentes do usuário do banco de dados
+      personal_id: input.personal_id !== undefined ? input.personal_id : userDB.personal_id,
+      entity_type: input.entity_type !== undefined ? (input.entity_type as EntityType) : userDB.entity_type,
+      name: input.name !== undefined ? input.name : userDB.name,
+      email: input.email !== undefined ? input.email : userDB.email,
+      password: hashedPassword,
+      birthdate: input.birthdate !== undefined ? input.birthdate : userDB.birthdate,
+      address: input.address !== undefined ? input.address : userDB.address,
+      number: input.number !== undefined ? input.number : userDB.number,
+      neighborhood: input.neighborhood !== undefined ? input.neighborhood : userDB.neighborhood,
+      city: input.city !== undefined ? input.city : userDB.city,
+      country: input.country !== undefined ? input.country : userDB.country,
+      gender: input.gender !== undefined ? input.gender : userDB.gender,
+      // phones: input.phones !== undefined ? input.phones : userDB.phones, // Adiciona atualização de telefones
+      role: userDB.role, // Mantém o papel existente do usuário
+      created_at: userDB.created_at // Mantém a data de criação original
   };
 
-  return output;
+    // Updates the user in the database with the updated fields
+    await this.userDatabase.updateUser(idToEdit, updatedUser);
+
+    // Returns updated user data
+    const updatedUserData = await this.userDatabase.findUserById(idToEdit);
+
+    // Check if `updatedUserData` is defined before accessing its properties
+    if (!updatedUserData) {
+        throw new NotFoundError("It was not possible to find the updated user data after editing.");
+    }
+
+    const output: UpdateUserOutputDTO = {
+        message: "Editing completed successfully",
+        user: {
+            id: updatedUserData.id,
+            name: updatedUserData.name,
+            email: updatedUserData.email,
+            createdAt: updatedUserData.created_at
+        }
+    };
+
+    return output;
+  };
+
+  public updatePhone = async (input: PhoneInputDTO): Promise<PhoneOutputDTO> => {
+    const { userId, token, phoneId, number, type } = input;
+
+    // Verify the token and get the user ID from it
+    const userIdFromToken = this.tokenService.getUserIdFromToken(token);
+
+    // Validate the token
+    const authorizedUser = this.tokenService.verifyToken(token);
+    if (!authorizedUser || authorizedUser.userId !== userIdFromToken) {
+      throw new UnauthorizedError("Unauthorized user");
+    }
+
+    // Check if the user exists
+    const userDB = await this.userDatabase.findUserById(userId);
+    if (!userDB) {
+      throw new NotFoundError("User not found");
+    }
+
+    // Check if the phone exists for the user
+    const phoneDB = await this.userDatabase.findPhoneById(phoneId);
+    if (!phoneDB || phoneDB.user_id !== userId) {
+      throw new NotFoundError("Phone not found or does not belong to the user");
+    }
+
+    // Update the phone
+    await this.userDatabase.updatePhone(phoneId, { number, type });
+
+    // Prepare output data
+    const updatedPhone = await this.userDatabase.findPhoneById(phoneId);
+
+    if (!updatedPhone) {
+        throw new NotFoundError("Failed to retrieve updated phone data");
+    }
+
+    const output: PhoneOutputDTO = {
+      message: "Phone updated successfully",
+      phones: [updatedPhone]
+    };
+
+    return output;
 };
 
 
-  // public editUser = async (idToEdit: string, input: UpdateUserInputDTO, token: string): Promise<UpdateUserOutputDTO> => {
-  //   if (typeof idToEdit !== "string") {
-  //       throw new BadRequestError("'ID' is required");
-  //   }
-
-  //   const userIdFromToken = this.tokenService.getUserIdFromToken(token);
-
-  //   // Checks that the token's user ID matches the ID provided in the request
-  //   if (userIdFromToken !== idToEdit) {
-  //       throw new UnauthorizedError("You have not access to change this user");
-  //   }
-
-  //   const userDB = await this.userDatabase.findUserById(idToEdit);
-
-  //   if (!userDB) {
-  //       throw new NotFoundError("'UserId' not found");
-  //   }
-
-  //   // Checks for hashed password or keeps existing password
-  //   const hashedPassword = input.password ? await this.hashManager.hash(input.password) : userDB.password;
-
-  //   // Updates only the fields provided in `input`
-  //   const updatedUser: UserDB = {
-  //     ...userDB, // Copia todos os campos existentes do usuário do banco de dados
-  //     personal_id: input.personal_id !== undefined ? input.personal_id : userDB.personal_id,
-  //     entity_type: input.entity_type !== undefined ? (input.entity_type as EntityType) : userDB.entity_type,
-  //     name: input.name !== undefined ? input.name : userDB.name,
-  //     email: input.email !== undefined ? input.email : userDB.email,
-  //     password: hashedPassword,
-  //     birthdate: input.birthdate !== undefined ? input.birthdate : userDB.birthdate,
-  //     address: input.address !== undefined ? input.address : userDB.address,
-  //     number: input.number !== undefined ? input.number : userDB.number,
-  //     neighborhood: input.neighborhood !== undefined ? input.neighborhood : userDB.neighborhood,
-  //     city: input.city !== undefined ? input.city : userDB.city,
-  //     country: input.country !== undefined ? input.country : userDB.country,
-  //     gender: input.gender !== undefined ? input.gender : userDB.gender,
-  //     role: userDB.role, // Mantém o papel existente do usuário
-  //     created_at: userDB.created_at // Mantém a data de criação original
-  // };
-
-  //   // Updates the user in the database with the updated fields
-  //   await this.userDatabase.updateUser(idToEdit, updatedUser);
-
-  //   // Returns updated user data
-  //   const updatedUserData = await this.userDatabase.findUserById(idToEdit);
-
-  //   // Check if `update User Data` is defined before accessing its properties
-  //   if (!updatedUserData) {
-  //       throw new NotFoundError("It was not possible to find the updated user data after editing.");
-  //   }
-
-  //   const output: UpdateUserOutputDTO = {
-  //       message: "Editing completed successfully",
-  //       user: {
-  //           id: updatedUserData.id,
-  //           name: updatedUserData.name,
-  //           email: updatedUserData.email,
-  //           createdAt: updatedUserData.created_at
-  //       }
-  //   };
-
-  //   return output;
-  // };
 
 }
