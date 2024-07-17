@@ -18,7 +18,8 @@ CREATE TABLE users (
     country TEXT NOT NULL
 );
 
-select * from users;
+select * from users
+
 PRAGMA table_info(users);
 
 

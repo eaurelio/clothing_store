@@ -1,9 +1,9 @@
 import express from "express"
+import TokenService from "../services/TokenService"
 import { UserController } from "../controller/UserController"
 import { UserBusiness } from "../business/UserBusiness"
 import { UserDatabase } from "../database/UserDatabase"
 import { IdGenerator } from "../services/idGenerator"
-import TokenService from "../services/TokenService"
 import { HashManager } from "../services/HashManager"
 
 export const userRouter = express.Router()
@@ -18,9 +18,12 @@ const userController = new UserController(
 )
 
 userRouter.post("/createUser", userController.createUser)
-userRouter.post("/getUserData", userController.getUserData)
+userRouter.post("/getUserData/:id", userController.getUserData)
 userRouter.post("/getAllUsers", userController.getAllUsers)
 userRouter.post("/login", userController.login)
-userRouter.patch("/:id", userController.editUser)
-userRouter.put("/updatephone:id", userController.updatePhone)
+userRouter.patch("/editUser/:id", userController.editUser)
+
+userRouter.post("/addPhone/:id", userController.addPhone)
+userRouter.patch("/updatePhone/:id", userController.updatePhone)
+userRouter.delete("/deletePhone/:id", userController.deletePhone)
 

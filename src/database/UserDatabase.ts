@@ -94,7 +94,7 @@ export class UserDatabase extends BaseDatabase {
       .where({ phone_id });
   }
 
-  public async deletePhonesById(phone_id: string): Promise<void> {
+  public async deletePhoneById(phone_id: string): Promise<void> {
     await BaseDatabase
       .connection(UserDatabase.TABLE_PHONES)
       .where({ phone_id })
