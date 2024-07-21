@@ -1,7 +1,6 @@
-// import { IdGenerator } from './../services/idGenerator';
 import { PhoneDB } from "../models/Phones";
 import { Phone, UserDB } from "../models/User";
-import { BaseDatabase } from "./BaseDatabase";
+import { BaseDatabase } from "./connection/BaseDatabase";
 
 export class UserDatabase extends BaseDatabase {
   public static TABLE_USERS = "users"
