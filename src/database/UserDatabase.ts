@@ -1,6 +1,6 @@
+import { BaseDatabase } from "./connection/BaseDatabase";
 import { PhoneDB } from "../models/Phones";
 import { Phone, UserDB } from "../models/User";
-import { BaseDatabase } from "./connection/BaseDatabase";
 
 export class UserDatabase extends BaseDatabase {
   public static TABLE_USERS = "users"

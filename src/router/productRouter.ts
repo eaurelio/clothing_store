@@ -1,8 +1,6 @@
 import express from "express"
 import TokenService from "../services/TokenService"
-import { UserController } from "../controller/UserController"
-import { UserBusiness } from "../business/UserBusiness"
-import { UserDatabase } from "../database/UserDatabase"
+import { ProductDatabase } from './../database/ProductDatabase';
 import { IdGenerator } from "../services/idGenerator"
 import { HashManager } from "../services/HashManager"
 import { ProductController } from "../controller/ProductController"
@@ -12,12 +10,16 @@ export const productRouter = express.Router()
 
 const productController = new ProductController(
   new ProductBusiness(
-    new UserDatabase,
+    new ProductDatabase,
     new IdGenerator,
     new TokenService,
     new HashManager
   )
 )
+
+productRouter.get("/getProduct/:id", productController.getProduct)
+productRouter.get("/getAllProducts", productController.getAllProducts)
+
 
 // userRouter.post("/createUser", userController.createUser)
 // userRouter.post("/getUserData/:id", userController.getUserData)
