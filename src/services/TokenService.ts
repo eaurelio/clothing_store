@@ -19,7 +19,7 @@ class TokenService {
         userId,
         role,
         createdAt: Date.now(),
-        expiresAt: Date.now() + (24 * 60 * 60 * 1000) // 24 horas de validade
+        expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000) // 7 days
       };
 
       const base64Payload = Buffer.from(JSON.stringify(payload)).toString('base64');

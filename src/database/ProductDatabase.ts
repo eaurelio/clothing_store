@@ -11,35 +11,141 @@ export class ProductDatabase extends BaseDatabase {
   // PRODUCT DATA
 
   public async findProducts(q?: string, category_id?: number, color_id?: number, size_id?: number, gender_id?: number) {
-    let query = BaseDatabase.connection(ProductDatabase.TABLE_PRODUCTS).select();
+    let conditions: string[] = [];
+    let params: any[] = [];
 
+    // Adiciona condições ao array se os parâmetros forem fornecidos
     if (q) {
-      query = query.where("name", "LIKE", `%${q}%`);
+        conditions.push('products.name LIKE ?');
+        params.push(`%${q}%`);
     }
     if (category_id) {
-      query = query.where({ category_id });
+        conditions.push('products.category_id = ?');
+        params.push(category_id);
     }
     if (color_id) {
-      query = query.where({ color_id });
+        conditions.push('products.color_id = ?');
+        params.push(color_id);
     }
     if (size_id) {
-      query = query.where({ size_id });
+        conditions.push('products.size_id = ?');
+        params.push(size_id);
     }
     if (gender_id) {
-      query = query.where({ gender_id });
+        conditions.push('products.gender_id = ?');
+        params.push(gender_id);
     }
 
-    const productsDB = await query;
+    // Se não houver condições, a cláusula WHERE será uma string vazia
+    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
-    return productsDB;
-  }
+    // Executa a consulta SQL
+    const result = await BaseDatabase.connection.raw(`
+      SELECT 
+        products.id, 
+        products.name, 
+        products.description, 
+        products.price, 
+        products.stock, 
+        products.created_at, 
+        categories.name AS category, 
+        colors.name AS color, 
+        sizes.name AS size, 
+        genders.name AS gender
+      FROM ${ProductDatabase.TABLE_PRODUCTS}
+      LEFT JOIN categories ON products.category_id = categories.category_id
+      LEFT JOIN colors ON products.color_id = colors.color_id
+      LEFT JOIN sizes ON products.size_id = sizes.size_id
+      LEFT JOIN genders ON products.gender_id = genders.gender_id
+      ${whereClause}
+    `, params);
+
+    return result;
+}
+
+
+
+//   public async findProducts(q?: string, category_id?: number, color_id?: number, size_id?: number, gender_id?: number) {
+//     let conditions: string[] = [];
+//     let params: any[] = [];
+
+//     if (q) {
+//         conditions.push('products.name LIKE ?');
+//         params.push(`%${q}%`);
+//     }
+//     if (category_id) {
+//         conditions.push('products.category_id = ?');
+//         params.push(category_id);
+//     }
+//     if (color_id) {
+//         conditions.push('products.color_id = ?');
+//         params.push(color_id);
+//     }
+//     if (size_id) {
+//         conditions.push('products.size_id = ?');
+//         params.push(size_id);
+//     }
+//     if (gender_id) {
+//         conditions.push('products.gender_id = ?');
+//         params.push(gender_id);
+//     }
+
+//     const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+//     const result = await BaseDatabase.connection.raw(`
+//       SELECT 
+//         products.id, 
+//         products.name, 
+//         products.description, 
+//         products.price, 
+//         products.stock, 
+//         products.created_at, 
+//         categories.name AS category, 
+//         colors.name AS color, 
+//         sizes.name AS size, 
+//         genders.name AS gender
+//       FROM ${ProductDatabase.TABLE_PRODUCTS}
+//       LEFT JOIN categories ON products.category_id = categories.category_id
+//       LEFT JOIN colors ON products.color_id = colors.color_id
+//       LEFT JOIN sizes ON products.size_id = sizes.size_id
+//       LEFT JOIN genders ON products.gender_id = genders.gender_id
+//       ${whereClause}
+//     `, params);
+
+//     return result[0];
+// }
+
+
+  // public async findProductById(id: string) {
+  //   const [productDB]: ProductDB[] | undefined[] = await BaseDatabase
+  //     .connection(ProductDatabase.TABLE_PRODUCTS)
+  //     .where({ id });
+
+  //   return productDB;
+  // }
 
   public async findProductById(id: string) {
-    const [productDB]: ProductDB[] | undefined[] = await BaseDatabase
-      .connection(ProductDatabase.TABLE_PRODUCTS)
-      .where({ id });
+    const result = await BaseDatabase.connection.raw(`
+      SELECT 
+        products.id, 
+        products.name, 
+        products.description, 
+        products.price, 
+        products.stock, 
+        products.created_at, 
+        categories.name AS category, 
+        colors.name AS color, 
+        sizes.name AS size, 
+        genders.name AS gender
+      FROM ${ProductDatabase.TABLE_PRODUCTS}
+      LEFT JOIN categories ON products.category_id = categories.category_id
+      LEFT JOIN colors ON products.color_id = colors.color_id
+      LEFT JOIN sizes ON products.size_id = sizes.size_id
+      LEFT JOIN genders ON products.gender_id = genders.gender_id
+      WHERE products.id = ?
+    `, [id]);
 
-    return productDB;
+    return result[0];
   }
 
   public async findProductByName(name: string) {

@@ -4,11 +4,11 @@ export interface ProductDB {
   description?: string;
   price: number;
   stock: number;
-  created_at: string;
-  category_id?: number;
-  color_id?: number;
-  size_id?: number;
-  gender_id?: number;
+  createdAt: string;
+  category?: number;
+  color?: number;
+  size?: number;
+  gender?: number;
 }
 
 export interface ProductDBOutput {
@@ -17,11 +17,11 @@ export interface ProductDBOutput {
   description?: string;
   price: number;
   stock: number;
-  created_at: string;
-  category?: string;
-  color?: string;
-  size?: string;
-  gender?: string;
+  createdAt: string | number;
+  category: string | number;
+  color: string | number;
+  size: string | number;
+  gender: string | number;
 }
 
 export class Product {
@@ -32,10 +32,10 @@ export class Product {
       private price: number,
       private stock: number,
       private createdAt: string,
-      private categoryId: number | undefined,
-      private colorId: number | undefined,
-      private sizeId: number | undefined,
-      private genderId: number | undefined
+      private category: number | string,
+      private color: number | string,
+      private size: number | string,
+      private gender: number | string
   ) {}
 
   getId(): string {
@@ -86,36 +86,36 @@ export class Product {
       this.createdAt = createdAt;
   }
 
-  getCategoryId(): number | undefined {
-      return this.categoryId;
+  getCategory(): number | string | undefined {
+      return this.category;
   }
 
-  setCategoryId(categoryId: number | undefined): void {
-      this.categoryId = categoryId;
+  setCategory(category: number | string): void {
+      this.category = category;
   }
 
-  getColorId(): number | undefined {
-      return this.colorId;
+  getColor(): number | string {
+      return this.color;
   }
 
-  setColorId(colorId: number | undefined): void {
-      this.colorId = colorId;
+  setColor(color: number | string): void {
+      this.color = color;
   }
 
-  getSizeId(): number | undefined {
-      return this.sizeId;
+  getSize(): number | string {
+      return this.size;
   }
 
-  setSizeId(sizeId: number | undefined): void {
-      this.sizeId = sizeId;
+  setSize(size: number | string): void {
+      this.size = size;
   }
 
-  getGenderId(): number | undefined {
-      return this.genderId;
+  getGender(): number | string {
+      return this.gender;
   }
 
-  setGenderId(genderId: number | undefined): void {
-      this.genderId = genderId;
+  setGender(gender: number | string): void {
+      this.gender = gender;
   }
 }
 

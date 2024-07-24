@@ -1,5 +1,5 @@
 import z from 'zod';
-import { ProductDB } from '../../models/Products';
+import { ProductDB, ProductDBOutput } from '../../models/Products';
 
 // DTOs para obter produtos
 export interface GetProductInputDTO {
