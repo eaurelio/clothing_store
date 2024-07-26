@@ -1,7 +1,7 @@
 import z from "zod";
 
-// DTO para atualizar produtos
 export interface UpdateProductInputDTO {
+  token: string;
   id: string;
   name?: string;
   description?: string;
@@ -26,12 +26,12 @@ export interface UpdateProductOutputDTO {
     size_id: number;
     gender_id: number;
     createdAt: string;
-    updatedAt: string;
   };
 }
 
 export const UpdateProductSchema = z
   .object({
+    token: z.string(),
     id: z.string(),
     name: z.string().optional(),
     description: z.string().optional(),
@@ -44,8 +44,9 @@ export const UpdateProductSchema = z
   })
   .transform((data) => data as UpdateProductInputDTO);
 
-// DTOs para atualizar categorias
+
 export interface UpdateCategoryInputDTO {
+  token: string;
   id: number;
   name?: string;
   description?: string;
@@ -54,14 +55,14 @@ export interface UpdateCategoryInputDTO {
 export interface UpdateCategoryOutputDTO {
   message: string;
   category: {
-    id: number;
     name: string;
-    description: string;
+    description?: string;
   };
 }
 
 export const UpdateCategorySchema = z
   .object({
+    token: z.string().min(1),
     id: z.number(),
     name: z.string().optional(),
     description: z.string().optional(),
@@ -70,6 +71,7 @@ export const UpdateCategorySchema = z
 
 // DTOs para atualizar cores
 export interface UpdateColorInputDTO {
+  token: string;
   id: number;
   name?: string; 
 }
@@ -77,13 +79,14 @@ export interface UpdateColorInputDTO {
 export interface UpdateColorOutputDTO {
   message: string;
   color: {
-    id: number;
+    // id: number;
     name: string;
   };
 }
 
 export const UpdateColorSchema = z
   .object({
+    token: z.string().min(1),
     id: z.number(),
     name: z.string().optional(),
   })
@@ -91,6 +94,7 @@ export const UpdateColorSchema = z
 
 // DTOs para atualizar tamanhos
 export interface UpdateSizeInputDTO {
+  token: string;
   id: number;
   name?: string;
 }
@@ -98,13 +102,14 @@ export interface UpdateSizeInputDTO {
 export interface UpdateSizeOutputDTO {
   message: string;
   size: {
-    id: number;
+    // id: number;
     name: string;
   };
 }
 
 export const UpdateSizeSchema = z
   .object({
+    token: z.string().min(1),
     id: z.number(),
     name: z.string().optional(),
   })
@@ -112,6 +117,7 @@ export const UpdateSizeSchema = z
 
 // DTOs para atualizar gêneros
 export interface UpdateGenderInputDTO {
+  token: string;
   id: number;
   name?: string;
 }
@@ -119,13 +125,14 @@ export interface UpdateGenderInputDTO {
 export interface UpdateGenderOutputDTO {
   message: string;
   gender: {
-    id: number;
+    // id: number;
     name: string;
   };
 }
 
 export const UpdateGenderSchema = z
   .object({
+    token: z.string().min(1),
     id: z.number(),
     name: z.string().optional(),
   })

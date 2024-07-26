@@ -2,14 +2,15 @@ import z from 'zod';
 
 // Product DTOs
 export interface CreateProductInputDTO {
+  token: string;
   name: string;
   description?: string;
   price: number;
   stock: number;
-  category_id?: number;
-  color_id?: number;
-  size_id?: number;
-  gender_id?: number;
+  category_id: number;
+  color_id: number;
+  size_id: number;
+  gender_id: number;
 }
 
 export interface CreateProductOutputDTO {
@@ -29,6 +30,7 @@ export interface CreateProductOutputDTO {
 }
 
 export const CreateProductSchema = z.object({
+  token: z.string(),
   name: z.string().min(1),
   description: z.string().optional(),
   price: z.number().min(0),
@@ -41,6 +43,7 @@ export const CreateProductSchema = z.object({
 
 // Category DTOs
 export interface CreateCategoryInputDTO {
+  token: string;
   name: string;
   description?: string;
 }
@@ -48,64 +51,71 @@ export interface CreateCategoryInputDTO {
 export interface CreateCategoryOutputDTO {
   message: string;
   category: {
-    id: number;
+    // id: number,
     name: string;
     description?: string;
   };
 }
 
 export const CreateCategorySchema = z.object({
+  token: z.string().min(1),
   name: z.string().min(1),
   description: z.string().optional(),
 }).transform(data => data as CreateCategoryInputDTO);
 
 // Color DTOs
 export interface CreateColorInputDTO {
+  token: string;
   name: string;
 }
 
 export interface CreateColorOutputDTO {
   message: string;
   color: {
-    id: number;
+    // id: number;
     name: string;
   };
 }
 
 export const CreateColorSchema = z.object({
+  token: z.string().min(1),
   name: z.string().min(1),
 }).transform(data => data as CreateColorInputDTO);
 
 // Size DTOs
 export interface CreateSizeInputDTO {
+  token: string;
   name: string;
 }
 
 export interface CreateSizeOutputDTO {
   message: string;
   size: {
-    id: number;
+    // id: number;
     name: string;
   };
 }
 
 export const CreateSizeSchema = z.object({
+  token: z.string().min(1),
   name: z.string().min(1),
 }).transform(data => data as CreateSizeInputDTO);
 
 // Gender DTOs
 export interface CreateGenderInputDTO {
+  token: string;
   name: string;
 }
 
 export interface CreateGenderOutputDTO {
   message: string;
   gender: {
-    id: number;
+    // id: number;
     name: string;
   };
 }
 
 export const CreateGenderSchema = z.object({
+  token: z.string().min(1),
   name: z.string().min(1),
 }).transform(data => data as CreateGenderInputDTO);

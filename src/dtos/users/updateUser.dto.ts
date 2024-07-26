@@ -1,7 +1,8 @@
 import z from 'zod';
 
 export interface UpdateUserInputDTO {
-  id: string;
+  userId: string;
+  token: string;
   personal_id?: string;
   entity_type?: string;
   name?: string;
@@ -24,7 +25,7 @@ export interface UpdateUserInputDTO {
 export interface UpdateUserOutputDTO {
   message: string;
   user: {
-    id: string;
+    userId: string;
     name: string;
     email: string;
     createdAt: string;
@@ -39,8 +40,10 @@ export interface UpdateUserOutputDTO {
   };
 }
 
+
 export const UpdateUserSchema = z.object({
-  id: z.string(),
+  userId: z.string(),
+  token: z.string(),
   personal_id: z.string().min(6).optional(),
   entity_type: z.string().min(6).optional(),
   name: z.string().min(2).optional(),
@@ -54,3 +57,22 @@ export const UpdateUserSchema = z.object({
   country: z.string().min(2).max(20).optional(),
   gender: z.string().min(1).optional(),
 }).transform(data => data as UpdateUserInputDTO);
+
+
+export interface UpdatePasswordInputDTO {
+  userId: string;
+  token: string;
+  oldPassword: string;
+  newPassword: string;
+}
+
+export interface UpdatePasswordOutputDTO {
+  message: string;
+}
+
+export const UpdatePasswordSchema = z.object({
+  userId: z.string(),
+  token: z.string(),
+  oldPassword: z.string().min(8).max(16),
+  newPassword: z.string().min(8).max(16)
+}).transform(data => data as UpdatePasswordInputDTO)

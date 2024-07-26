@@ -57,6 +57,13 @@ export class UserDatabase extends BaseDatabase {
       .where({ id: idToEdit })
   }
 
+  public async updatePassword(id: string, newPassword: string): Promise<void> {
+    await BaseDatabase
+      .connection(UserDatabase.TABLE_USERS)
+      .update({ password: newPassword })
+      .where({ id });
+  }
+
   // PHONE USER
 
   public async getPhones(user_id: string) {

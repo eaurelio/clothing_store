@@ -120,10 +120,10 @@ SELECT
     sizes.name AS size, 
     genders.name AS gender
 FROM products
-WHERE products.id = 'P001'
 LEFT JOIN categories ON products.category_id = categories.category_id
 LEFT JOIN colors ON products.color_id = colors.color_id
 LEFT JOIN sizes ON products.size_id = sizes.size_id
-LEFT JOIN genders ON products.gender_id = genders.gender_id;
+LEFT JOIN genders ON products.gender_id = genders.gender_id
+WHERE products.id = 'P001';
 
-
+select * from products

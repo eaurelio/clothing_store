@@ -4,11 +4,11 @@ export interface ProductDB {
   description?: string;
   price: number;
   stock: number;
-  createdAt: string;
-  category?: number;
-  color?: number;
-  size?: number;
-  gender?: number;
+  created_at: string;
+  category_id: number;
+  color_id: number;
+  size_id: number;
+  gender_id: number;
 }
 
 export interface ProductDBOutput {
@@ -86,7 +86,7 @@ export class Product {
       this.createdAt = createdAt;
   }
 
-  getCategory(): number | string | undefined {
+  getCategory(): number | string {
       return this.category;
   }
 
@@ -120,22 +120,19 @@ export class Product {
 }
 
 export interface CategoryDB {
-  id: number;
-  name: string;
-  description?: string;
-}
-
-export interface ColorDB {
-  id: number;
-  name: string;
-}
-
-export interface SizeDB {
-  id: number;
-  name: string;
-}
-
-export interface GenderDB {
-  id: number;
-  name: string;
-}
+    name: string;
+    description?: string;
+  }
+  
+  export interface ColorDB {
+    name: string;
+  }
+  
+  export interface SizeDB {
+    name: string;
+  }
+  
+  export interface GenderDB {
+    name: string;
+  }
+  
