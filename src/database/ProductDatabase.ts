@@ -14,7 +14,6 @@ export class ProductDatabase extends BaseDatabase {
     let conditions: string[] = [];
     let params: any[] = [];
 
-    // Adiciona condições ao array se os parâmetros forem fornecidos
     if (name) {
         conditions.push('products.name LIKE ?');
         params.push(`%${name}%`);
@@ -36,10 +35,8 @@ export class ProductDatabase extends BaseDatabase {
         params.push(gender_id);
     }
 
-    // Se não houver condições, a cláusula WHERE será uma string vazia
     const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
-    // Executa a consulta SQL
     const result = await BaseDatabase.connection.raw(`
       SELECT 
         products.id, 
@@ -135,41 +132,38 @@ export class ProductDatabase extends BaseDatabase {
     return result;
   }
 
-  public async findCategoryById(id: number) {
+  public async findCategoryById(category_id: string) {
     const [categoryDB]: CategoryDB[] | undefined[] = await BaseDatabase
       .connection(ProductDatabase.TABLE_CATEGORIES)
-      .where({ id });
+      .where({ category_id });
 
     return categoryDB;
   }
 
-  public async findCategoryByName(name: string) {
-    const [categoryDB]: CategoryDB[] | undefined[] = await BaseDatabase
+  public async findCategoryByName(name: string): Promise<CategoryDB | undefined> {
+    const categoryDB: CategoryDB | undefined = await BaseDatabase
       .connection(ProductDatabase.TABLE_CATEGORIES)
       .where({ name })
       .first();
 
     return categoryDB;
-  }
+}
 
-  public async insertCategory(newCategoryDB: CategoryDB) {
-    await BaseDatabase
-      .connection(ProductDatabase.TABLE_CATEGORIES)
-      .insert(newCategoryDB);
-  }
+public async insertCategory(newCategoryDB: CategoryDB) {
+  const { name, description } = newCategoryDB;
 
-  public async updateCategory(idToEdit: number, updatedCategoryDB: CategoryDB) {
+  await BaseDatabase.connection.raw(`
+    INSERT INTO ${ProductDatabase.TABLE_CATEGORIES} (name, description)
+    VALUES (?, ?)
+  `, [name, description]);
+}
+
+
+  public async updateCategory(category_id: string, updatedCategoryDB: CategoryDB) {
     await BaseDatabase
       .connection(ProductDatabase.TABLE_CATEGORIES)
       .update(updatedCategoryDB)
-      .where({ id: idToEdit });
-  }
-
-  public async deleteCategoryById(id: number) {
-    await BaseDatabase
-      .connection(ProductDatabase.TABLE_CATEGORIES)
-      .where({ id })
-      .delete();
+      .where({ category_id });
   }
 
   // COLOR DATA
@@ -181,16 +175,16 @@ export class ProductDatabase extends BaseDatabase {
     return result;
   }
 
-  public async findColorById(id: number) {
+  public async findColorById(color_id: string) {
     const [colorDB]: ColorDB[] | undefined[] = await BaseDatabase
       .connection(ProductDatabase.TABLE_COLORS)
-      .where({ id });
+      .where({ color_id });
 
     return colorDB;
   }
 
   public async findColorByName(name: string) {
-    const [colorDB]: ColorDB[] | undefined[] = await BaseDatabase
+    const colorDB: ColorDB | undefined = await BaseDatabase
       .connection(ProductDatabase.TABLE_COLORS)
       .where({ name })
       .first();
@@ -199,23 +193,20 @@ export class ProductDatabase extends BaseDatabase {
   }
 
   public async insertColor(newColorDB: ColorDB) {
-    await BaseDatabase
-      .connection(ProductDatabase.TABLE_COLORS)
-      .insert(newColorDB);
+    const { color } = newColorDB;
+  
+    await BaseDatabase.connection.raw(`
+      INSERT INTO ${ProductDatabase.TABLE_COLORS} (name)
+      VALUES (?)
+    `, [color]);
   }
+  
 
-  public async updateColor(idToEdit: number, updatedColorDB: ColorDB) {
+  public async updateColor(color_id: string, updatedColorDB: ColorDB) {
     await BaseDatabase
       .connection(ProductDatabase.TABLE_COLORS)
       .update(updatedColorDB)
-      .where({ id: idToEdit });
-  }
-
-  public async deleteColorById(id: number) {
-    await BaseDatabase
-      .connection(ProductDatabase.TABLE_COLORS)
-      .where({ id })
-      .delete();
+      .where({ color_id });
   }
 
   // SIZE DATA
@@ -227,16 +218,16 @@ export class ProductDatabase extends BaseDatabase {
     return result;
   }
 
-  public async findSizeById(id: number) {
+  public async findSizeById(size_id: string) {
     const [sizeDB]: SizeDB[] | undefined[] = await BaseDatabase
       .connection(ProductDatabase.TABLE_SIZES)
-      .where({ id });
+      .where({ size_id });
 
     return sizeDB;
   }
 
   public async findSizeByName(name: string) {
-    const [sizeDB]: SizeDB[] | undefined[] = await BaseDatabase
+    const sizeDB: SizeDB | undefined = await BaseDatabase
       .connection(ProductDatabase.TABLE_SIZES)
       .where({ name })
       .first();
@@ -250,18 +241,11 @@ export class ProductDatabase extends BaseDatabase {
       .insert(newSizeDB);
   }
 
-  public async updateSize(idToEdit: number, updatedSizeDB: SizeDB) {
+  public async updateSize(size_id: string, updatedSizeDB: SizeDB) {
     await BaseDatabase
       .connection(ProductDatabase.TABLE_SIZES)
       .update(updatedSizeDB)
-      .where({ id: idToEdit });
-  }
-
-  public async deleteSizeById(id: number) {
-    await BaseDatabase
-      .connection(ProductDatabase.TABLE_SIZES)
-      .where({ id })
-      .delete();
+      .where({ size_id });
   }
 
   // GENDER DATA
@@ -273,16 +257,16 @@ export class ProductDatabase extends BaseDatabase {
     return result;
   }
 
-  public async findGenderById(id: number) {
+  public async findGenderById(gender_id: string) {
     const [genderDB]: GenderDB[] | undefined[] = await BaseDatabase
       .connection(ProductDatabase.TABLE_GENDERS)
-      .where({ id });
+      .where({ gender_id });
 
     return genderDB;
   }
 
   public async findGenderByName(name: string) {
-    const [genderDB]: GenderDB[] | undefined[] = await BaseDatabase
+    const genderDB: GenderDB | undefined = await BaseDatabase
       .connection(ProductDatabase.TABLE_GENDERS)
       .where({ name })
       .first();
@@ -296,17 +280,10 @@ export class ProductDatabase extends BaseDatabase {
       .insert(newGenderDB);
   }
 
-  public async updateGender(idToEdit: number, updatedGenderDB: GenderDB) {
+  public async updateGender(gender_id: string, updatedGenderDB: GenderDB) {
     await BaseDatabase
       .connection(ProductDatabase.TABLE_GENDERS)
       .update(updatedGenderDB)
-      .where({ id: idToEdit });
-  }
-
-  public async deleteGenderById(id: number) {
-    await BaseDatabase
-      .connection(ProductDatabase.TABLE_GENDERS)
-      .where({ id })
-      .delete();
+      .where({ gender_id });
   }
 }

@@ -279,7 +279,7 @@ export class ProductBusiness {
 
     const existingCategory = await this.productDatabase.findCategoryByName(name);
     if (existingCategory) {
-        throw new BadRequestError("'name' already exists");
+        throw new BadRequestError("'category' already exists");
     }
 
     const newCategoryDB: CategoryDB = {
@@ -297,6 +297,7 @@ export class ProductBusiness {
 
     console.log(newCategory)
 
+
     const output: CreateCategoryOutputDTO = {
         message: "Category created successfully",
         category: newCategory,
@@ -309,84 +310,79 @@ export class ProductBusiness {
 
   public updateCategory = async (
     input: UpdateCategoryInputDTO
-): Promise<UpdateCategoryOutputDTO> => {
+  ): Promise<UpdateCategoryOutputDTO> => {
     const { token, id, name, description } = input;
 
     const userId = this.tokenService.getUserIdFromToken(token);
     const userDB = await this.userDatabase.findUserById(userId as string);
 
     if (!userDB) {
-        throw new NotFoundError("User not found");
+      throw new NotFoundError("User not found");
     }
 
     if (userDB.role !== USER_ROLES.ADMIN) {
-        throw new UnauthorizedError("Unauthorized user");
+      throw new UnauthorizedError("Unauthorized user");
     }
 
     const categoryDB = await this.productDatabase.findCategoryById(id);
 
     if (!categoryDB) {
-        throw new NotFoundError("Category not found");
+      throw new NotFoundError("category not found");
     }
 
-    const updatedCategory: Omit<CategoryDB, 'id'> = {
-        name: name !== undefined ? name : categoryDB.name,
-        description: description !== undefined ? description : categoryDB.description,
+    const updatedCategory = {
+      ...categoryDB,
+      name: name !== undefined ? name : categoryDB.name,
+      description: description !== undefined ? description: categoryDB.description
     };
 
     await this.productDatabase.updateCategory(id, updatedCategory);
 
-    const newCategory = await this.productDatabase.findCategoryById(id);
-
-    if (!newCategory) {
-        throw new Error("Failed to update category");
-    }
-
     const output: UpdateCategoryOutputDTO = {
-        message: "Category updated successfully",
-        category: newCategory,
+      message: "Color updated successfully",
+      category: updatedCategory,
     };
 
     return output;
-};
-
+  };
 
 public createColor = async (
   input: CreateColorInputDTO
 ): Promise<CreateColorOutputDTO> => {
-  const { token, name } = input;
+  const { token, color } = input;
 
   const userId = this.tokenService.getUserIdFromToken(token);
   const userDB = await this.userDatabase.findUserById(userId as string);
 
   if (!userDB) {
-      throw new NotFoundError("User not found");
+    throw new NotFoundError("User not found");
   }
 
   if (userDB.role !== USER_ROLES.ADMIN) {
-      throw new UnauthorizedError("Unauthorized user");
+    throw new UnauthorizedError("Unauthorized user");
   }
 
-  const existingColor = await this.productDatabase.findColorByName(name);
+  const existingColor = await this.productDatabase.findColorByName(color);
   if (existingColor) {
-      throw new BadRequestError("'name' already exists");
+    throw new BadRequestError("'color' already exists");
   }
 
-  const newColorDB: Omit<ColorDB, 'id'> = {
-      name,
+  const newColorDB: ColorDB = {
+    color,
   };
 
   await this.productDatabase.insertColor(newColorDB);
 
-  const newColor = await this.productDatabase.findColorByName(name);
+  // Buscando o registro da nova cor criada
+  const newColor = await this.productDatabase.findColorByName(color);
 
   if (!newColor) {
-      throw new Error("Failed to create color");
+    throw new Error("Failed to create color");
   }
 
   const output: CreateColorOutputDTO = {
-      message: "Color created successfully",
-      color: newColor,
+    message: "Color created successfully",
+    color: newColor, // Presumindo que o campo de resposta é chamado color
   };
 
   return output;
@@ -419,7 +415,7 @@ public createColor = async (
 
     const updatedColor = {
       ...colorDB,
-      name: name !== undefined ? name : colorDB.name,
+      name: name !== undefined ? name : colorDB.color,
     };
 
     await this.productDatabase.updateColor(id, updatedColor);
@@ -450,7 +446,7 @@ public createColor = async (
 
     const existingSize = await this.productDatabase.findSizeByName(name);
     if (existingSize) {
-        throw new BadRequestError("'name' already exists");
+        throw new BadRequestError("'size' already exists");
     }
 
     const newSizeDB: Omit<SizeDB, 'id'> = {

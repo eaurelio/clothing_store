@@ -66,20 +66,20 @@ export const CreateCategorySchema = z.object({
 // Color DTOs
 export interface CreateColorInputDTO {
   token: string;
-  name: string;
+  color: string;
 }
 
 export interface CreateColorOutputDTO {
   message: string;
   color: {
     // id: number;
-    name: string;
+    color: string;
   };
 }
 
 export const CreateColorSchema = z.object({
   token: z.string().min(1),
-  name: z.string().min(1),
+  color: z.string().min(1),
 }).transform(data => data as CreateColorInputDTO);
 
 // Size DTOs

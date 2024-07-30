@@ -125,7 +125,7 @@ export interface CategoryDB {
   }
   
   export interface ColorDB {
-    name: string;
+    color: string;
   }
   
   export interface SizeDB {

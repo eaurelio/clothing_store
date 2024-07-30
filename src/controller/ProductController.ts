@@ -205,7 +205,7 @@ export class ProductController {
     try {
       const input = CreateColorSchema.parse({
         token: req.headers.authorization as string,
-        name: req.body.name
+        color: req.body.color
       });
 
       const output = await this.productBusiness.createColor(input);

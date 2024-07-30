@@ -126,4 +126,11 @@ LEFT JOIN sizes ON products.size_id = sizes.size_id
 LEFT JOIN genders ON products.gender_id = genders.gender_id
 WHERE products.id = 'P001';
 
-select * from products
+select * from products;
+select * from categories;
+
+select * from colors;
+
+select * from sizes;
+
+select * from genders;

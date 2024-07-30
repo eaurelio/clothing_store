@@ -47,7 +47,7 @@ export const UpdateProductSchema = z
 
 export interface UpdateCategoryInputDTO {
   token: string;
-  id: number;
+  id: string;
   name?: string;
   description?: string;
 }
@@ -63,7 +63,7 @@ export interface UpdateCategoryOutputDTO {
 export const UpdateCategorySchema = z
   .object({
     token: z.string().min(1),
-    id: z.number(),
+    id: z.string(),
     name: z.string().optional(),
     description: z.string().optional(),
   })
@@ -72,7 +72,7 @@ export const UpdateCategorySchema = z
 // DTOs para atualizar cores
 export interface UpdateColorInputDTO {
   token: string;
-  id: number;
+  id: string;
   name?: string; 
 }
 
@@ -87,7 +87,7 @@ export interface UpdateColorOutputDTO {
 export const UpdateColorSchema = z
   .object({
     token: z.string().min(1),
-    id: z.number(),
+    id: z.string(),
     name: z.string().optional(),
   })
   .transform((data) => data as UpdateColorInputDTO);
@@ -95,7 +95,7 @@ export const UpdateColorSchema = z
 // DTOs para atualizar tamanhos
 export interface UpdateSizeInputDTO {
   token: string;
-  id: number;
+  id: string;
   name?: string;
 }
 
@@ -110,7 +110,7 @@ export interface UpdateSizeOutputDTO {
 export const UpdateSizeSchema = z
   .object({
     token: z.string().min(1),
-    id: z.number(),
+    id: z.string(),
     name: z.string().optional(),
   })
   .transform((data) => data as UpdateSizeInputDTO);
@@ -118,7 +118,7 @@ export const UpdateSizeSchema = z
 // DTOs para atualizar gêneros
 export interface UpdateGenderInputDTO {
   token: string;
-  id: number;
+  id: string;
   name?: string;
 }
 
@@ -133,7 +133,7 @@ export interface UpdateGenderOutputDTO {
 export const UpdateGenderSchema = z
   .object({
     token: z.string().min(1),
-    id: z.number(),
+    id: z.string(),
     name: z.string().optional(),
   })
   .transform((data) => data as UpdateGenderInputDTO);
