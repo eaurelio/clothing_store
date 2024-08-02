@@ -8,10 +8,8 @@ import {
 } from "../dtos/users/updateUser.dto";
 import { GetUserSchema, GetAllUserSchema } from "../dtos/users/getUser.dto";
 import { PhoneDeleteSchema, PhoneInputSchema } from "../dtos/users/phone";
-import { UnauthorizedError } from "../errors/UnauthorizedError";
-import { NotFoundError } from "../errors/NotFoundError";
-import { BadRequestError } from "../errors/BadRequestError";
-import { ZodError } from "zod";
+import { ErrorHandler } from "../errors/ErrorHandler";
+import logger from "../logs/logger";
 
 export class UserController {
   constructor(private userBusiness: UserBusiness) {}
@@ -41,19 +39,8 @@ export class UserController {
       const output = await this.userBusiness.createUser(input);
       res.status(201).send(output);
     } catch (error) {
-      console.log(error);
-      if (error instanceof ZodError) {
-        res.status(400).send(error.issues)
-      }
-      if (
-        error instanceof BadRequestError ||
-        error instanceof NotFoundError ||
-        error instanceof UnauthorizedError
-      ) {
-        res.status(error.statusCode).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "Unexpected error" });
-      }
+      logger.error(error);
+      ErrorHandler.handleError(error, res);
     }
   };
 
@@ -69,19 +56,8 @@ export class UserController {
       const output = await this.userBusiness.login(input);
       res.status(200).send(output);
     } catch (error) {
-      console.log(error);
-      if (error instanceof ZodError) {
-        res.status(400).send(error.issues)
-      }
-      if (
-        error instanceof BadRequestError ||
-        error instanceof NotFoundError ||
-        error instanceof UnauthorizedError
-      ) {
-        res.status(error.statusCode).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "Unexpected error" });
-      }
+      logger.error(error);
+      ErrorHandler.handleError(error, res);
     }
   };
 
@@ -97,19 +73,8 @@ export class UserController {
       const output = await this.userBusiness.getUserData(input);
       res.status(200).send(output);
     } catch (error) {
-      console.log(error);
-      if (error instanceof ZodError) {
-        res.status(400).send(error.issues)
-      }
-      if (
-        error instanceof BadRequestError ||
-        error instanceof NotFoundError ||
-        error instanceof UnauthorizedError
-      ) {
-        res.status(error.statusCode).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "Unexpected error" });
-      }
+      logger.error(error);
+      ErrorHandler.handleError(error, res);
     }
   };
 
@@ -125,19 +90,8 @@ export class UserController {
       const output = await this.userBusiness.getAllUsers(input);
       res.status(200).send(output);
     } catch (error) {
-      console.log(error);
-      if (error instanceof ZodError) {
-        res.status(400).send(error.issues)
-      }
-      if (
-        error instanceof BadRequestError ||
-        error instanceof NotFoundError ||
-        error instanceof UnauthorizedError
-      ) {
-        res.status(error.statusCode).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "Unexpected error" });
-      }
+      logger.error(error);
+      ErrorHandler.handleError(error, res);
     }
   };
 
@@ -166,19 +120,8 @@ export class UserController {
       const output = await this.userBusiness.editUser(input);
       res.status(200).send(output);
     } catch (error) {
-      console.log(error);
-      if (error instanceof ZodError) {
-        res.status(400).send(error.issues)
-      }
-      if (
-        error instanceof BadRequestError ||
-        error instanceof NotFoundError ||
-        error instanceof UnauthorizedError
-      ) {
-        res.status(error.statusCode).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "Unexpected error" });
-      }
+      logger.error(error);
+      ErrorHandler.handleError(error, res);
     }
   };
 
@@ -196,19 +139,8 @@ export class UserController {
       const output = await this.userBusiness.changePassword(input);
       res.status(200).send(output);
     } catch (error) {
-      console.log(error);
-      if (error instanceof ZodError) {
-        res.status(400).send(error.issues)
-      }
-      if (
-        error instanceof BadRequestError ||
-        error instanceof NotFoundError ||
-        error instanceof UnauthorizedError
-      ) {
-        res.status(error.statusCode).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "Unexpected error" });
-      }
+      logger.error(error);
+      ErrorHandler.handleError(error, res);
     }
   };
 
@@ -229,19 +161,8 @@ export class UserController {
       const output = await this.userBusiness.addPhone(input);
       res.status(200).json(output);
     } catch (error) {
-      console.log(error);
-      if (error instanceof ZodError) {
-        res.status(400).send(error.issues)
-      }
-      if (
-        error instanceof BadRequestError ||
-        error instanceof NotFoundError ||
-        error instanceof UnauthorizedError
-      ) {
-        res.status(error.statusCode).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "Unexpected error" });
-      }
+      logger.error(error);
+      ErrorHandler.handleError(error, res);
     }
   };
 
@@ -260,19 +181,8 @@ export class UserController {
       const output = await this.userBusiness.updatePhone(input);
       res.status(200).json(output);
     } catch (error) {
-      console.log(error);
-      if (error instanceof ZodError) {
-        res.status(400).send(error.issues)
-      }
-      if (
-        error instanceof BadRequestError ||
-        error instanceof NotFoundError ||
-        error instanceof UnauthorizedError
-      ) {
-        res.status(error.statusCode).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "Unexpected error" });
-      }
+      logger.error(error);
+      ErrorHandler.handleError(error, res);
     }
   };
 
@@ -289,19 +199,8 @@ export class UserController {
       const output = await this.userBusiness.deletePhone(input);
       res.status(200).json(output);
     } catch (error) {
-      console.log(error);
-      if (error instanceof ZodError) {
-        res.status(400).send(error.issues)
-      }
-      if (
-        error instanceof BadRequestError ||
-        error instanceof NotFoundError ||
-        error instanceof UnauthorizedError
-      ) {
-        res.status(error.statusCode).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "Unexpected error" });
-      }
+      logger.error(error);
+      ErrorHandler.handleError(error, res);
     }
   };
 }

@@ -6,6 +6,7 @@ import { HashManager } from "../services/HashManager"
 import { ProductController } from "../controller/ProductController"
 import { ProductBusiness } from "../business/ProductBusiness"
 import { UserDatabase } from "../database/UserDatabase";
+import { ErrorHandler } from "../errors/ErrorHandler";
 
 export const productRouter = express.Router()
 
@@ -15,7 +16,8 @@ const productController = new ProductController(
     new IdGenerator,
     new TokenService,
     new HashManager,
-    new UserDatabase
+    new UserDatabase,
+    new ErrorHandler
   )
 )
 

@@ -129,61 +129,35 @@ export class ProductDatabase extends BaseDatabase {
     return result[0];
   }
 
-  // public async insertProduct(newProductDB: ProductDB) {
-  //   await BaseDatabase.connection(ProductDatabase.TABLE_PRODUCTS).insert(
-  //     newProductDB
-  //   );
-  // }
+  public async insertProduct(newProductDB: ProductDB): Promise<void> {
+    const columns = Object.keys(newProductDB);
+    const placeholders = columns.map(() => "?").join(", ");
+    const values = Object.values(newProductDB);
 
-  public async insertProduct(newProductDB: ProductDB) {
-    await BaseDatabase.connection.raw(
-      `
-      INSERT INTO ${ProductDatabase.TABLE_PRODUCTS} 
-      (id, name, description, price, stock, created_at, category_id, color_id, size_id, gender_id)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `,
-      [
-        newProductDB.id,
-        newProductDB.name,
-        newProductDB.description,
-        newProductDB.price,
-        newProductDB.stock,
-        newProductDB.created_at,
-        newProductDB.category_id,
-        newProductDB.color_id,
-        newProductDB.size_id,
-        newProductDB.gender_id,
-      ]
-    );
+    const query = `
+      INSERT INTO ${ProductDatabase.TABLE_PRODUCTS} (${columns.join(", ")})
+      VALUES (${placeholders})
+    `;
+
+    await BaseDatabase.connection.raw(query, values);
   }
 
-  // public async updateProduct(idToEdit: string, updatedProductDB: ProductDB) {
-  //   console.log(updatedProductDB);
-  //   await BaseDatabase.connection(ProductDatabase.TABLE_PRODUCTS)
-  //     .update(updatedProductDB)
-  //     .where({ id: idToEdit });
-  // }
+  public async updateProduct(
+    idToEdit: string,
+    updatedProductDB: Partial<ProductDB>
+  ): Promise<void> {
+    const columns = Object.keys(updatedProductDB);
+    const values = Object.values(updatedProductDB);
 
-  public async updateProduct(idToEdit: string, updatedProductDB: ProductDB) {
-    await BaseDatabase.connection.raw(
-      `
+    const setClause = columns.map((col) => `${col} = ?`).join(", ");
+
+    const query = `
       UPDATE ${ProductDatabase.TABLE_PRODUCTS}
-      SET name = ?, description = ?, price = ?, stock = ?, created_at = ?, category_id = ?, color_id = ?, size_id = ?, gender_id = ?
+      SET ${setClause}
       WHERE id = ?
-    `,
-      [
-        updatedProductDB.name,
-        updatedProductDB.description,
-        updatedProductDB.price,
-        updatedProductDB.stock,
-        updatedProductDB.created_at,
-        updatedProductDB.category_id,
-        updatedProductDB.color_id,
-        updatedProductDB.size_id,
-        updatedProductDB.gender_id,
-        idToEdit,
-      ]
-    );
+    `;
+
+    await BaseDatabase.connection.raw(query, [...values, idToEdit]);
   }
 
   // CATEGORY DATA
@@ -225,39 +199,35 @@ export class ProductDatabase extends BaseDatabase {
     return result[0];
   }
 
-  public async insertCategory(newCategoryDB: CategoryDB) {
-    const { name, description } = newCategoryDB;
+  public async insertCategory(newCategoryDB: CategoryDB): Promise<void> {
+    const columns = Object.keys(newCategoryDB);
+    const placeholders = columns.map(() => "?").join(", ");
+    const values = Object.values(newCategoryDB);
 
-    await BaseDatabase.connection.raw(
-      `
-    INSERT INTO ${ProductDatabase.TABLE_CATEGORIES} (name, description)
-    VALUES (?, ?)
-  `,
-      [name, description]
-    );
+    const query = `
+      INSERT INTO ${ProductDatabase.TABLE_CATEGORIES} (${columns.join(", ")})
+      VALUES (${placeholders})
+    `;
+
+    await BaseDatabase.connection.raw(query, values);
   }
-
-  // public async updateCategory(
-  //   category_id: string,
-  //   updatedCategoryDB: CategoryDB
-  // ) {
-  //   await BaseDatabase.connection(ProductDatabase.TABLE_CATEGORIES)
-  //     .update(updatedCategoryDB)
-  //     .where({ category_id });
-  // }
 
   public async updateCategory(
     category_id: string,
-    updatedCategoryDB: CategoryDB
-  ) {
-    await BaseDatabase.connection.raw(
-      `
-        UPDATE ${ProductDatabase.TABLE_CATEGORIES}
-        SET name = ?, description = ?
-        WHERE category_id = ?
-    `,
-      [updatedCategoryDB.name, updatedCategoryDB.description, category_id]
-    );
+    updatedCategoryDB: Partial<CategoryDB>
+  ): Promise<void> {
+    const columns = Object.keys(updatedCategoryDB);
+    const values = Object.values(updatedCategoryDB);
+
+    const setClause = columns.map((col) => `${col} = ?`).join(", ");
+
+    const query = `
+      UPDATE ${ProductDatabase.TABLE_CATEGORIES}
+      SET ${setClause}
+      WHERE category_id = ?
+    `;
+
+    await BaseDatabase.connection.raw(query, [...values, category_id]);
   }
 
   // COLOR DATA

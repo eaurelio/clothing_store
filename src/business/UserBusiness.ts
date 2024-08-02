@@ -28,13 +28,17 @@ import {
   PhoneOutputDTO,
 } from "../dtos/users/phone";
 import TokenService from "../services/TokenService";
+import { PhoneDB } from "../models/Phones";
+import { ConflictError } from "../errors/ConflictError";
+import { ErrorHandler } from "../errors/ErrorHandler";
 
 export class UserBusiness {
   constructor(
     private userDatabase: UserDatabase,
     private idGenerator: IdGenerator,
     private tokenService: TokenService,
-    private hashManager: HashManager
+    private hashManager: HashManager,
+    private errorHandler: ErrorHandler
   ) {}
 
   // ------------------------------------------------------------------------------------------------------------------
@@ -60,10 +64,18 @@ export class UserBusiness {
       phones,
     } = input;
 
-    const userDBExists = await this.userDatabase.findUserByEmail(email);
+    const userDBEmailExists: UserDB | undefined =
+      await this.userDatabase.findUserByEmail(email);
 
-    if (userDBExists) {
-      throw new BadRequestError("'email' already exists");
+    if (userDBEmailExists) {
+      throw new ConflictError("'email' already exists");
+    }
+
+    const userDBPersonalIdExists: UserDB | undefined =
+      await this.userDatabase.findUserByPersonalId(personal_id);
+
+    if (userDBPersonalIdExists) {
+      throw new ConflictError("'personal Id' already exists");
     }
 
     const id = this.idGenerator.generate();
@@ -109,12 +121,14 @@ export class UserBusiness {
 
     if (phones && phones.length > 0) {
       for (const phone of phones) {
-        const phone_id = await this.idGenerator.generate();
-        const { number, type } = phone;
-        await this.userDatabase.insertPhone(phone_id, newUser.getId(), {
-          number,
-          type,
-        });
+        const phoneData: PhoneDB = {
+          phone_id: await this.idGenerator.generate(),
+          user_id: newUser.getId(),
+          number: phone.number,
+          type: phone.type,
+        };
+
+        await this.userDatabase.insertPhone(phoneData);
       }
     }
 
@@ -182,13 +196,26 @@ export class UserBusiness {
     const userIdFromToken = this.tokenService.getUserIdFromToken(token);
 
     if (userIdFromToken !== userId) {
-      throw new UnauthorizedError("You have not access to change this user");
+      throw new UnauthorizedError("You do not have access to change this user");
     }
 
     const userDB = await this.userDatabase.findUserById(userId);
 
     if (!userDB) {
       throw new NotFoundError("'UserId' not found");
+    }
+
+    if (input.personal_id) {
+      const userDBPersonalIdExists: UserDB | undefined =
+        await this.userDatabase.findUserByPersonalId(
+          input.personal_id as string
+        );
+
+      if (userDBPersonalIdExists && userDBPersonalIdExists.id !== userId) {
+        throw new ConflictError(
+          "This personal ID is already in use by another user"
+        );
+      }
     }
 
     const hashedPassword = input.password
@@ -284,10 +311,15 @@ export class UserBusiness {
     const { userId, token } = input;
 
     const userIdFromToken = this.tokenService.getUserIdFromToken(token);
-    const userDB = await this.userDatabase.findUserById(userIdFromToken as string);
+    const userDB = await this.userDatabase.findUserById(
+      userIdFromToken as string
+    );
     const authorizedUser = this.tokenService.verifyToken(token);
 
-    if (authorizedUser?.userId !== userId && userDB?.role !== USER_ROLES.ADMIN) {
+    if (
+      authorizedUser?.userId !== userId &&
+      userDB?.role !== USER_ROLES.ADMIN
+    ) {
       throw new UnauthorizedError("User not authorized");
     }
 
@@ -317,10 +349,6 @@ export class UserBusiness {
 
     if (!userDB) {
       throw new NotFoundError("User not found");
-    }
-
-    if (userDB.role !== USER_ROLES.ADMIN) {
-      throw new UnauthorizedError("Unauthorized user");
     }
 
     const usersDB = await this.userDatabase.findUsers(q);
@@ -355,7 +383,15 @@ export class UserBusiness {
     }
 
     const phoneId = await this.idGenerator.generate();
-    await this.userDatabase.insertPhone(phoneId, userId, { number, type });
+
+    const phoneData = {
+      phone_id: phoneId,
+      user_id: userId,
+      number,
+      type,
+    };
+
+    await this.userDatabase.insertPhone(phoneData);
 
     const updatedPhone = await this.userDatabase.findPhoneById(phoneId);
 

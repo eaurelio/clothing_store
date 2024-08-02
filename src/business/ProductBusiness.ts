@@ -1,4 +1,4 @@
-import { GenderDB } from './../models/Products';
+import { GenderDB } from "./../models/Products";
 import { UserDatabase } from "./../database/UserDatabase";
 import { HashManager } from "./../services/HashManager";
 import { ProductDatabase } from "../database/ProductDatabase";
@@ -32,13 +32,22 @@ import {
   GetAllProductsInputDTO,
   GetAllProductsOutputDTO,
 } from "../dtos/products/getProduct.dto";
-import { CategoryDB, ColorDB, Product, ProductDB, ProductDBOutput, SizeDB } from "../models/Products";
+import {
+  CategoryDB,
+  ColorDB,
+  Product,
+  ProductDB,
+  ProductDBOutput,
+  SizeDB,
+} from "../models/Products";
 import { BadRequestError } from "../errors/BadRequestError";
 import { NotFoundError } from "../errors/NotFoundError";
 import { IdGenerator } from "../services/idGenerator";
 import TokenService from "../services/TokenService";
 import { UnauthorizedError } from "../errors/UnauthorizedError";
 import { USER_ROLES } from "../models/User";
+import { ConflictError } from "../errors/ConflictError";
+import { ErrorHandler } from "../errors/ErrorHandler";
 
 export class ProductBusiness {
   constructor(
@@ -46,7 +55,8 @@ export class ProductBusiness {
     private idGenerator: IdGenerator,
     private tokenService: TokenService,
     private HashManager: HashManager,
-    private userDatabase: UserDatabase
+    private userDatabase: UserDatabase,
+    private errorHandler: ErrorHandler
   ) {}
 
   // ------------------------------------------------------------------------------------------------------------------
@@ -81,7 +91,7 @@ export class ProductBusiness {
 
     const existingProduct = await this.productDatabase.findProductByName(name);
     if (existingProduct) {
-      throw new BadRequestError("'name' already exists");
+      throw new ConflictError("'name' already exists");
     }
 
     const id = this.idGenerator.generate();
@@ -136,8 +146,10 @@ export class ProductBusiness {
 
   // ------------------------------------------------------------------------------------------------------------------
 
-  public editProduct = async (input: UpdateProductInputDTO): Promise<UpdateProductOutputDTO> => {
-    const {id, token} = input;
+  public editProduct = async (
+    input: UpdateProductInputDTO
+  ): Promise<UpdateProductOutputDTO> => {
+    const { id, token } = input;
     const userId = this.tokenService.getUserIdFromToken(token);
     const userDB = await this.userDatabase.findUserById(userId as string);
 
@@ -152,49 +164,61 @@ export class ProductBusiness {
     const productDB = await this.productDatabase.findPureProductById(id);
 
     if (!productDB) {
-        throw new NotFoundError("Product not found");
+      throw new NotFoundError("Product not found");
     }
 
     const updatedProduct: ProductDB = {
       ...productDB,
       name: input.name !== undefined ? input.name : productDB.name,
-      description: input.description !== undefined ? input.description : productDB.description,
+      description:
+        input.description !== undefined
+          ? input.description
+          : productDB.description,
       price: input.price !== undefined ? input.price : productDB.price,
       stock: input.stock !== undefined ? input.stock : productDB.stock,
-      category_id: input.category_id !== undefined ? input.category_id : productDB.category_id,
-      color_id: input.color_id !== undefined ? input.color_id : productDB.color_id,
+      category_id:
+        input.category_id !== undefined
+          ? input.category_id
+          : productDB.category_id,
+      color_id:
+        input.color_id !== undefined ? input.color_id : productDB.color_id,
       size_id: input.size_id !== undefined ? input.size_id : productDB.size_id,
-      gender_id: input.gender_id !== undefined ? input.gender_id : productDB.gender_id
+      gender_id:
+        input.gender_id !== undefined ? input.gender_id : productDB.gender_id,
     };
 
     await this.productDatabase.updateProduct(id, updatedProduct);
 
-    const updatedProductData = await this.productDatabase.findPureProductById(id);
+    const updatedProductData = await this.productDatabase.findPureProductById(
+      id
+    );
 
     if (!updatedProductData) {
-        throw new NotFoundError("It was not possible to find the updated product data after editing.");
+      throw new NotFoundError(
+        "It was not possible to find the updated product data after editing."
+      );
     }
 
     const output: UpdateProductOutputDTO = {
-        message: "Editing completed successfully",
-        product: {
-            id: updatedProductData.id,
-            name: updatedProductData.name,
-            description: updatedProductData.description,
-            price: updatedProductData.price,
-            stock: updatedProductData.stock,
-            createdAt: updatedProductData.createdAt,
-            category_id: updatedProductData.category,
-            color_id: updatedProductData.color,
-            size_id: updatedProductData.size,
-            gender_id: updatedProductData.gender,
-        }
+      message: "Editing completed successfully",
+      product: {
+        id: updatedProductData.id,
+        name: updatedProductData.name,
+        description: updatedProductData.description,
+        price: updatedProductData.price,
+        stock: updatedProductData.stock,
+        createdAt: updatedProductData.createdAt,
+        category_id: updatedProductData.category,
+        color_id: updatedProductData.color,
+        size_id: updatedProductData.size,
+        gender_id: updatedProductData.gender,
+      },
     };
 
     return output;
-};
+  };
 
-// ------------------------------------------------------------------------------------------------------------------
+  // ------------------------------------------------------------------------------------------------------------------
 
   public getProduct = async (
     input: GetProductInputDTO
@@ -263,48 +287,51 @@ export class ProductBusiness {
 
   public createCategory = async (
     input: CreateCategoryInputDTO
-): Promise<CreateCategoryOutputDTO> => {
+  ): Promise<CreateCategoryOutputDTO> => {
     const { token, name, description } = input;
 
     const userId = this.tokenService.getUserIdFromToken(token);
     const userDB = await this.userDatabase.findUserById(userId as string);
 
     if (!userDB) {
-        throw new NotFoundError("User not found");
+      throw new NotFoundError("User not found");
     }
 
     if (userDB.role !== USER_ROLES.ADMIN) {
-        throw new UnauthorizedError("Unauthorized user");
+      throw new UnauthorizedError("Unauthorized user");
     }
 
-    const existingCategory = await this.productDatabase.findCategoryByName(name);
+    const existingCategory = await this.productDatabase.findCategoryByName(
+      name
+    );
     if (existingCategory) {
-        throw new BadRequestError("'category' already exists");
+      throw new BadRequestError("'category' already exists");
     }
 
     const newCategoryDB: CategoryDB = {
-        name,
-        description,
+      name,
+      description,
     };
 
     await this.productDatabase.insertCategory(newCategoryDB);
 
-    const newCategory = await this.productDatabase.findCategoryByName(newCategoryDB.name);
+    const newCategory = await this.productDatabase.findCategoryByName(
+      newCategoryDB.name
+    );
 
     if (!newCategory) {
-        throw new Error("Failed to create category");
+      throw new Error("Failed to create category");
     }
 
-    console.log(newCategory)
-
+    console.log(newCategory);
 
     const output: CreateCategoryOutputDTO = {
-        message: "Category created successfully",
-        category: newCategory,
+      message: "Category created successfully",
+      category: newCategory,
     };
 
     return output;
-};
+  };
 
   // ------------------------------------------------------------------------------------------------------------------
 
@@ -333,7 +360,8 @@ export class ProductBusiness {
     const updatedCategory = {
       ...categoryDB,
       name: name !== undefined ? name : categoryDB.name,
-      description: description !== undefined ? description: categoryDB.description
+      description:
+        description !== undefined ? description : categoryDB.description,
     };
 
     await this.productDatabase.updateCategory(id, updatedCategory);
@@ -346,48 +374,47 @@ export class ProductBusiness {
     return output;
   };
 
-public createColor = async (
-  input: CreateColorInputDTO
-): Promise<CreateColorOutputDTO> => {
-  const { token, color } = input;
+  public createColor = async (
+    input: CreateColorInputDTO
+  ): Promise<CreateColorOutputDTO> => {
+    const { token, name } = input;
 
-  const userId = this.tokenService.getUserIdFromToken(token);
-  const userDB = await this.userDatabase.findUserById(userId as string);
+    const userId = this.tokenService.getUserIdFromToken(token);
+    const userDB = await this.userDatabase.findUserById(userId as string);
 
-  if (!userDB) {
-    throw new NotFoundError("User not found");
-  }
+    if (!userDB) {
+      throw new NotFoundError("User not found");
+    }
 
-  if (userDB.role !== USER_ROLES.ADMIN) {
-    throw new UnauthorizedError("Unauthorized user");
-  }
+    if (userDB.role !== USER_ROLES.ADMIN) {
+      throw new UnauthorizedError("Unauthorized user");
+    }
 
-  const existingColor = await this.productDatabase.findColorByName(color);
-  if (existingColor) {
-    throw new BadRequestError("'color' already exists");
-  }
+    const existingColor = await this.productDatabase.findColorByName(name);
+    if (existingColor) {
+      throw new ConflictError("'color' already exists");
+    }
 
-  const newColorDB: ColorDB = {
-    color,
+    const newColorDB: ColorDB = {
+      name,
+    };
+
+    await this.productDatabase.insertColor(newColorDB);
+
+    // Buscando o registro da nova cor criada
+    const newColor = await this.productDatabase.findColorByName(name);
+
+    if (!newColor) {
+      throw new Error("Failed to create color");
+    }
+
+    const output: CreateColorOutputDTO = {
+      message: "Color created successfully",
+      color: newColor,
+    };
+
+    return output;
   };
-
-  await this.productDatabase.insertColor(newColorDB);
-
-  // Buscando o registro da nova cor criada
-  const newColor = await this.productDatabase.findColorByName(color);
-
-  if (!newColor) {
-    throw new Error("Failed to create color");
-  }
-
-  const output: CreateColorOutputDTO = {
-    message: "Color created successfully",
-    color: newColor, // Presumindo que o campo de resposta é chamado color
-  };
-
-  return output;
-};
-
 
   // ------------------------------------------------------------------------------------------------------------------
 
@@ -415,7 +442,7 @@ public createColor = async (
 
     const updatedColor = {
       ...colorDB,
-      name: name !== undefined ? name : colorDB.color,
+      name: name !== undefined ? name : colorDB.name,
     };
 
     await this.productDatabase.updateColor(id, updatedColor);
@@ -430,27 +457,27 @@ public createColor = async (
 
   public createSize = async (
     input: CreateSizeInputDTO
-): Promise<CreateSizeOutputDTO> => {
+  ): Promise<CreateSizeOutputDTO> => {
     const { token, name } = input;
 
     const userId = this.tokenService.getUserIdFromToken(token);
     const userDB = await this.userDatabase.findUserById(userId as string);
 
     if (!userDB) {
-        throw new NotFoundError("User not found");
+      throw new NotFoundError("User not found");
     }
 
     if (userDB.role !== USER_ROLES.ADMIN) {
-        throw new UnauthorizedError("Unauthorized user");
+      throw new UnauthorizedError("Unauthorized user");
     }
 
     const existingSize = await this.productDatabase.findSizeByName(name);
     if (existingSize) {
-        throw new BadRequestError("'size' already exists");
+      throw new ConflictError("'size' already exists");
     }
 
-    const newSizeDB: Omit<SizeDB, 'id'> = {
-        name,
+    const newSizeDB: SizeDB = {
+      name,
     };
 
     await this.productDatabase.insertSize(newSizeDB);
@@ -458,17 +485,16 @@ public createColor = async (
     const newSize = await this.productDatabase.findSizeByName(name);
 
     if (!newSize) {
-        throw new Error("Failed to create size");
+      throw new Error("Failed to create size");
     }
 
     const output: CreateSizeOutputDTO = {
-        message: "Size created successfully",
-        size:newSize,
+      message: "Size created successfully",
+      size: newSize,
     };
 
     return output;
-};
-
+  };
 
   // ------------------------------------------------------------------------------------------------------------------
 
@@ -511,27 +537,27 @@ public createColor = async (
 
   public createGender = async (
     input: CreateGenderInputDTO
-): Promise<CreateGenderOutputDTO> => {
+  ): Promise<CreateGenderOutputDTO> => {
     const { token, name } = input;
 
     const userId = this.tokenService.getUserIdFromToken(token);
     const userDB = await this.userDatabase.findUserById(userId as string);
 
     if (!userDB) {
-        throw new NotFoundError("User not found");
+      throw new NotFoundError("User not found");
     }
 
     if (userDB.role !== USER_ROLES.ADMIN) {
-        throw new UnauthorizedError("Unauthorized user");
+      throw new UnauthorizedError("Unauthorized user");
     }
 
     const existingGender = await this.productDatabase.findGenderByName(name);
     if (existingGender) {
-        throw new BadRequestError("'name' already exists");
+      throw new ConflictError("'name' already exists");
     }
 
-    const newGenderDB: Omit<GenderDB, 'id'> = {
-        name,
+    const newGenderDB: GenderDB = {
+      name,
     };
 
     await this.productDatabase.insertGender(newGenderDB);
@@ -539,17 +565,16 @@ public createColor = async (
     const newGender = await this.productDatabase.findGenderByName(name);
 
     if (!newGender) {
-        throw new Error("Failed to create gender");
+      throw new Error("Failed to create gender");
     }
 
     const output: CreateGenderOutputDTO = {
-        message: "Gender created successfully",
-        gender: newGender,
+      message: "Gender created successfully",
+      gender: newGender,
     };
 
     return output;
-};
-
+  };
 
   // ------------------------------------------------------------------------------------------------------------------
 

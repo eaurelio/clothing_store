@@ -27,7 +27,7 @@ export const GetProductSchema = z.object({
 }).transform(data => data as GetProductInputDTO);
 
 export const GetAllProductsSchema = z.object({
-  q: z.string().optional(),
+  name: z.string().optional(),
   category_id: z.number().optional(),
   color_id: z.number().optional(),
   size_id: z.number().optional(),

@@ -1,12 +1,25 @@
 import { Request, Response } from "express";
 import { ProductBusiness } from "../business/ProductBusiness";
-import { CreateCategorySchema, CreateColorSchema, CreateGenderSchema, CreateProductSchema, CreateSizeSchema } from "../dtos/products/createProduct.dto";
-import { UpdateCategorySchema, UpdateColorSchema, UpdateGenderSchema, UpdateProductSchema, UpdateSizeSchema } from "../dtos/products/updateProduct.dto";
-import { GetProductSchema, GetAllProductsSchema } from "../dtos/products/getProduct.dto";
-import { UnauthorizedError } from "../errors/UnauthorizedError";
-import { NotFoundError } from "../errors/NotFoundError";
-import { BadRequestError } from "../errors/BadRequestError";
-import { ZodError } from "zod";
+import {
+  CreateCategorySchema,
+  CreateColorSchema,
+  CreateGenderSchema,
+  CreateProductSchema,
+  CreateSizeSchema,
+} from "../dtos/products/createProduct.dto";
+import {
+  UpdateCategorySchema,
+  UpdateColorSchema,
+  UpdateGenderSchema,
+  UpdateProductSchema,
+  UpdateSizeSchema,
+} from "../dtos/products/updateProduct.dto";
+import {
+  GetProductSchema,
+  GetAllProductsSchema,
+} from "../dtos/products/getProduct.dto";
+import { ErrorHandler } from "../errors/ErrorHandler";
+import logger from "../logs/logger";
 
 export class ProductController {
   constructor(private productBusiness: ProductBusiness) {}
@@ -26,25 +39,14 @@ export class ProductController {
         category_id: req.body.category_id,
         color_id: req.body.color_id,
         size_id: req.body.size_id,
-        gender_id: req.body.gender_id
+        gender_id: req.body.gender_id,
       });
 
       const output = await this.productBusiness.createProduct(input);
       res.status(201).send(output);
     } catch (error) {
-      console.log(error);
-      if (error instanceof ZodError) {
-        res.status(400).send(error.issues)
-      }
-      if (
-        error instanceof BadRequestError ||
-        error instanceof NotFoundError ||
-        error instanceof UnauthorizedError
-      ) {
-        res.status(error.statusCode).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "Unexpected error" });
-      }
+      logger.error(error)
+      ErrorHandler.handleError(error, res);
     }
   };
 
@@ -68,21 +70,9 @@ export class ProductController {
       const output = await this.productBusiness.editProduct(input);
 
       res.status(200).send(output);
-    
     } catch (error) {
-      console.log(error);
-      if (error instanceof ZodError) {
-        res.status(400).send(error.issues)
-      }
-      if (
-        error instanceof BadRequestError ||
-        error instanceof NotFoundError ||
-        error instanceof UnauthorizedError
-      ) {
-        res.status(error.statusCode).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "Unexpected error" });
-      }
+      logger.error(error)
+      ErrorHandler.handleError(error, res);
     }
   };
 
@@ -91,29 +81,22 @@ export class ProductController {
   public getAllProducts = async (req: Request, res: Response) => {
     try {
       const input = GetAllProductsSchema.parse({
-        name: req.body.name as string | undefined,
-        category_id: req.body.category_id ? Number(req.body.category_id) : undefined,
+        name: req.body.name ? String(req.body.name).trim() : undefined,
+        category_id: req.body.category_id
+          ? Number(req.body.category_id)
+          : undefined,
         color_id: req.body.color_id ? Number(req.body.color_id) : undefined,
         size_id: req.body.size_id ? Number(req.body.size_id) : undefined,
-        gender_id: req.body.gender_id ? Number(req.body.gender_id) : undefined
+        gender_id: req.body.gender_id ? Number(req.body.gender_id) : undefined,
       });
+
+      console.log(input);
 
       const output = await this.productBusiness.getAllProducts(input);
       res.status(200).send(output);
     } catch (error) {
-      console.log(error);
-      if (error instanceof ZodError) {
-        res.status(400).send(error.issues)
-      }
-      if (
-        error instanceof BadRequestError ||
-        error instanceof NotFoundError ||
-        error instanceof UnauthorizedError
-      ) {
-        res.status(error.statusCode).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "Unexpected error" });
-      }
+      logger.error(error)
+      ErrorHandler.handleError(error, res);
     }
   };
 
@@ -122,25 +105,14 @@ export class ProductController {
   public getProduct = async (req: Request, res: Response) => {
     try {
       const input = GetProductSchema.parse({
-        id: req.params.id
+        id: req.params.id,
       });
 
       const output = await this.productBusiness.getProduct(input);
       res.status(200).send(output);
     } catch (error) {
-      console.log(error);
-      if (error instanceof ZodError) {
-        res.status(400).send(error.issues)
-      }
-      if (
-        error instanceof BadRequestError ||
-        error instanceof NotFoundError ||
-        error instanceof UnauthorizedError
-      ) {
-        res.status(error.statusCode).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "Unexpected error" });
-      }
+      logger.error(error)
+      ErrorHandler.handleError(error, res);
     }
   };
 
@@ -153,24 +125,14 @@ export class ProductController {
       const input = CreateCategorySchema.parse({
         token: req.headers.authorization as string,
         name: req.body.name,
-        description: req.body.description
+        description: req.body.description,
       });
 
       const output = await this.productBusiness.createCategory(input);
       res.status(201).send(output);
     } catch (error) {
-      console.log(error);
-      if (error instanceof ZodError) {
-        res.status(400).send(error.issues);
-      } else if (
-        error instanceof BadRequestError ||
-        error instanceof NotFoundError ||
-        error instanceof UnauthorizedError
-      ) {
-        res.status(error.statusCode).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "Unexpected error" });
-      }
+      logger.error(error)
+      ErrorHandler.handleError(error, res);
     }
   };
 
@@ -180,24 +142,14 @@ export class ProductController {
         token: req.headers.authorization as string,
         id: req.params.id,
         name: req.body.name,
-        description: req.body.description
+        description: req.body.description,
       });
 
       const output = await this.productBusiness.updateCategory(input);
       res.status(200).send(output);
     } catch (error) {
-      console.log(error);
-      if (error instanceof ZodError) {
-        res.status(400).send(error.issues);
-      } else if (
-        error instanceof BadRequestError ||
-        error instanceof NotFoundError ||
-        error instanceof UnauthorizedError
-      ) {
-        res.status(error.statusCode).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "Unexpected error" });
-      }
+      logger.error(error)
+      ErrorHandler.handleError(error, res);
     }
   };
 
@@ -205,24 +157,14 @@ export class ProductController {
     try {
       const input = CreateColorSchema.parse({
         token: req.headers.authorization as string,
-        color: req.body.color
+        name: req.body.name,
       });
 
       const output = await this.productBusiness.createColor(input);
       res.status(201).send(output);
     } catch (error) {
-      console.log(error);
-      if (error instanceof ZodError) {
-        res.status(400).send(error.issues);
-      } else if (
-        error instanceof BadRequestError ||
-        error instanceof NotFoundError ||
-        error instanceof UnauthorizedError
-      ) {
-        res.status(error.statusCode).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "Unexpected error" });
-      }
+      logger.error(error)
+      ErrorHandler.handleError(error, res);
     }
   };
 
@@ -231,24 +173,14 @@ export class ProductController {
       const input = UpdateColorSchema.parse({
         token: req.headers.authorization as string,
         id: req.params.id,
-        name: req.body.name
+        name: req.body.name,
       });
 
       const output = await this.productBusiness.updateColor(input);
       res.status(200).send(output);
     } catch (error) {
-      console.log(error);
-      if (error instanceof ZodError) {
-        res.status(400).send(error.issues);
-      } else if (
-        error instanceof BadRequestError ||
-        error instanceof NotFoundError ||
-        error instanceof UnauthorizedError
-      ) {
-        res.status(error.statusCode).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "Unexpected error" });
-      }
+      logger.error(error)
+      ErrorHandler.handleError(error, res);
     }
   };
 
@@ -256,24 +188,14 @@ export class ProductController {
     try {
       const input = CreateSizeSchema.parse({
         token: req.headers.authorization as string,
-        name: req.body.name
+        name: req.body.name,
       });
 
       const output = await this.productBusiness.createSize(input);
       res.status(201).send(output);
     } catch (error) {
-      console.log(error);
-      if (error instanceof ZodError) {
-        res.status(400).send(error.issues);
-      } else if (
-        error instanceof BadRequestError ||
-        error instanceof NotFoundError ||
-        error instanceof UnauthorizedError
-      ) {
-        res.status(error.statusCode).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "Unexpected error" });
-      }
+      logger.error(error)
+      ErrorHandler.handleError(error, res);
     }
   };
 
@@ -282,24 +204,14 @@ export class ProductController {
       const input = UpdateSizeSchema.parse({
         token: req.headers.authorization as string,
         id: req.params.id,
-        name: req.body.name
+        name: req.body.name,
       });
 
       const output = await this.productBusiness.updateSize(input);
       res.status(200).send(output);
     } catch (error) {
-      console.log(error);
-      if (error instanceof ZodError) {
-        res.status(400).send(error.issues);
-      } else if (
-        error instanceof BadRequestError ||
-        error instanceof NotFoundError ||
-        error instanceof UnauthorizedError
-      ) {
-        res.status(error.statusCode).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "Unexpected error" });
-      }
+      logger.error(error)
+      ErrorHandler.handleError(error, res);
     }
   };
 
@@ -307,24 +219,14 @@ export class ProductController {
     try {
       const input = CreateGenderSchema.parse({
         token: req.headers.authorization as string,
-        name: req.body.name
+        name: req.body.name,
       });
 
       const output = await this.productBusiness.createGender(input);
       res.status(201).send(output);
     } catch (error) {
-      console.log(error);
-      if (error instanceof ZodError) {
-        res.status(400).send(error.issues);
-      } else if (
-        error instanceof BadRequestError ||
-        error instanceof NotFoundError ||
-        error instanceof UnauthorizedError
-      ) {
-        res.status(error.statusCode).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "Unexpected error" });
-      }
+      logger.error(error)
+      ErrorHandler.handleError(error, res);
     }
   };
 
@@ -333,25 +235,14 @@ export class ProductController {
       const input = UpdateGenderSchema.parse({
         token: req.headers.authorization as string,
         id: req.params.id,
-        name: req.body.name
+        name: req.body.name,
       });
 
       const output = await this.productBusiness.updateGender(input);
       res.status(200).send(output);
     } catch (error) {
-      console.log(error);
-      if (error instanceof ZodError) {
-        res.status(400).send(error.issues);
-      } else if (
-        error instanceof BadRequestError ||
-        error instanceof NotFoundError ||
-        error instanceof UnauthorizedError
-      ) {
-        res.status(error.statusCode).json({ message: error.message });
-      } else {
-        res.status(500).json({ message: "Unexpected error" });
-      }
+      logger.error(error)
+      ErrorHandler.handleError(error, res);
     }
   };
-
 }
