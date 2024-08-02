@@ -5,6 +5,8 @@ import { UserBusiness } from "../business/UserBusiness"
 import { UserDatabase } from "../database/UserDatabase"
 import { IdGenerator } from "../services/idGenerator"
 import { HashManager } from "../services/HashManager"
+import { ErrorHandler } from './../errors/ErrorHandler';
+
 
 export const userRouter = express.Router()
 
@@ -13,7 +15,8 @@ const userController = new UserController(
     new UserDatabase,
     new IdGenerator,
     new TokenService,
-    new HashManager
+    new HashManager,
+    new ErrorHandler
   )
 )
 
@@ -22,6 +25,7 @@ userRouter.post("/getUserData/:id", userController.getUserData)
 userRouter.post("/getAllUsers", userController.getAllUsers)
 userRouter.post("/login", userController.login)
 userRouter.patch("/editUser/:id", userController.editUser)
+userRouter.patch("/changePassword/:id", userController.changePassword)
 
 userRouter.post("/addPhone/:id", userController.addPhone)
 userRouter.patch("/updatePhone/:id", userController.updatePhone)

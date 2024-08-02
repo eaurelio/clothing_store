@@ -1,7 +1,7 @@
 import z from 'zod';
 
 export interface GetUserInputDTO {
-  id: string,
+  userId: string,
   token: string,
 }
 
@@ -11,7 +11,7 @@ export interface GetAllUserInputDTO {
 }
 
 export const GetUserSchema = z.object({
-  id: z.string(),
+  userId: z.string(),
   token: z.string()
 }).transform(data => data as GetUserInputDTO);
 

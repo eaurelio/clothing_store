@@ -1,4 +1,3 @@
-// Definição das interfaces para PhoneDB
 export interface PhoneDB {
   phone_id: string;
   user_id: string;

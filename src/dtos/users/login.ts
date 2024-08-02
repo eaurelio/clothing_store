@@ -8,7 +8,7 @@ export interface LoginInputDTO {
 export interface LoginOutputDTO {
   message: string,
   user: {
-    id: string,
+    userId: string,
     name: string,
     email: string,
     token?: string

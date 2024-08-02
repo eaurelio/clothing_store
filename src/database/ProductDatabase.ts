@@ -1,5 +1,11 @@
 import { BaseDatabase } from "./connection/BaseDatabase";
-import { CategoryDB, ColorDB, SizeDB, GenderDB, ProductDB } from "../models/Products";
+import {
+  CategoryDB,
+  ColorDB,
+  SizeDB,
+  GenderDB,
+  ProductDB,
+} from "../models/Products";
 
 export class ProductDatabase extends BaseDatabase {
   public static TABLE_PRODUCTS = "products";
@@ -10,37 +16,42 @@ export class ProductDatabase extends BaseDatabase {
 
   // PRODUCT DATA
 
-  public async findProducts(q?: string, category_id?: number, color_id?: number, size_id?: number, gender_id?: number) {
+  public async findProducts(
+    name?: string,
+    category_id?: number,
+    color_id?: number,
+    size_id?: number,
+    gender_id?: number
+  ) {
     let conditions: string[] = [];
     let params: any[] = [];
 
-    // Adiciona condições ao array se os parâmetros forem fornecidos
-    if (q) {
-        conditions.push('products.name LIKE ?');
-        params.push(`%${q}%`);
+    if (name) {
+      conditions.push("products.name LIKE ?");
+      params.push(`%${name}%`);
     }
     if (category_id) {
-        conditions.push('products.category_id = ?');
-        params.push(category_id);
+      conditions.push("products.category_id = ?");
+      params.push(category_id);
     }
     if (color_id) {
-        conditions.push('products.color_id = ?');
-        params.push(color_id);
+      conditions.push("products.color_id = ?");
+      params.push(color_id);
     }
     if (size_id) {
-        conditions.push('products.size_id = ?');
-        params.push(size_id);
+      conditions.push("products.size_id = ?");
+      params.push(size_id);
     }
     if (gender_id) {
-        conditions.push('products.gender_id = ?');
-        params.push(gender_id);
+      conditions.push("products.gender_id = ?");
+      params.push(gender_id);
     }
 
-    // Se não houver condições, a cláusula WHERE será uma string vazia
-    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+    const whereClause =
+      conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
 
-    // Executa a consulta SQL
-    const result = await BaseDatabase.connection.raw(`
+    const result = await BaseDatabase.connection.raw(
+      `
       SELECT 
         products.id, 
         products.name, 
@@ -58,74 +69,16 @@ export class ProductDatabase extends BaseDatabase {
       LEFT JOIN sizes ON products.size_id = sizes.size_id
       LEFT JOIN genders ON products.gender_id = genders.gender_id
       ${whereClause}
-    `, params);
+    `,
+      params
+    );
 
     return result;
-}
-
-
-
-//   public async findProducts(q?: string, category_id?: number, color_id?: number, size_id?: number, gender_id?: number) {
-//     let conditions: string[] = [];
-//     let params: any[] = [];
-
-//     if (q) {
-//         conditions.push('products.name LIKE ?');
-//         params.push(`%${q}%`);
-//     }
-//     if (category_id) {
-//         conditions.push('products.category_id = ?');
-//         params.push(category_id);
-//     }
-//     if (color_id) {
-//         conditions.push('products.color_id = ?');
-//         params.push(color_id);
-//     }
-//     if (size_id) {
-//         conditions.push('products.size_id = ?');
-//         params.push(size_id);
-//     }
-//     if (gender_id) {
-//         conditions.push('products.gender_id = ?');
-//         params.push(gender_id);
-//     }
-
-//     const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
-
-//     const result = await BaseDatabase.connection.raw(`
-//       SELECT 
-//         products.id, 
-//         products.name, 
-//         products.description, 
-//         products.price, 
-//         products.stock, 
-//         products.created_at, 
-//         categories.name AS category, 
-//         colors.name AS color, 
-//         sizes.name AS size, 
-//         genders.name AS gender
-//       FROM ${ProductDatabase.TABLE_PRODUCTS}
-//       LEFT JOIN categories ON products.category_id = categories.category_id
-//       LEFT JOIN colors ON products.color_id = colors.color_id
-//       LEFT JOIN sizes ON products.size_id = sizes.size_id
-//       LEFT JOIN genders ON products.gender_id = genders.gender_id
-//       ${whereClause}
-//     `, params);
-
-//     return result[0];
-// }
-
-
-  // public async findProductById(id: string) {
-  //   const [productDB]: ProductDB[] | undefined[] = await BaseDatabase
-  //     .connection(ProductDatabase.TABLE_PRODUCTS)
-  //     .where({ id });
-
-  //   return productDB;
-  // }
+  }
 
   public async findProductById(id: string) {
-    const result = await BaseDatabase.connection.raw(`
+    const result = await BaseDatabase.connection.raw(
+      `
       SELECT 
         products.id, 
         products.name, 
@@ -143,184 +96,313 @@ export class ProductDatabase extends BaseDatabase {
       LEFT JOIN sizes ON products.size_id = sizes.size_id
       LEFT JOIN genders ON products.gender_id = genders.gender_id
       WHERE products.id = ?
-    `, [id]);
+    `,
+      [id]
+    );
+
+    return result[0];
+  }
+
+  public async findPureProductById(id: string) {
+    const result = await BaseDatabase.connection.raw(
+      `
+      SELECT *
+      FROM ${ProductDatabase.TABLE_PRODUCTS}
+      WHERE products.id = ?
+    `,
+      [id]
+    );
 
     return result[0];
   }
 
   public async findProductByName(name: string) {
-    const [productDB]: ProductDB[] | undefined[] = await BaseDatabase
-      .connection(ProductDatabase.TABLE_PRODUCTS)
-      .where({ name });
+    const result = await BaseDatabase.connection.raw(
+      `
+      SELECT *
+      FROM ${ProductDatabase.TABLE_PRODUCTS}
+      WHERE name = ?
+    `,
+      [name]
+    );
 
-    return productDB;
+    return result[0];
   }
 
-  public async insertProduct(newProductDB: ProductDB) {
-    await BaseDatabase
-      .connection(ProductDatabase.TABLE_PRODUCTS)
-      .insert(newProductDB);
+  public async insertProduct(newProductDB: ProductDB): Promise<void> {
+    const columns = Object.keys(newProductDB);
+    const placeholders = columns.map(() => "?").join(", ");
+    const values = Object.values(newProductDB);
+
+    const query = `
+      INSERT INTO ${ProductDatabase.TABLE_PRODUCTS} (${columns.join(", ")})
+      VALUES (${placeholders})
+    `;
+
+    await BaseDatabase.connection.raw(query, values);
   }
 
-  public async updateProduct(idToEdit: string, updatedProductDB: Partial<ProductDB>) {
-    await BaseDatabase
-      .connection(ProductDatabase.TABLE_PRODUCTS)
-      .update(updatedProductDB)
-      .where({ id: idToEdit });
-  }
+  public async updateProduct(
+    idToEdit: string,
+    updatedProductDB: Partial<ProductDB>
+  ): Promise<void> {
+    const columns = Object.keys(updatedProductDB);
+    const values = Object.values(updatedProductDB);
 
-  public async deleteProductById(id: string) {
-    await BaseDatabase
-      .connection(ProductDatabase.TABLE_PRODUCTS)
-      .where({ id })
-      .delete();
+    const setClause = columns.map((col) => `${col} = ?`).join(", ");
+
+    const query = `
+      UPDATE ${ProductDatabase.TABLE_PRODUCTS}
+      SET ${setClause}
+      WHERE id = ?
+    `;
+
+    await BaseDatabase.connection.raw(query, [...values, idToEdit]);
   }
 
   // CATEGORY DATA
 
   public async findCategories() {
-    const result: CategoryDB[] = await BaseDatabase
-      .connection(ProductDatabase.TABLE_CATEGORIES);
+    const result = await BaseDatabase.connection.raw(`
+      SELECT *
+      FROM ${ProductDatabase.TABLE_CATEGORIES}
+    `);
 
-    return result;
+    return result[0];
   }
 
-  public async findCategoryById(id: number) {
-    const [categoryDB]: CategoryDB[] | undefined[] = await BaseDatabase
-      .connection(ProductDatabase.TABLE_CATEGORIES)
-      .where({ id });
+  public async findCategoryById(category_id: string) {
+    const result = await BaseDatabase.connection.raw(
+      `
+      SELECT *
+      FROM ${ProductDatabase.TABLE_CATEGORIES}
+      WHERE category_id = ?
+    `,
+      [category_id]
+    );
 
-    return categoryDB;
+    return result[0];
   }
 
-  public async insertCategory(newCategoryDB: CategoryDB) {
-    await BaseDatabase
-      .connection(ProductDatabase.TABLE_CATEGORIES)
-      .insert(newCategoryDB);
+  public async findCategoryByName(
+    name: string
+  ): Promise<CategoryDB | undefined> {
+    const result = await BaseDatabase.connection.raw(
+      `
+      SELECT *
+      FROM ${ProductDatabase.TABLE_CATEGORIES}
+      WHERE name = ?
+    `,
+      [name]
+    );
+
+    return result[0];
   }
 
-  public async updateCategory(idToEdit: number, updatedCategoryDB: CategoryDB) {
-    await BaseDatabase
-      .connection(ProductDatabase.TABLE_CATEGORIES)
-      .update(updatedCategoryDB)
-      .where({ id: idToEdit });
+  public async insertCategory(newCategoryDB: CategoryDB): Promise<void> {
+    const columns = Object.keys(newCategoryDB);
+    const placeholders = columns.map(() => "?").join(", ");
+    const values = Object.values(newCategoryDB);
+
+    const query = `
+      INSERT INTO ${ProductDatabase.TABLE_CATEGORIES} (${columns.join(", ")})
+      VALUES (${placeholders})
+    `;
+
+    await BaseDatabase.connection.raw(query, values);
   }
 
-  public async deleteCategoryById(id: number) {
-    await BaseDatabase
-      .connection(ProductDatabase.TABLE_CATEGORIES)
-      .where({ id })
-      .delete();
+  public async updateCategory(
+    category_id: string,
+    updatedCategoryDB: Partial<CategoryDB>
+  ): Promise<void> {
+    const columns = Object.keys(updatedCategoryDB);
+    const values = Object.values(updatedCategoryDB);
+
+    const setClause = columns.map((col) => `${col} = ?`).join(", ");
+
+    const query = `
+      UPDATE ${ProductDatabase.TABLE_CATEGORIES}
+      SET ${setClause}
+      WHERE category_id = ?
+    `;
+
+    await BaseDatabase.connection.raw(query, [...values, category_id]);
   }
 
   // COLOR DATA
 
-  public async findColors() {
-    const result: ColorDB[] = await BaseDatabase
-      .connection(ProductDatabase.TABLE_COLORS);
+  public async findColors(): Promise<ColorDB[]> {
+    const result = await BaseDatabase.connection.raw(`
+        SELECT *
+        FROM ${ProductDatabase.TABLE_COLORS}
+    `);
 
-    return result;
+    return result[0];
   }
 
-  public async findColorById(id: number) {
-    const [colorDB]: ColorDB[] | undefined[] = await BaseDatabase
-      .connection(ProductDatabase.TABLE_COLORS)
-      .where({ id });
+  public async findColorById(color_id: string): Promise<ColorDB | undefined> {
+    const result = await BaseDatabase.connection.raw(
+      `
+      SELECT *
+      FROM ${ProductDatabase.TABLE_COLORS}
+      WHERE color_id = ?
+    `,
+      [color_id]
+    );
 
-    return colorDB;
+    return result[0];
+  }
+
+  public async findColorByName(name: string): Promise<ColorDB | undefined> {
+    const result = await BaseDatabase.connection.raw(
+      `
+      SELECT *
+      FROM ${ProductDatabase.TABLE_COLORS}
+      WHERE name = ?
+  `,
+      [name]
+    );
+
+    return result[0];
   }
 
   public async insertColor(newColorDB: ColorDB) {
-    await BaseDatabase
-      .connection(ProductDatabase.TABLE_COLORS)
-      .insert(newColorDB);
+    await BaseDatabase.connection.raw(
+      `
+      INSERT INTO ${ProductDatabase.TABLE_COLORS} (name)
+      VALUES (?)
+    `,
+      [newColorDB.name]
+    );
   }
 
-  public async updateColor(idToEdit: number, updatedColorDB: ColorDB) {
-    await BaseDatabase
-      .connection(ProductDatabase.TABLE_COLORS)
-      .update(updatedColorDB)
-      .where({ id: idToEdit });
-  }
-
-  public async deleteColorById(id: number) {
-    await BaseDatabase
-      .connection(ProductDatabase.TABLE_COLORS)
-      .where({ id })
-      .delete();
+  public async updateColor(color_id: string, updatedColorDB: ColorDB) {
+    await BaseDatabase.connection.raw(
+      `
+      UPDATE ${ProductDatabase.TABLE_COLORS}
+      SET name = ?
+      WHERE color_id = ?
+    `,
+      [updatedColorDB.name, color_id]
+    );
   }
 
   // SIZE DATA
 
-  public async findSizes() {
-    const result: SizeDB[] = await BaseDatabase
-      .connection(ProductDatabase.TABLE_SIZES);
+  public async findSizes(): Promise<SizeDB[]> {
+    const result = await BaseDatabase.connection.raw(`
+      SELECT *
+      FROM ${ProductDatabase.TABLE_SIZES}
+    `);
 
-    return result;
+    return result[0];
   }
 
-  public async findSizeById(id: number) {
-    const [sizeDB]: SizeDB[] | undefined[] = await BaseDatabase
-      .connection(ProductDatabase.TABLE_SIZES)
-      .where({ id });
+  public async findSizeById(size_id: string): Promise<SizeDB | undefined> {
+    const result = await BaseDatabase.connection.raw(
+      `
+    SELECT *
+    FROM ${ProductDatabase.TABLE_SIZES}
+    WHERE size_id = ?
+  `,
+      [size_id]
+    );
 
-    return sizeDB;
+    return result[0];
+  }
+
+  public async findSizeByName(name: string): Promise<SizeDB | undefined> {
+    const result = await BaseDatabase.connection.raw(
+      `
+    SELECT *
+    FROM ${ProductDatabase.TABLE_SIZES}
+    WHERE name = ?
+  `,
+      [name]
+    );
+
+    return result[0];
   }
 
   public async insertSize(newSizeDB: SizeDB) {
-    await BaseDatabase
-      .connection(ProductDatabase.TABLE_SIZES)
-      .insert(newSizeDB);
+    await BaseDatabase.connection.raw(
+      `
+    INSERT INTO ${ProductDatabase.TABLE_SIZES} (name)
+    VALUES (?)
+  `,
+      [newSizeDB.name]
+    );
   }
 
-  public async updateSize(idToEdit: number, updatedSizeDB: SizeDB) {
-    await BaseDatabase
-      .connection(ProductDatabase.TABLE_SIZES)
-      .update(updatedSizeDB)
-      .where({ id: idToEdit });
-  }
-
-  public async deleteSizeById(id: number) {
-    await BaseDatabase
-      .connection(ProductDatabase.TABLE_SIZES)
-      .where({ id })
-      .delete();
+  public async updateSize(size_id: string, updatedSizeDB: SizeDB) {
+    await BaseDatabase.connection.raw(
+      `
+    UPDATE ${ProductDatabase.TABLE_SIZES}
+    SET name = ?
+    WHERE size_id = ?
+  `,
+      [updatedSizeDB.name, size_id]
+    );
   }
 
   // GENDER DATA
 
-  public async findGenders() {
-    const result: GenderDB[] = await BaseDatabase
-      .connection(ProductDatabase.TABLE_GENDERS);
+  public async findGenders(): Promise<GenderDB[]> {
+    const result = await BaseDatabase.connection.raw(`
+      SELECT *
+      FROM ${ProductDatabase.TABLE_GENDERS}
+    `);
 
-    return result;
+    return result[0];
   }
 
-  public async findGenderById(id: number) {
-    const [genderDB]: GenderDB[] | undefined[] = await BaseDatabase
-      .connection(ProductDatabase.TABLE_GENDERS)
-      .where({ id });
+  public async findGenderById(
+    gender_id: string
+  ): Promise<GenderDB | undefined> {
+    const result = await BaseDatabase.connection.raw(
+      `
+      SELECT *
+      FROM ${ProductDatabase.TABLE_GENDERS}
+      WHERE gender_id = ?
+    `,
+      [gender_id]
+    );
 
-    return genderDB;
+    return result[0];
   }
 
-  public async insertGender(newGenderDB: GenderDB) {
-    await BaseDatabase
-      .connection(ProductDatabase.TABLE_GENDERS)
-      .insert(newGenderDB);
+  public async findGenderByName(name: string): Promise<GenderDB | undefined> {
+    const result = await BaseDatabase.connection.raw(
+      `
+      SELECT *
+      FROM ${ProductDatabase.TABLE_GENDERS}
+      WHERE name = ?
+    `,
+      [name]
+    );
+
+    return result[0];
   }
 
-  public async updateGender(idToEdit: number, updatedGenderDB: GenderDB) {
-    await BaseDatabase
-      .connection(ProductDatabase.TABLE_GENDERS)
-      .update(updatedGenderDB)
-      .where({ id: idToEdit });
+  public async insertGender(newGenderDB: Omit<GenderDB, "gender_id">) {
+    await BaseDatabase.connection.raw(
+      `
+      INSERT INTO ${ProductDatabase.TABLE_GENDERS} (name)
+      VALUES (?)
+    `,
+      [newGenderDB.name]
+    );
   }
 
-  public async deleteGenderById(id: number) {
-    await BaseDatabase
-      .connection(ProductDatabase.TABLE_GENDERS)
-      .where({ id })
-      .delete();
+  public async updateGender(gender_id: string, updatedGenderDB: GenderDB) {
+    await BaseDatabase.connection.raw(
+      `
+      UPDATE ${ProductDatabase.TABLE_GENDERS}
+      SET name = ?
+      WHERE gender_id = ?
+    `,
+      [updatedGenderDB.name, gender_id]
+    );
   }
 }

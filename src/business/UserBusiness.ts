@@ -1,269 +1,368 @@
-import { HashManager } from '../services/HashManager';
-import { UserDatabase } from "../database/UserDatabase"
-import { CreateUserInputDTO, CreateUserOutputDTO } from "../dtos/users/createUser.dto"
-import { LoginInputDTO, LoginOutputDTO } from "../dtos/users/login"
-import { BadRequestError } from "../errors/BadRequestError"
-import { NotFoundError } from "../errors/NotFoundError"
-import { UnauthorizedError } from '../errors/UnauthorizedError'
-import { User, UserDB, USER_ROLES, EntityType, UserDBOutput} from "../models/User"
-import { IdGenerator } from "../services/idGenerator"
-import { UpdateUserInputDTO, UpdateUserOutputDTO } from '../dtos/users/updateUser.dto';
-import { PhoneDeleteDTO, PhoneInputDTO, PhoneOutputDTO, } from '../dtos/users/phone';
-import TokenService from "../services/TokenService"
+import { HashManager } from "../services/HashManager";
+import { UserDatabase } from "../database/UserDatabase";
+import {
+  CreateUserInputDTO,
+  CreateUserOutputDTO,
+} from "../dtos/users/createUser.dto";
+import { LoginInputDTO, LoginOutputDTO } from "../dtos/users/login";
+import { BadRequestError } from "../errors/BadRequestError";
+import { NotFoundError } from "../errors/NotFoundError";
+import { UnauthorizedError } from "../errors/UnauthorizedError";
+import {
+  User,
+  UserDB,
+  USER_ROLES,
+  EntityType,
+  UserDBOutput,
+} from "../models/User";
+import { IdGenerator } from "../services/idGenerator";
+import {
+  UpdatePasswordInputDTO,
+  UpdatePasswordOutputDTO,
+  UpdateUserInputDTO,
+  UpdateUserOutputDTO,
+} from "../dtos/users/updateUser.dto";
+import {
+  PhoneDeleteDTO,
+  PhoneInputDTO,
+  PhoneOutputDTO,
+} from "../dtos/users/phone";
+import TokenService from "../services/TokenService";
+import { PhoneDB } from "../models/Phones";
+import { ConflictError } from "../errors/ConflictError";
+import { ErrorHandler } from "../errors/ErrorHandler";
 
 export class UserBusiness {
   constructor(
-    private userDatabase : UserDatabase,
-    private idGenerator : IdGenerator,
+    private userDatabase: UserDatabase,
+    private idGenerator: IdGenerator,
     private tokenService: TokenService,
-    private hashManager: HashManager
-  ){}
+    private hashManager: HashManager,
+    private errorHandler: ErrorHandler
+  ) {}
 
-// USERS
+  // ------------------------------------------------------------------------------------------------------------------
+  // USER DATA
+  // ------------------------------------------------------------------------------------------------------------------
 
-public createUser = async (input: CreateUserInputDTO): Promise<CreateUserOutputDTO> => {
-  const { personal_id, entity_type, name, email, password, birthdate, address, number, neighborhood, city, country, gender, phones } = input;
+  public createUser = async (
+    input: CreateUserInputDTO
+  ): Promise<CreateUserOutputDTO> => {
+    const {
+      personal_id,
+      entity_type,
+      name,
+      email,
+      password,
+      birthdate,
+      address,
+      number,
+      neighborhood,
+      city,
+      country,
+      gender,
+      phones,
+    } = input;
 
-  const userDBExists = await this.userDatabase.findUserByEmail(email);
+    const userDBEmailExists: UserDB | undefined =
+      await this.userDatabase.findUserByEmail(email);
 
-  if (userDBExists) {
-    throw new BadRequestError("'email' already exists");
-  }
-
-  const id = this.idGenerator.generate();
-  const hashedPassword = await this.hashManager.hash(password);
-
-  const newUser = new User(
-    id,
-    personal_id,
-    entity_type as EntityType,
-    name,
-    email,
-    hashedPassword,
-    birthdate,
-    USER_ROLES.ADMIN,
-    new Date().toISOString(),
-    address,
-    number,
-    neighborhood,
-    city,
-    country,
-    gender
-  );
-
-  const newUserDB: UserDB = {
-    id: newUser.getId(),
-    personal_id: newUser.getPersonalId(),
-    entity_type: newUser.getEntityType(),
-    name: newUser.getName(),
-    email: newUser.getEmail(),
-    password: newUser.getPassword(),
-    birthdate: newUser.getBirthdate(),
-    role: newUser.getRole(),
-    created_at: newUser.getCreatedAt(),
-    address: newUser.getAddress(),
-    number: newUser.getNumber(),
-    neighborhood: newUser.getNeighborhood(),
-    city: newUser.getCity(),
-    country: newUser.getCountry(),
-    gender: newUser.getGender()
-  };
-
-  await this.userDatabase.insertUser(newUserDB);
-
-  if (phones && phones.length > 0) {
-    for (const phone of phones) {
-      const phone_id = await this.idGenerator.generate()
-      const { number, type } = phone;
-      await this.userDatabase.insertPhone(phone_id, newUser.getId(), { number, type });
+    if (userDBEmailExists) {
+      throw new ConflictError("'email' already exists");
     }
-  }
 
-  const token = this.tokenService.generateToken(newUser.getId(), newUser.getRole());
+    const userDBPersonalIdExists: UserDB | undefined =
+      await this.userDatabase.findUserByPersonalId(personal_id);
 
-  const output: CreateUserOutputDTO = {
-    message: "User created successfully",
-    user: {
+    if (userDBPersonalIdExists) {
+      throw new ConflictError("'personal Id' already exists");
+    }
+
+    const id = this.idGenerator.generate();
+    const hashedPassword = await this.hashManager.hash(password);
+
+    const newUser = new User(
+      id,
+      personal_id,
+      entity_type as EntityType,
+      name,
+      email,
+      hashedPassword,
+      birthdate,
+      USER_ROLES.ADMIN,
+      new Date().toISOString(),
+      address,
+      number,
+      neighborhood,
+      city,
+      country,
+      gender
+    );
+
+    const newUserDB: UserDB = {
       id: newUser.getId(),
+      personal_id: newUser.getPersonalId(),
+      entity_type: newUser.getEntityType(),
       name: newUser.getName(),
       email: newUser.getEmail(),
-      createdAt: newUser.getCreatedAt(),
-      token: token
-    },
-  };
+      password: newUser.getPassword(),
+      birthdate: newUser.getBirthdate(),
+      role: newUser.getRole(),
+      created_at: newUser.getCreatedAt(),
+      address: newUser.getAddress(),
+      number: newUser.getNumber(),
+      neighborhood: newUser.getNeighborhood(),
+      city: newUser.getCity(),
+      country: newUser.getCountry(),
+      gender: newUser.getGender(),
+    };
 
-  return output;
-};
+    await this.userDatabase.insertUser(newUserDB);
 
-// ------------------------------------------------------------------------------------------------------------------
+    if (phones && phones.length > 0) {
+      for (const phone of phones) {
+        const phoneData: PhoneDB = {
+          phone_id: await this.idGenerator.generate(),
+          user_id: newUser.getId(),
+          number: phone.number,
+          type: phone.type,
+        };
 
-public login = async (
-  input: LoginInputDTO
-): Promise<LoginOutputDTO> => {
-  const { email, password } = input;
-
-  // Check if the user exists in the database
-  const userDB = await this.userDatabase.findUserByEmail(email);
-
-  if (!userDB) {
-    throw new NotFoundError("'User' not registered");
-  }
-
-  // Check if the password is correct
-  const hashedPassword = userDB.password;
-  const isPasswordCorrect = await this.hashManager.compare(password, hashedPassword);
-
-  if (!isPasswordCorrect) {
-    throw new BadRequestError("incorrect 'email' or 'password'");
-  }
-
-  // Generate token
-  const token = this.tokenService.generateToken(userDB.id, userDB.role);
-
-
-  // Prepare output
-  const output: LoginOutputDTO = {
-    message: "Login has been successfully",
-    user: {
-      id: userDB.id,
-      name: userDB.name,
-      email: userDB.email,
-      token: token
-    }
-  };
-
-  return output;
-}
-
-// ------------------------------------------------------------------------------------------------------------------
-  
-public getUserData = async (input: any): Promise<UserDBOutput> => {
-  const { id, token } = input;
-
-  if (!token) {
-      throw new BadRequestError("Token is missing");
-  }
-
-  // Validate the token and get the user role from it
-  const userId = this.tokenService.getUserIdFromToken(token);
-  const userDB = await this.userDatabase.findUserById(userId as string);
-  const authorizedUser = this.tokenService.verifyToken(token)
-
-  if (authorizedUser?.userId !== id) {
-    throw new UnauthorizedError('User not authorized')
-  }
-
-  if (!userDB) {
-      throw new NotFoundError("User not found");
-  }
-
-  const userFromDatabase = await this.userDatabase.findUserById(id);
-  const phonesFromDatabase = await this.userDatabase.getPhones(id)
-  const {password, ...userOutput} = userFromDatabase as UserDB
-
-  userOutput.phones = phonesFromDatabase;
-
-  return userOutput;
-}
-
-public getAllUsers = async (input: any): Promise<UserDB[]> => {
-  const { q, token } = input;
-
-  if (!token) {
-      throw new BadRequestError("Token is missing");
-  }
-
-  // Validate the token and get the user role from it
-  const userId = this.tokenService.getUserIdFromToken(token);
-  const userDB = await this.userDatabase.findUserById(userId as string);
-  const authorizedUser = this.tokenService.verifyToken(token);
-
-  if (authorizedUser?.role !== 'ADMIN') {
-      throw new UnauthorizedError('User not authorized');
-  }
-
-  if (!userDB) {
-      throw new NotFoundError("User not found");
-  }
-
-  // Only admin users can get all users from database
-  if (userDB.role !== USER_ROLES.ADMIN) {
-      throw new UnauthorizedError("Unauthorized user");
-  }
-
-  const usersDB = await this.userDatabase.findUsers(q);
-
-  // Map through each user and fetch phones for each user
-  const usersOutput = await Promise.all(usersDB.map(async (userDB) => {
-      const phonesFromDatabase = await this.userDatabase.getPhones(userDB.id);
-      const { password, ...userWithoutPassword } = userDB;
-      userWithoutPassword.phones = phonesFromDatabase; // Assign phones to each user
-      return userWithoutPassword as UserDB;
-  }));
-
-  return usersOutput;
-}
-
-// ------------------------------------------------------------------------------------------------------------------
-
-  public editUser = async (idToEdit: string, input: UpdateUserInputDTO, token: string): Promise<UpdateUserOutputDTO> => {
-    const userIdFromToken = this.tokenService.getUserIdFromToken(token);
-
-    // Checks that the token's user ID matches the ID provided in the request
-    if (userIdFromToken !== idToEdit) {
-        throw new UnauthorizedError("You have not access to change this user");
+        await this.userDatabase.insertPhone(phoneData);
+      }
     }
 
-    const userDB = await this.userDatabase.findUserById(idToEdit);
+    const token = this.tokenService.generateToken(
+      newUser.getId(),
+      newUser.getRole()
+    );
 
-    if (!userDB) {
-        throw new NotFoundError("'UserId' not found");
-    }
-
-    // Checks for hashed password or keeps existing password
-    const hashedPassword = input.password ? await this.hashManager.hash(input.password) : userDB.password;
-
-    // Updates only the fields provided in `input`
-    const updatedUser: UserDB = {
-      ...userDB,
-      personal_id: input.personal_id !== undefined ? input.personal_id : userDB.personal_id,
-      entity_type: input.entity_type !== undefined ? (input.entity_type as EntityType) : userDB.entity_type,
-      name: input.name !== undefined ? input.name : userDB.name,
-      email: input.email !== undefined ? input.email : userDB.email,
-      password: hashedPassword,
-      birthdate: input.birthdate !== undefined ? input.birthdate : userDB.birthdate,
-      address: input.address !== undefined ? input.address : userDB.address,
-      number: input.number !== undefined ? input.number : userDB.number,
-      neighborhood: input.neighborhood !== undefined ? input.neighborhood : userDB.neighborhood,
-      city: input.city !== undefined ? input.city : userDB.city,
-      country: input.country !== undefined ? input.country : userDB.country,
-      gender: input.gender !== undefined ? input.gender : userDB.gender,
-      role: userDB.role, // Maintains the user's existing role
-      created_at: userDB.created_at // Keeps the original creation date
-  };
-
-    // Updates the user in the database with the updated fields
-    await this.userDatabase.updateUser(idToEdit, updatedUser);
-
-    // Returns updated user data
-    const updatedUserData = await this.userDatabase.findUserById(idToEdit);
-
-    // Check if `updatedUserData` is defined before accessing its properties
-    if (!updatedUserData) {
-        throw new NotFoundError("It was not possible to find the updated user data after editing.");
-    }
-
-    const output: UpdateUserOutputDTO = {
-        message: "Editing completed successfully",
-        user: {
-            id: updatedUserData.id,
-            name: updatedUserData.name,
-            email: updatedUserData.email,
-            createdAt: updatedUserData.created_at
-        }
+    const output: CreateUserOutputDTO = {
+      message: "User created successfully",
+      user: {
+        id: newUser.getId(),
+        name: newUser.getName(),
+        email: newUser.getEmail(),
+        createdAt: newUser.getCreatedAt(),
+        token: token,
+      },
     };
 
     return output;
+  };
+
+  // ------------------------------------------------------------------------------------------------------------------
+
+  public login = async (input: LoginInputDTO): Promise<LoginOutputDTO> => {
+    const { email, password } = input;
+
+    const userDB = await this.userDatabase.findUserByEmail(email);
+
+    if (!userDB) {
+      throw new NotFoundError("'User' not registered");
+    }
+
+    const hashedPassword = userDB.password;
+    const isPasswordCorrect = await this.hashManager.compare(
+      password,
+      hashedPassword
+    );
+
+    if (!isPasswordCorrect) {
+      throw new BadRequestError("incorrect 'email' or 'password'");
+    }
+
+    const token = this.tokenService.generateToken(userDB.id, userDB.role);
+
+    const output: LoginOutputDTO = {
+      message: "Login has been successfully",
+      user: {
+        userId: userDB.id,
+        name: userDB.name,
+        email: userDB.email,
+        token: token,
+      },
+    };
+
+    return output;
+  };
+
+  // ------------------------------------------------------------------------------------------------------------------
+
+  public editUser = async (
+    input: UpdateUserInputDTO
+  ): Promise<UpdateUserOutputDTO> => {
+    const { userId, token } = input;
+    const userIdFromToken = this.tokenService.getUserIdFromToken(token);
+
+    if (userIdFromToken !== userId) {
+      throw new UnauthorizedError("You do not have access to change this user");
+    }
+
+    const userDB = await this.userDatabase.findUserById(userId);
+
+    if (!userDB) {
+      throw new NotFoundError("'UserId' not found");
+    }
+
+    if (input.personal_id) {
+      const userDBPersonalIdExists: UserDB | undefined =
+        await this.userDatabase.findUserByPersonalId(
+          input.personal_id as string
+        );
+
+      if (userDBPersonalIdExists && userDBPersonalIdExists.id !== userId) {
+        throw new ConflictError(
+          "This personal ID is already in use by another user"
+        );
+      }
+    }
+
+    const hashedPassword = input.password
+      ? await this.hashManager.hash(input.password)
+      : userDB.password;
+
+    const updatedUser: UserDB = {
+      ...userDB,
+      personal_id:
+        input.personal_id !== undefined
+          ? input.personal_id
+          : userDB.personal_id,
+      entity_type:
+        input.entity_type !== undefined
+          ? (input.entity_type as EntityType)
+          : userDB.entity_type,
+      name: input.name !== undefined ? input.name : userDB.name,
+      email: input.email !== undefined ? input.email : userDB.email,
+      password: hashedPassword,
+      birthdate:
+        input.birthdate !== undefined ? input.birthdate : userDB.birthdate,
+      address: input.address !== undefined ? input.address : userDB.address,
+      number: input.number !== undefined ? input.number : userDB.number,
+      neighborhood:
+        input.neighborhood !== undefined
+          ? input.neighborhood
+          : userDB.neighborhood,
+      city: input.city !== undefined ? input.city : userDB.city,
+      country: input.country !== undefined ? input.country : userDB.country,
+      gender: input.gender !== undefined ? input.gender : userDB.gender,
+      role: userDB.role,
+      created_at: userDB.created_at,
+    };
+
+    await this.userDatabase.updateUser(userId, updatedUser);
+
+    const updatedUserData = await this.userDatabase.findUserById(userId);
+
+    if (!updatedUserData) {
+      throw new NotFoundError(
+        "It was not possible to find the updated user data after editing."
+      );
+    }
+
+    const output: UpdateUserOutputDTO = {
+      message: "Editing completed successfully",
+      user: {
+        userId: updatedUserData.id,
+        name: updatedUserData.name,
+        email: updatedUserData.email,
+        createdAt: updatedUserData.created_at,
+      },
+    };
+
+    return output;
+  };
+
+  public changePassword = async (
+    input: UpdatePasswordInputDTO
+  ): Promise<UpdatePasswordOutputDTO> => {
+    const { userId, token, oldPassword, newPassword } = input;
+
+    const userIdFromToken = this.tokenService.getUserIdFromToken(token);
+    if (userIdFromToken !== userId) {
+      throw new UnauthorizedError("Unauthorized access");
+    }
+
+    const user = await this.userDatabase.findUserById(userId);
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+
+    const isOldPasswordCorrect = await this.hashManager.compare(
+      oldPassword,
+      user.password
+    );
+    if (!isOldPasswordCorrect) {
+      throw new BadRequestError("Old password is incorrect");
+    }
+
+    const hashedNewPassword = await this.hashManager.hash(newPassword);
+
+    await this.userDatabase.updatePassword(userId, hashedNewPassword);
+
+    return {
+      message: "Password updated successfully",
+    };
+  };
+
+  // ------------------------------------------------------------------------------------------------------------------
+
+  public getUserData = async (input: any): Promise<UserDBOutput> => {
+    const { userId, token } = input;
+
+    const userIdFromToken = this.tokenService.getUserIdFromToken(token);
+    const userDB = await this.userDatabase.findUserById(
+      userIdFromToken as string
+    );
+    const authorizedUser = this.tokenService.verifyToken(token);
+
+    if (
+      authorizedUser?.userId !== userId &&
+      userDB?.role !== USER_ROLES.ADMIN
+    ) {
+      throw new UnauthorizedError("User not authorized");
+    }
+
+    if (!userDB) {
+      throw new NotFoundError("User not found");
+    }
+
+    const userFromDatabase = await this.userDatabase.findUserById(userId);
+    const phonesFromDatabase = await this.userDatabase.getPhones(userId);
+    const { password, ...userOutput } = userFromDatabase as UserDB;
+
+    userOutput.phones = phonesFromDatabase;
+
+    return userOutput;
+  };
+
+  public getAllUsers = async (input: any): Promise<UserDB[]> => {
+    const { q, token } = input;
+
+    const userId = this.tokenService.getUserIdFromToken(token);
+    const userDB = await this.userDatabase.findUserById(userId as string);
+    const authorizedUser = this.tokenService.verifyToken(token);
+
+    if (authorizedUser?.role !== USER_ROLES.ADMIN) {
+      throw new UnauthorizedError("User not authorized");
+    }
+
+    if (!userDB) {
+      throw new NotFoundError("User not found");
+    }
+
+    const usersDB = await this.userDatabase.findUsers(q);
+
+    const usersOutput = await Promise.all(
+      usersDB.map(async (userDB) => {
+        const phonesFromDatabase = await this.userDatabase.getPhones(userDB.id);
+        const { password, ...userWithoutPassword } = userDB;
+        userWithoutPassword.phones = phonesFromDatabase;
+        return userWithoutPassword as UserDB;
+      })
+    );
+
+    return usersOutput;
   };
 
   // PHONES
@@ -271,105 +370,102 @@ public getAllUsers = async (input: any): Promise<UserDB[]> => {
   public addPhone = async (input: PhoneInputDTO): Promise<PhoneOutputDTO> => {
     const { userId, token, number, type } = input;
 
-    // Verify the token and get the user ID from it
     const userIdFromToken = this.tokenService.getUserIdFromToken(token);
 
-    // Validate the token
     const authorizedUser = this.tokenService.verifyToken(token);
     if (!authorizedUser || authorizedUser.userId !== userIdFromToken) {
       throw new UnauthorizedError("Unauthorized user");
     }
 
-    // Check if the user exists
     const userDB = await this.userDatabase.findUserById(userId);
     if (!userDB) {
       throw new NotFoundError("User not found");
     }
 
-    // Create a new phone
-    const phoneId = await this.idGenerator.generate()
-    await this.userDatabase.insertPhone(phoneId, userId, { number, type });
+    const phoneId = await this.idGenerator.generate();
 
-    // Prepare output data
+    const phoneData = {
+      phone_id: phoneId,
+      user_id: userId,
+      number,
+      type,
+    };
+
+    await this.userDatabase.insertPhone(phoneData);
+
     const updatedPhone = await this.userDatabase.findPhoneById(phoneId);
 
     if (!updatedPhone) {
-        throw new NotFoundError("Failed to retrieve updated phone data");
+      throw new NotFoundError("Failed to retrieve updated phone data");
     }
 
     const output: PhoneOutputDTO = {
       message: "Phone updated successfully",
-      phones: [updatedPhone]
+      phones: [updatedPhone],
     };
 
     return output;
   };
 
-// ------------------------------------------------------------------------------------------------------------------
+  // ------------------------------------------------------------------------------------------------------------------
 
-  public updatePhone = async (input: PhoneInputDTO): Promise<PhoneOutputDTO> => {
+  public updatePhone = async (
+    input: PhoneInputDTO
+  ): Promise<PhoneOutputDTO> => {
     const { userId, token, phoneId, number, type } = input;
 
-    // Verify the token and get the user ID from it
     const userIdFromToken = this.tokenService.getUserIdFromToken(token);
 
-    // Validate the token
     const authorizedUser = this.tokenService.verifyToken(token);
     if (!authorizedUser || authorizedUser.userId !== userIdFromToken) {
       throw new UnauthorizedError("Unauthorized user");
     }
 
-    // Check if the user exists
     const userDB = await this.userDatabase.findUserById(userId);
     if (!userDB) {
       throw new NotFoundError("User not found");
     }
 
-    // Check if the phone exists for the user
     const phoneDB = await this.userDatabase.findPhoneById(phoneId);
     if (!phoneDB || phoneDB.user_id !== userId) {
       throw new NotFoundError("Phone not found or does not belong to the user");
     }
 
-    // Update the phone
     await this.userDatabase.updatePhone(phoneId, { number, type });
 
-    // Prepare output data
     const updatedPhone = await this.userDatabase.findPhoneById(phoneId);
 
     if (!updatedPhone) {
-        throw new NotFoundError("Failed to retrieve updated phone data");
+      throw new NotFoundError("Failed to retrieve updated phone data");
     }
 
     const output: PhoneOutputDTO = {
       message: "Phone updated successfully",
-      phones: [updatedPhone]
+      phones: [updatedPhone],
     };
 
     return output;
   };
 
-// ------------------------------------------------------------------------------------------------------------------
+  // ------------------------------------------------------------------------------------------------------------------
 
-  public deletePhone = async (input: PhoneDeleteDTO): Promise<PhoneOutputDTO> => {
+  public deletePhone = async (
+    input: PhoneDeleteDTO
+  ): Promise<PhoneOutputDTO> => {
     const { userId, token, phoneId } = input;
 
-    // Verify the token and get the user ID from it
     const userIdFromToken = this.tokenService.getUserIdFromToken(token);
 
-    // Validate the token
     const authorizedUser = this.tokenService.verifyToken(token);
     if (!authorizedUser || authorizedUser.userId !== userIdFromToken) {
       throw new UnauthorizedError("Unauthorized user");
     }
 
-    // Check if the user exists
     const userDB = await this.userDatabase.findUserById(userId);
     if (!userDB) {
       throw new NotFoundError("User not found");
     }
 
-    // Check if the phone exists for the user
     const phoneDB = await this.userDatabase.findPhoneById(phoneId);
     if (!phoneDB || phoneDB.user_id !== userId) {
       throw new NotFoundError("Phone not found or does not belong to the user");
@@ -377,17 +473,13 @@ public getAllUsers = async (input: any): Promise<UserDB[]> => {
 
     await this.userDatabase.deletePhoneById(phoneId);
 
-    // Retrieve updated phone list for the user
     const updatedPhones = await this.userDatabase.getPhones(userId);
 
     const output: PhoneOutputDTO = {
       message: "Phone deleted successfully",
-      phones: updatedPhones
+      phones: updatedPhones,
     };
 
     return output;
   };
-
 }
-
-

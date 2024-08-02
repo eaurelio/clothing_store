@@ -4,38 +4,34 @@ import { ProductDB, ProductDBOutput } from '../../models/Products';
 // DTOs para obter produtos
 export interface GetProductInputDTO {
   id: string;
-  token: string;
 }
 
 export interface GetAllProductsInputDTO {
-  q?: string; 
+  name?: string; 
   category_id?: number;
   color_id?: number;
   size_id?: number;
   gender_id?: number;
-  token: string;
 }
 
 export interface GetProductOutputDTO {
-  product: ProductDB;
+  product: ProductDBOutput;
 }
 
 export interface GetAllProductsOutputDTO {
-  products: ProductDB[];
+  products: ProductDBOutput[];
 }
 
 export const GetProductSchema = z.object({
-  id: z.string(),
-  token: z.string()
+  id: z.string()
 }).transform(data => data as GetProductInputDTO);
 
 export const GetAllProductsSchema = z.object({
-  q: z.string().optional(),
+  name: z.string().optional(),
   category_id: z.number().optional(),
   color_id: z.number().optional(),
   size_id: z.number().optional(),
-  gender_id: z.number().optional(),
-  token: z.string()
+  gender_id: z.number().optional()
 }).transform(data => data as GetAllProductsInputDTO);
 
 
