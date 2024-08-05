@@ -32,3 +32,20 @@ INSERT INTO order_status (status_name) VALUES ('Pending');
 INSERT INTO order_status (status_name) VALUES ('Processing');
 INSERT INTO order_status (status_name) VALUES ('Shipped');
 INSERT INTO order_status (status_name) VALUES ('Completed');
+
+
+select * from order_status;
+
+select * from orders;
+select * from order_items;
+
+SELECT 
+  orders.order_id, 
+  orders.user_id, 
+  orders.order_date, 
+  order_status.status_name AS status_name, 
+  orders.total
+FROM orders
+INNER JOIN order_status 
+  ON orders.status_id = order_status.status_id;
+

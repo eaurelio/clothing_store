@@ -3,39 +3,50 @@ import { OrderBusiness } from "../business/OrderBusiness";
 import {
   CreateOrderSchema,
   CreateOrderInputDTO,
-  CreateOrderOutputDTO
+  CreateOrderOutputDTO,
 } from "../dtos/orders/createOrder.dto";
 import {
   GetOrdersSchema,
   GetOrdersInputDTO,
-  GetOrdersOutputDTO
+  GetOrdersOutputDTO,
+  GetAllOrdersSchema,
+  GetAllOrdersOutputDTO,
 } from "../dtos/orders/getOrder.dto";
 import {
   UpdateOrderSchema,
   UpdateOrderInputDTO,
-  UpdateOrderOutputDTO
+  UpdateOrderOutputDTO,
 } from "../dtos/orders/updateOrder.dto";
+import {
+  DeleteOrderSchema,
+  DeleteOrderInputDTO,
+} from "../dtos/orders/deleteOrder.dto";
+import {
+  AddOrderItemSchema,
+  AddOrderItemInputDTO,
+} from "../dtos/orders/addOrderItem.dto";
+import {
+  RemoveOrderItemSchema,
+  RemoveOrderItemInputDTO,
+} from "../dtos/orders/removeOrderItem.dto";
 import { ErrorHandler } from "../errors/ErrorHandler";
 import logger from "../logs/logger";
 
 export class OrderController {
   constructor(private orderBusiness: OrderBusiness) {}
 
-  // ------------------------------------------------------------------------------------------------------------------
-  // ORDERS
-  // ------------------------------------------------------------------------------------------------------------------
-
   public createOrder = async (req: Request, res: Response) => {
     try {
       const input: CreateOrderInputDTO = CreateOrderSchema.parse({
         token: req.headers.authorization as string,
-        userId: req.body.userId,
         items: req.body.items,
         status_id: req.body.status_id,
-        total: req.body.total
+        total: req.body.total,
       });
 
-      const output: CreateOrderOutputDTO = await this.orderBusiness.createOrder(input);
+      const output: CreateOrderOutputDTO = await this.orderBusiness.createOrder(
+        input
+      );
       res.status(201).send(output);
     } catch (error) {
       logger.error(error);
@@ -46,11 +57,13 @@ export class OrderController {
   public getOrder = async (req: Request, res: Response) => {
     try {
       const input = GetOrdersSchema.parse({
+        orderId: req.params.id,
         token: req.headers.authorization as string,
-        userId: req.params.userId
       });
 
-      const output: GetOrdersOutputDTO = await this.orderBusiness.getOrder(input);
+      const output: GetOrdersOutputDTO = await this.orderBusiness.getOrder(
+        input
+      );
       res.status(200).send(output);
     } catch (error) {
       logger.error(error);
@@ -58,51 +71,55 @@ export class OrderController {
     }
   };
 
-  // public getAllOrders = async (req: Request, res: Response) => {
-  //   try {
-  //     const input = GetOrdersSchema.parse({
-  //       token: req.headers.authorization as string,
-  //       userId: req.query.userId as string
-  //     });
+  public getAllOrders = async (req: Request, res: Response) => {
+    try {
+      const input = GetAllOrdersSchema.parse({
+        token: req.headers.authorization as string,
+      });
 
-  //     const output: GetOrdersOutputDTO = await this.orderBusiness.getAllOrders(input);
-  //     res.status(200).send(output);
-  //   } catch (error) {
-  //     logger.error(error);
-  //     ErrorHandler.handleError(error, res);
-  //   }
-  // };
+      const output: GetAllOrdersOutputDTO =
+        await this.orderBusiness.getAllOrders(input);
+      res.status(200).send(output);
+    } catch (error) {
+      logger.error(error);
+      ErrorHandler.handleError(error, res);
+    }
+  };
 
-  // public updateOrder = async (req: Request, res: Response) => {
-  //   try {
-  //     const input: UpdateOrderInputDTO = UpdateOrderSchema.parse({
-  //       token: req.headers.authorization as string,
-  //       orderId: req.params.id,
-  //       status: req.body.status,
-  //       items: req.body.items,
-  //       total: req.body.total
-  //     });
+  public updateOrder = async (req: Request, res: Response) => {
+    try {
+      const input: UpdateOrderInputDTO = UpdateOrderSchema.parse({
+        token: req.headers.authorization as string,
+        orderId: req.params.id,
+        status_id: req.body.status_id,
+        items: req.body.items,
+        total: req.body.total,
+      });
 
-  //     const output: UpdateOrderOutputDTO = await this.orderBusiness.updateOrder(input);
-  //     res.status(200).send(output);
-  //   } catch (error) {
-  //     logger.error(error);
-  //     ErrorHandler.handleError(error, res);
-  //   }
-  // };
+      console.log(input)
 
-  // public deleteOrder = async (req: Request, res: Response) => {
-  //   try {
-  //     const input = {
-  //       token: req.headers.authorization as string,
-  //       orderId: req.params.id
-  //     };
+      const output: UpdateOrderOutputDTO = await this.orderBusiness.updateOrder(
+        input
+      );
+      res.status(200).send(output);
+    } catch (error) {
+      logger.error(error);
+      ErrorHandler.handleError(error, res);
+    }
+  };
 
-  //     const output = await this.orderBusiness.deleteOrder(input);
-  //     res.status(200).send({ message: "Order deleted successfully" });
-  //   } catch (error) {
-  //     logger.error(error);
-  //     ErrorHandler.handleError(error, res);
-  //   }
-  // };
+  public deleteOrder = async (req: Request, res: Response) => {
+    try {
+      const input: DeleteOrderInputDTO = DeleteOrderSchema.parse({
+        token: req.headers.authorization as string,
+        orderId: req.params.id,
+      });
+
+      await this.orderBusiness.deleteOrder(input);
+      res.status(200).send({ message: "Order deleted successfully" });
+    } catch (error) {
+      logger.error(error);
+      ErrorHandler.handleError(error, res);
+    }
+  };
 }

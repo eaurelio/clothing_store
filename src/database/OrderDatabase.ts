@@ -104,17 +104,37 @@ export class OrderDatabase extends BaseDatabase {
     return result;
   }
 
+  // public async findOrdersByUserId(userId: string) {
+  //   const result = await BaseDatabase.connection.raw(
+  //     `
+  //     SELECT *
+  //     FROM ${OrderDatabase.TABLE_ORDERS}
+  //     WHERE user_id = ?
+  //   `,
+  //     [userId]
+  //   );
+
+  //   return result;
+  // }
+
   public async findOrdersByUserId(userId: string) {
     const result = await BaseDatabase.connection.raw(
       `
-      SELECT *
-      FROM ${OrderDatabase.TABLE_ORDERS}
-      WHERE user_id = ?
-    `,
+      SELECT 
+        orders.order_id, 
+        orders.user_id, 
+        orders.order_date, 
+        order_status.status_name AS status_name, 
+        orders.total
+      FROM ${OrderDatabase.TABLE_ORDERS} orders
+      INNER JOIN order_status 
+        ON orders.status_id = order_status.status_id
+      WHERE orders.user_id = ?
+      `,
       [userId]
     );
   
-    return result[0];
+    return result;
   }
   
 
@@ -157,5 +177,48 @@ export class OrderDatabase extends BaseDatabase {
     `,
       [order_id]
     );
+  }
+
+  public async updateOrderItemQuantity(
+    item_id: string,
+    quantity: number
+  ): Promise<void> {
+    const query = `
+      UPDATE ${OrderDatabase.TABLE_ORDER_ITEMS}
+      SET quantity = ?
+      WHERE item_id = ?
+    `;
+    await BaseDatabase.connection.raw(query, [quantity, item_id]);
+  }
+
+  public async findOrderItemByOrderIdAndProductId(
+    order_id: string,
+    product_id: string
+  ): Promise<OrderItemDB | undefined> {
+    const result = await BaseDatabase.connection.raw(
+      `
+      SELECT *
+      FROM ${OrderDatabase.TABLE_ORDER_ITEMS}
+      WHERE order_id = ? AND product_id = ?
+    `,
+      [order_id, product_id]
+    );
+    return result[0][0];
+  }
+
+  public async deleteOrderItem(item_id: string): Promise<void> {
+    const query = `
+      DELETE FROM ${OrderDatabase.TABLE_ORDER_ITEMS}
+      WHERE item_id = ?
+    `;
+    await BaseDatabase.connection.raw(query, [item_id]);
+  }
+
+  public async deleteOrder(order_id: string): Promise<void> {
+    const query = `
+    DELETE FROM ${OrderDatabase.TABLE_ORDERS}
+    WHERE order_id = ?
+  `;
+    await BaseDatabase.connection.raw(query, [order_id]);
   }
 }
