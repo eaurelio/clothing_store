@@ -45,7 +45,7 @@ export class ProductController {
       const output = await this.productBusiness.createProduct(input);
       res.status(201).send(output);
     } catch (error) {
-      logger.error(error)
+      logger.error(error);
       ErrorHandler.handleError(error, res);
     }
   };
@@ -71,7 +71,7 @@ export class ProductController {
 
       res.status(200).send(output);
     } catch (error) {
-      logger.error(error)
+      logger.error(error);
       ErrorHandler.handleError(error, res);
     }
   };
@@ -95,7 +95,7 @@ export class ProductController {
       const output = await this.productBusiness.getAllProducts(input);
       res.status(200).send(output);
     } catch (error) {
-      logger.error(error)
+      logger.error(error);
       ErrorHandler.handleError(error, res);
     }
   };
@@ -111,7 +111,7 @@ export class ProductController {
       const output = await this.productBusiness.getProduct(input);
       res.status(200).send(output);
     } catch (error) {
-      logger.error(error)
+      logger.error(error);
       ErrorHandler.handleError(error, res);
     }
   };
@@ -119,6 +119,18 @@ export class ProductController {
   // ------------------------------------------------------------------------------------------------------------------
   // AUX FIELDS - PRODUCTS
   // ------------------------------------------------------------------------------------------------------------------
+
+  public getAllCategories = async (req: Request, res: Response) => {
+    try {
+      const categories = await this.productBusiness.getAllCategories()
+
+      return categories;
+
+    } catch (error) {
+      logger.error(error)
+      ErrorHandler.handleError(error, res);
+    }
+  }
 
   public createCategory = async (req: Request, res: Response) => {
     try {
@@ -131,7 +143,7 @@ export class ProductController {
       const output = await this.productBusiness.createCategory(input);
       res.status(201).send(output);
     } catch (error) {
-      logger.error(error)
+      logger.error(error);
       ErrorHandler.handleError(error, res);
     }
   };
@@ -148,10 +160,23 @@ export class ProductController {
       const output = await this.productBusiness.updateCategory(input);
       res.status(200).send(output);
     } catch (error) {
-      logger.error(error)
+      logger.error(error);
       ErrorHandler.handleError(error, res);
     }
   };
+  
+  // ------------------------------------------------------------------------------------------------------------------
+
+  public getAllColors = async (req: Request, res: Response) => {
+    try{
+      const colors = await this.productBusiness.getAllColors()
+
+      return colors;
+    } catch (error) {
+      logger.error(error)
+      ErrorHandler.handleError(error, res);
+    }
+  }
 
   public createColor = async (req: Request, res: Response) => {
     try {
@@ -163,7 +188,7 @@ export class ProductController {
       const output = await this.productBusiness.createColor(input);
       res.status(201).send(output);
     } catch (error) {
-      logger.error(error)
+      logger.error(error);
       ErrorHandler.handleError(error, res);
     }
   };
@@ -179,7 +204,20 @@ export class ProductController {
       const output = await this.productBusiness.updateColor(input);
       res.status(200).send(output);
     } catch (error) {
-      logger.error(error)
+      logger.error(error);
+      ErrorHandler.handleError(error, res);
+    }
+  };
+
+  // ------------------------------------------------------------------------------------------------------------------
+
+  public getAllSizes = async (req: Request, res: Response) => {
+    try {
+      const sizes = await this.productBusiness.getAllSizes();
+
+      return sizes;
+    } catch (error) {
+      logger.error(error);
       ErrorHandler.handleError(error, res);
     }
   };
@@ -194,7 +232,7 @@ export class ProductController {
       const output = await this.productBusiness.createSize(input);
       res.status(201).send(output);
     } catch (error) {
-      logger.error(error)
+      logger.error(error);
       ErrorHandler.handleError(error, res);
     }
   };
@@ -210,7 +248,20 @@ export class ProductController {
       const output = await this.productBusiness.updateSize(input);
       res.status(200).send(output);
     } catch (error) {
-      logger.error(error)
+      logger.error(error);
+      ErrorHandler.handleError(error, res);
+    }
+  };
+
+  // ------------------------------------------------------------------------------------------------------------------
+
+  public getAllGenders = async (req: Request, res: Response) => {
+    try {
+      const genders = await this.productBusiness.getAllGenders();
+
+      return genders;
+    } catch (error) {
+      logger.error(error);
       ErrorHandler.handleError(error, res);
     }
   };
@@ -225,7 +276,7 @@ export class ProductController {
       const output = await this.productBusiness.createGender(input);
       res.status(201).send(output);
     } catch (error) {
-      logger.error(error)
+      logger.error(error);
       ErrorHandler.handleError(error, res);
     }
   };
@@ -241,7 +292,7 @@ export class ProductController {
       const output = await this.productBusiness.updateGender(input);
       res.status(200).send(output);
     } catch (error) {
-      logger.error(error)
+      logger.error(error);
       ErrorHandler.handleError(error, res);
     }
   };

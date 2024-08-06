@@ -5,6 +5,10 @@ import {
   SizeDB,
   GenderDB,
   ProductDB,
+  GenderDBOutPut,
+  SizeDBOutput,
+  ColorDBOutput,
+  CategoryDBOutput,
 } from "../models/Products";
 
 export class ProductDatabase extends BaseDatabase {
@@ -162,13 +166,13 @@ export class ProductDatabase extends BaseDatabase {
 
   // CATEGORY DATA
 
-  public async findCategories() {
+  public async getAllCategories(): Promise<CategoryDBOutput[]> {
     const result = await BaseDatabase.connection.raw(`
       SELECT *
       FROM ${ProductDatabase.TABLE_CATEGORIES}
     `);
 
-    return result[0];
+    return result;
   }
 
   public async findCategoryById(category_id: string) {
@@ -232,13 +236,13 @@ export class ProductDatabase extends BaseDatabase {
 
   // COLOR DATA
 
-  public async findColors(): Promise<ColorDB[]> {
+  public async getAllColors(): Promise<ColorDBOutput[]> {
     const result = await BaseDatabase.connection.raw(`
         SELECT *
         FROM ${ProductDatabase.TABLE_COLORS}
     `);
 
-    return result[0];
+    return result;
   }
 
   public async findColorById(color_id: string): Promise<ColorDB | undefined> {
@@ -290,13 +294,13 @@ export class ProductDatabase extends BaseDatabase {
 
   // SIZE DATA
 
-  public async findSizes(): Promise<SizeDB[]> {
+  public async getAllSizes(): Promise<SizeDBOutput[]> {
     const result = await BaseDatabase.connection.raw(`
       SELECT *
       FROM ${ProductDatabase.TABLE_SIZES}
     `);
 
-    return result[0];
+    return result;
   }
 
   public async findSizeById(size_id: string): Promise<SizeDB | undefined> {
@@ -348,13 +352,13 @@ export class ProductDatabase extends BaseDatabase {
 
   // GENDER DATA
 
-  public async findGenders(): Promise<GenderDB[]> {
+  public async getAllGenders(): Promise<GenderDBOutPut[]> {
     const result = await BaseDatabase.connection.raw(`
       SELECT *
       FROM ${ProductDatabase.TABLE_GENDERS}
     `);
 
-    return result[0];
+    return result;
   }
 
   public async findGenderById(

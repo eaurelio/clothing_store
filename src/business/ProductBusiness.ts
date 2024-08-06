@@ -1,4 +1,4 @@
-import { GenderDB } from "./../models/Products";
+import { CategoryDBOutput, ColorDBOutput, GenderDB, GenderDBOutPut, SizeDBOutput } from "./../models/Products";
 import { UserDatabase } from "./../database/UserDatabase";
 import { HashManager } from "./../services/HashManager";
 import { ProductDatabase } from "../database/ProductDatabase";
@@ -285,6 +285,11 @@ export class ProductBusiness {
   // AUX FIELDS - PRODUCTS
   // ------------------------------------------------------------------------------------------------------------------
 
+  public getAllCategories = async (): Promise<CategoryDBOutput[]> => {
+    const categories = await this.productDatabase.getAllCategories()
+    return categories
+  }
+
   public createCategory = async (
     input: CreateCategoryInputDTO
   ): Promise<CreateCategoryOutputDTO> => {
@@ -374,6 +379,13 @@ export class ProductBusiness {
     return output;
   };
 
+    // ------------------------------------------------------------------------------------------------------------------
+
+  public getAllColors = async (): Promise<ColorDBOutput[]> => {
+    const colors = await this.productDatabase.getAllColors()
+    return colors
+  }
+
   public createColor = async (
     input: CreateColorInputDTO
   ): Promise<CreateColorOutputDTO> => {
@@ -455,6 +467,13 @@ export class ProductBusiness {
     return output;
   };
 
+  // ------------------------------------------------------------------------------------------------------------------
+
+  public getAllSizes = async (): Promise<SizeDBOutput[]> => {
+    const sizes = await this.productDatabase.getAllSizes()
+    return sizes
+  }
+
   public createSize = async (
     input: CreateSizeInputDTO
   ): Promise<CreateSizeOutputDTO> => {
@@ -534,6 +553,13 @@ export class ProductBusiness {
 
     return output;
   };
+
+  // ------------------------------------------------------------------------------------------------------------------
+
+  public getAllGenders = async (): Promise<GenderDBOutPut[]> => {
+    const genders = await this.productDatabase.getAllGenders()
+    return genders
+  }
 
   public createGender = async (
     input: CreateGenderInputDTO

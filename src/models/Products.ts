@@ -123,16 +123,35 @@ export interface CategoryDB {
     name: string;
     description?: string;
   }
+
+  export interface CategoryDBOutput {
+    category_id: number,
+    name: string;
+    description?: string;
+  }
   
   export interface ColorDB {
+    name: string;
+  }
+  export interface ColorDBOutput {
+    color_id: number,
     name: string;
   }
   
   export interface SizeDB {
     name: string;
   }
+  export interface SizeDBOutput {
+    size_id: number, 
+    name: string;
+  }
   
   export interface GenderDB {
+    name: string;
+  }
+
+  export interface GenderDBOutPut {
+    gender_id: number,
     name: string;
   }
   
