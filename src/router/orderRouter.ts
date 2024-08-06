@@ -1,11 +1,7 @@
 import express from "express"
 import TokenService from "../services/TokenService"
-import { ProductDatabase } from './../database/ProductDatabase';
 import { IdGenerator } from "../services/idGenerator"
 import { HashManager } from "../services/HashManager"
-import { ProductController } from "../controller/ProductController"
-import { ProductBusiness } from "../business/ProductBusiness"
-import { UserDatabase } from "../database/UserDatabase";
 import { ErrorHandler } from "../errors/ErrorHandler";
 import { OrderController } from "../controller/OrderController";
 import { OrderDatabase } from "../database/OrderDatabase";
@@ -23,17 +19,9 @@ const orderController = new OrderController(
   )
 )
 
-// productRouter.get("/getProduct/:id", productController.getProduct)
-// productRouter.get("/getAllProducts", productController.getAllProducts)
-// productRouter.post("/createProduct", productController.createProduct)
-// productRouter.patch("/updateProduct/:id", productController.editProduct)
-
-// productRouter.post("/createCategory", productController.createCategory)
-// productRouter.post("/createColor", productController.createColor)
-// productRouter.post("/createSize", productController.createSize)
-// productRouter.post("/createGender", productController.createGender)
-
-// productRouter.patch("/updateCategory/:id", productController.updateCategory)
-// productRouter.patch("/updateColor/:id", productController.updateColor)
-// productRouter.patch("/updateSize/:id", productController.updateSize)
-// productRouter.patch("/updateGender/:id", productController.updateGender)
+orderRouter.get("/getOrder/:id", orderController.getOrder)
+orderRouter.get("/getAllOrders", orderController.getAllOrders)
+orderRouter.get("/getAllStatus", orderController.getAllStatus)
+orderRouter.post("/createOrder", orderController.createOrder)
+orderRouter.patch("/updateOrder/:id", orderController.updateOrder)
+orderRouter.delete("/deleteOrder/:id", orderController.deleteOrder)

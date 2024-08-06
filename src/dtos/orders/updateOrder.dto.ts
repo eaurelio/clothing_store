@@ -3,7 +3,7 @@ import z from "zod";
 export interface UpdateOrderInputDTO {
   token: string;
   orderId: string;
-  status?: string;
+  status_id?: number;
   items?: {
     productId: string;
     quantity: number;
@@ -18,7 +18,7 @@ export interface UpdateOrderOutputDTO {
     orderId: string;
     userId: string;
     orderDate: string;
-    status: string;
+    status: string | number;
     total: number;
     items: {
       itemId: string;
@@ -29,11 +29,25 @@ export interface UpdateOrderOutputDTO {
   };
 }
 
+export interface AddOrderItemInputDTO {
+  token: string;
+  orderId: string;
+  productId: string;
+  quantity: number;
+  price: number;
+}
+
+export interface RemoveOrderItemInputDTO {
+  token: string;
+  orderId: string;
+  productId: string;
+}
+
 export const UpdateOrderSchema = z
   .object({
     token: z.string(),
     orderId: z.string(),
-    status: z.string().optional(),
+    status_id: z.number().optional(),
     items: z
       .array(
         z.object({

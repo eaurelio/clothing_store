@@ -35,3 +35,8 @@ productRouter.patch("/updateCategory/:id", productController.updateCategory)
 productRouter.patch("/updateColor/:id", productController.updateColor)
 productRouter.patch("/updateSize/:id", productController.updateSize)
 productRouter.patch("/updateGender/:id", productController.updateGender)
+
+// productRouter.get('/getAllCategories', productController.getAllCategories)
+// productRouter.get('/getAllColors', productController.getAllColors)
+// productRouter.get('/getAllSizes', productController.getAllSizes)
+// productRouter.get('/getAllGenders', productController.getAllGenders)

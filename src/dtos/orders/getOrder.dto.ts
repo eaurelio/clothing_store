@@ -3,14 +3,13 @@ import z from "zod";
 export interface GetOrdersInputDTO {
   token: string;
   orderId: string;
-  userId: string; // Adiciona a ID do usuário
 }
 
 export interface GetOrdersOutputDTO {
   order: {
     orderId: string;
     userId: string;
-    status: number;
+    status_name: string;
     total: number;
     orderDate: string;
     items: {
@@ -25,8 +24,7 @@ export interface GetOrdersOutputDTO {
 export const GetOrdersSchema = z
   .object({
     token: z.string().min(1),
-    orderId: z.string().min(1),
-    userId: z.string().min(1),
+    orderId: z.string().min(1)
   })
   .transform((data) => data as GetOrdersInputDTO);
 

@@ -2,7 +2,6 @@ import z from "zod";
 
 export interface CreateOrderInputDTO {
   token: string;
-  userId: string;
   items: {
     productId: string;
     quantity: number;
@@ -33,7 +32,6 @@ export interface CreateOrderOutputDTO {
 export const CreateOrderSchema = z
   .object({
     token: z.string().min(1),
-    userId: z.string().min(1),
     items: z
       .array(
         z.object({
