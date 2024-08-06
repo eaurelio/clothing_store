@@ -9,7 +9,7 @@ export interface GetOrdersOutputDTO {
   order: {
     orderId: string;
     userId: string;
-    status: number;
+    status_name: string;
     total: number;
     orderDate: string;
     items: {

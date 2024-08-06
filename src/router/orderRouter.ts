@@ -21,6 +21,7 @@ const orderController = new OrderController(
 
 orderRouter.get("/getOrder/:id", orderController.getOrder)
 orderRouter.get("/getAllOrders", orderController.getAllOrders)
+orderRouter.get("/getAllStatus", orderController.getAllStatus)
 orderRouter.post("/createOrder", orderController.createOrder)
 orderRouter.patch("/updateOrder/:id", orderController.updateOrder)
 orderRouter.delete("/deleteOrder/:id", orderController.deleteOrder)

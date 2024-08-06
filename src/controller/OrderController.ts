@@ -1,3 +1,4 @@
+import { OrderDatabase } from './../database/OrderDatabase';
 import { Request, Response } from "express";
 import { OrderBusiness } from "../business/OrderBusiness";
 import {
@@ -117,6 +118,16 @@ export class OrderController {
 
       await this.orderBusiness.deleteOrder(input);
       res.status(200).send({ message: "Order deleted successfully" });
+    } catch (error) {
+      logger.error(error);
+      ErrorHandler.handleError(error, res);
+    }
+  };
+
+  public getAllStatus = async (req: Request, res: Response) => {
+    try {
+      const output =await this.orderBusiness.getAllStatus();
+      res.status(200).send(output);
     } catch (error) {
       logger.error(error);
       ErrorHandler.handleError(error, res);
