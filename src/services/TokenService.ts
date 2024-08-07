@@ -1,7 +1,7 @@
 import crypto from 'crypto';
-import dotenv from 'dotenv';
+// import dotenv from 'dotenv';
 
-dotenv.config();
+// dotenv.config();
 
 class TokenService {
   private readonly secret: string;

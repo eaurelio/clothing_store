@@ -80,6 +80,8 @@ export class ProductDatabase extends BaseDatabase {
     return result;
   }
 
+  // --------------------------------------------------------------------
+
   public async findProductById(id: string) {
     const result = await BaseDatabase.connection.raw(
       `
@@ -107,6 +109,8 @@ export class ProductDatabase extends BaseDatabase {
     return result[0];
   }
 
+  // --------------------------------------------------------------------
+
   public async findPureProductById(id: string) {
     const result = await BaseDatabase.connection.raw(
       `
@@ -119,6 +123,8 @@ export class ProductDatabase extends BaseDatabase {
 
     return result[0];
   }
+
+  // --------------------------------------------------------------------
 
   public async findProductByName(name: string) {
     const result = await BaseDatabase.connection.raw(
@@ -133,6 +139,8 @@ export class ProductDatabase extends BaseDatabase {
     return result[0];
   }
 
+  // --------------------------------------------------------------------
+
   public async insertProduct(newProductDB: ProductDB): Promise<void> {
     const columns = Object.keys(newProductDB);
     const placeholders = columns.map(() => "?").join(", ");
@@ -145,6 +153,8 @@ export class ProductDatabase extends BaseDatabase {
 
     await BaseDatabase.connection.raw(query, values);
   }
+
+  // --------------------------------------------------------------------
 
   public async updateProduct(
     idToEdit: string,
@@ -164,7 +174,9 @@ export class ProductDatabase extends BaseDatabase {
     await BaseDatabase.connection.raw(query, [...values, idToEdit]);
   }
 
+  // --------------------------------------------------------------------
   // CATEGORY DATA
+  // --------------------------------------------------------------------
 
   public async getAllCategories(): Promise<CategoryDBOutput[]> {
     const result = await BaseDatabase.connection.raw(`
@@ -174,6 +186,8 @@ export class ProductDatabase extends BaseDatabase {
 
     return result;
   }
+
+  // --------------------------------------------------------------------
 
   public async findCategoryById(category_id: string) {
     const result = await BaseDatabase.connection.raw(
@@ -187,6 +201,8 @@ export class ProductDatabase extends BaseDatabase {
 
     return result[0];
   }
+
+  // --------------------------------------------------------------------
 
   public async findCategoryByName(
     name: string
@@ -203,6 +219,8 @@ export class ProductDatabase extends BaseDatabase {
     return result[0];
   }
 
+  // --------------------------------------------------------------------
+
   public async insertCategory(newCategoryDB: CategoryDB): Promise<void> {
     const columns = Object.keys(newCategoryDB);
     const placeholders = columns.map(() => "?").join(", ");
@@ -215,6 +233,8 @@ export class ProductDatabase extends BaseDatabase {
 
     await BaseDatabase.connection.raw(query, values);
   }
+
+  // --------------------------------------------------------------------
 
   public async updateCategory(
     category_id: string,
@@ -234,7 +254,9 @@ export class ProductDatabase extends BaseDatabase {
     await BaseDatabase.connection.raw(query, [...values, category_id]);
   }
 
+  // --------------------------------------------------------------------
   // COLOR DATA
+  // --------------------------------------------------------------------
 
   public async getAllColors(): Promise<ColorDBOutput[]> {
     const result = await BaseDatabase.connection.raw(`
@@ -244,6 +266,8 @@ export class ProductDatabase extends BaseDatabase {
 
     return result;
   }
+
+  // --------------------------------------------------------------------
 
   public async findColorById(color_id: string): Promise<ColorDB | undefined> {
     const result = await BaseDatabase.connection.raw(
@@ -258,6 +282,8 @@ export class ProductDatabase extends BaseDatabase {
     return result[0];
   }
 
+// --------------------------------------------------------------------
+
   public async findColorByName(name: string): Promise<ColorDB | undefined> {
     const result = await BaseDatabase.connection.raw(
       `
@@ -271,6 +297,8 @@ export class ProductDatabase extends BaseDatabase {
     return result[0];
   }
 
+// --------------------------------------------------------------------
+
   public async insertColor(newColorDB: ColorDB) {
     await BaseDatabase.connection.raw(
       `
@@ -280,6 +308,8 @@ export class ProductDatabase extends BaseDatabase {
       [newColorDB.name]
     );
   }
+
+  // --------------------------------------------------------------------
 
   public async updateColor(color_id: string, updatedColorDB: ColorDB) {
     await BaseDatabase.connection.raw(
@@ -316,6 +346,8 @@ export class ProductDatabase extends BaseDatabase {
     return result[0];
   }
 
+  // --------------------------------------------------------------------
+
   public async findSizeByName(name: string): Promise<SizeDB | undefined> {
     const result = await BaseDatabase.connection.raw(
       `
@@ -329,6 +361,8 @@ export class ProductDatabase extends BaseDatabase {
     return result[0];
   }
 
+  // --------------------------------------------------------------------
+
   public async insertSize(newSizeDB: SizeDB) {
     await BaseDatabase.connection.raw(
       `
@@ -338,6 +372,8 @@ export class ProductDatabase extends BaseDatabase {
       [newSizeDB.name]
     );
   }
+
+  // --------------------------------------------------------------------
 
   public async updateSize(size_id: string, updatedSizeDB: SizeDB) {
     await BaseDatabase.connection.raw(
@@ -350,7 +386,9 @@ export class ProductDatabase extends BaseDatabase {
     );
   }
 
+  // --------------------------------------------------------------------
   // GENDER DATA
+  // --------------------------------------------------------------------
 
   public async getAllGenders(): Promise<GenderDBOutPut[]> {
     const result = await BaseDatabase.connection.raw(`
@@ -360,6 +398,8 @@ export class ProductDatabase extends BaseDatabase {
 
     return result;
   }
+
+  // --------------------------------------------------------------------
 
   public async findGenderById(
     gender_id: string
@@ -376,6 +416,8 @@ export class ProductDatabase extends BaseDatabase {
     return result[0];
   }
 
+  // --------------------------------------------------------------------
+
   public async findGenderByName(name: string): Promise<GenderDB | undefined> {
     const result = await BaseDatabase.connection.raw(
       `
@@ -389,6 +431,8 @@ export class ProductDatabase extends BaseDatabase {
     return result[0];
   }
 
+  // --------------------------------------------------------------------
+
   public async insertGender(newGenderDB: Omit<GenderDB, "gender_id">) {
     await BaseDatabase.connection.raw(
       `
@@ -398,6 +442,8 @@ export class ProductDatabase extends BaseDatabase {
       [newGenderDB.name]
     );
   }
+
+  // --------------------------------------------------------------------
 
   public async updateGender(gender_id: string, updatedGenderDB: GenderDB) {
     await BaseDatabase.connection.raw(

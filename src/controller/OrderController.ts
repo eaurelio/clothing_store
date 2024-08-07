@@ -1,4 +1,3 @@
-import { OrderDatabase } from './../database/OrderDatabase';
 import { Request, Response } from "express";
 import { OrderBusiness } from "../business/OrderBusiness";
 import {
@@ -8,7 +7,6 @@ import {
 } from "../dtos/orders/createOrder.dto";
 import {
   GetOrdersSchema,
-  GetOrdersInputDTO,
   GetOrdersOutputDTO,
   GetAllOrdersSchema,
   GetAllOrdersOutputDTO,
@@ -22,14 +20,6 @@ import {
   DeleteOrderSchema,
   DeleteOrderInputDTO,
 } from "../dtos/orders/deleteOrder.dto";
-import {
-  AddOrderItemSchema,
-  AddOrderItemInputDTO,
-} from "../dtos/orders/addOrderItem.dto";
-import {
-  RemoveOrderItemSchema,
-  RemoveOrderItemInputDTO,
-} from "../dtos/orders/removeOrderItem.dto";
 import { ErrorHandler } from "../errors/ErrorHandler";
 import logger from "../logs/logger";
 
@@ -55,6 +45,8 @@ export class OrderController {
     }
   };
 
+  // ------------------------------------------------------------------------------------------------------------------
+
   public getOrder = async (req: Request, res: Response) => {
     try {
       const input = GetOrdersSchema.parse({
@@ -72,6 +64,8 @@ export class OrderController {
     }
   };
 
+  // ------------------------------------------------------------------------------------------------------------------
+
   public getAllOrders = async (req: Request, res: Response) => {
     try {
       const input = GetAllOrdersSchema.parse({
@@ -86,6 +80,19 @@ export class OrderController {
       ErrorHandler.handleError(error, res);
     }
   };
+  // ------------------------------------------------------------------------------------------------------------------
+
+  public getAllStatus = async (req: Request, res: Response) => {
+    try {
+      const output =await this.orderBusiness.getAllStatus();
+      res.status(200).send(output);
+    } catch (error) {
+      logger.error(error);
+      ErrorHandler.handleError(error, res);
+    }
+  };
+
+  // ------------------------------------------------------------------------------------------------------------------
 
   public updateOrder = async (req: Request, res: Response) => {
     try {
@@ -109,6 +116,8 @@ export class OrderController {
     }
   };
 
+  // ------------------------------------------------------------------------------------------------------------------
+
   public deleteOrder = async (req: Request, res: Response) => {
     try {
       const input: DeleteOrderInputDTO = DeleteOrderSchema.parse({
@@ -118,16 +127,6 @@ export class OrderController {
 
       await this.orderBusiness.deleteOrder(input);
       res.status(200).send({ message: "Order deleted successfully" });
-    } catch (error) {
-      logger.error(error);
-      ErrorHandler.handleError(error, res);
-    }
-  };
-
-  public getAllStatus = async (req: Request, res: Response) => {
-    try {
-      const output =await this.orderBusiness.getAllStatus();
-      res.status(200).send(output);
     } catch (error) {
       logger.error(error);
       ErrorHandler.handleError(error, res);

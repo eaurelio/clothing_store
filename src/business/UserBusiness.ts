@@ -41,9 +41,9 @@ export class UserBusiness {
     private errorHandler: ErrorHandler
   ) {}
 
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
   // USER DATA
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
   public createUser = async (
     input: CreateUserInputDTO
@@ -89,7 +89,7 @@ export class UserBusiness {
       email,
       hashedPassword,
       birthdate,
-      USER_ROLES.ADMIN,
+      USER_ROLES.CLIENT,
       new Date().toISOString(),
       address,
       number,
@@ -151,7 +151,7 @@ export class UserBusiness {
     return output;
   };
 
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
   public login = async (input: LoginInputDTO): Promise<LoginOutputDTO> => {
     const { email, password } = input;
@@ -187,7 +187,7 @@ export class UserBusiness {
     return output;
   };
 
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
   public editUser = async (
     input: UpdateUserInputDTO
@@ -305,7 +305,7 @@ export class UserBusiness {
     };
   };
 
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
   public getUserData = async (input: any): Promise<UserDBOutput> => {
     const { userId, token } = input;
@@ -336,6 +336,8 @@ export class UserBusiness {
     return userOutput;
   };
 
+  // --------------------------------------------------------------------
+
   public getAllUsers = async (input: any): Promise<UserDB[]> => {
     const { q, token } = input;
 
@@ -365,7 +367,9 @@ export class UserBusiness {
     return usersOutput;
   };
 
+  // --------------------------------------------------------------------
   // PHONES
+  // --------------------------------------------------------------------
 
   public addPhone = async (input: PhoneInputDTO): Promise<PhoneOutputDTO> => {
     const { userId, token, number, type } = input;
@@ -407,7 +411,7 @@ export class UserBusiness {
     return output;
   };
 
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
   public updatePhone = async (
     input: PhoneInputDTO
@@ -447,7 +451,7 @@ export class UserBusiness {
     return output;
   };
 
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
   public deletePhone = async (
     input: PhoneDeleteDTO

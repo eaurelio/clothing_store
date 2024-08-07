@@ -6,7 +6,9 @@ export class UserDatabase extends BaseDatabase {
   public static TABLE_USERS = "users";
   public static TABLE_PHONES = "phones";
 
+  // --------------------------------------------------------------------
   // USER DATA
+  // --------------------------------------------------------------------
 
   public async findUsers(q: string | undefined): Promise<UserDB[]> {
     let usersDB;
@@ -32,6 +34,8 @@ export class UserDatabase extends BaseDatabase {
     return usersDB;
   }
 
+  // --------------------------------------------------------------------
+
   public async findUserById(id: string): Promise<UserDB | undefined> {
     const result = await BaseDatabase.connection.raw(
       `
@@ -45,6 +49,8 @@ export class UserDatabase extends BaseDatabase {
     return result[0];
   }
 
+  // --------------------------------------------------------------------
+
   public async findUserByEmail(email: string): Promise<UserDB | undefined> {
     const result = await BaseDatabase.connection.raw(
       `
@@ -57,6 +63,8 @@ export class UserDatabase extends BaseDatabase {
 
     return result[0];
   }
+
+  // --------------------------------------------------------------------
 
   public async findUserByPersonalId(
     personal_id: string
@@ -73,6 +81,8 @@ export class UserDatabase extends BaseDatabase {
     return result[0];
   }
 
+  // --------------------------------------------------------------------
+
   public async insertUser(newUserDB: UserDB): Promise<void> {
     const keys = Object.keys(newUserDB);
     const values = keys.map((key) => newUserDB[key as keyof UserDB]);
@@ -88,6 +98,8 @@ export class UserDatabase extends BaseDatabase {
       values
     );
   }
+
+  // --------------------------------------------------------------------
 
   public async updateUser(
     idToEdit: string,
@@ -107,6 +119,8 @@ export class UserDatabase extends BaseDatabase {
     await BaseDatabase.connection.raw(query, values);
   }
 
+  // --------------------------------------------------------------------
+
   public async updatePassword(id: string, newPassword: string): Promise<void> {
     await BaseDatabase.connection.raw(
       `
@@ -118,7 +132,9 @@ export class UserDatabase extends BaseDatabase {
     );
   }
 
+  // --------------------------------------------------------------------
   // PHONE USER
+  // --------------------------------------------------------------------  
 
   public async getPhones(user_id: string): Promise<PhoneDB[]> {
     const result = await BaseDatabase.connection.raw(
@@ -133,6 +149,8 @@ export class UserDatabase extends BaseDatabase {
     return result;
   }
 
+  // --------------------------------------------------------------------
+
   public async findPhoneById(phone_id: string): Promise<PhoneDB | undefined> {
     const result = await BaseDatabase.connection.raw(
       `
@@ -146,6 +164,8 @@ export class UserDatabase extends BaseDatabase {
     return result[0] as PhoneDB | undefined;
   }
 
+  // --------------------------------------------------------------------
+
   public async insertPhone(phoneData: PhoneDB): Promise<void> {
     const columns = Object.keys(phoneData);
     const placeholders = columns.map(() => "?").join(", ");
@@ -158,6 +178,8 @@ export class UserDatabase extends BaseDatabase {
 
     await BaseDatabase.connection.raw(query, values);
   }
+
+  // --------------------------------------------------------------------
 
   public async updatePhone(
     phoneId: string,
@@ -177,6 +199,8 @@ export class UserDatabase extends BaseDatabase {
 
     await BaseDatabase.connection.raw(query, [...values, phoneId]);
   }
+
+  // --------------------------------------------------------------------
 
   public async deletePhoneById(phone_id: string): Promise<void> {
     await BaseDatabase.connection.raw(

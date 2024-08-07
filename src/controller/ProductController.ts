@@ -76,6 +76,22 @@ export class ProductController {
     }
   };
 
+   // ------------------------------------------------------------------------------------------------------------------
+
+   public getProduct = async (req: Request, res: Response) => {
+    try {
+      const input = GetProductSchema.parse({
+        id: req.params.id,
+      });
+
+      const output = await this.productBusiness.getProduct(input);
+      res.status(200).send(output);
+    } catch (error) {
+      logger.error(error);
+      ErrorHandler.handleError(error, res);
+    }
+  };
+
   // ------------------------------------------------------------------------------------------------------------------
 
   public getAllProducts = async (req: Request, res: Response) => {
@@ -101,22 +117,6 @@ export class ProductController {
   };
 
   // ------------------------------------------------------------------------------------------------------------------
-
-  public getProduct = async (req: Request, res: Response) => {
-    try {
-      const input = GetProductSchema.parse({
-        id: req.params.id,
-      });
-
-      const output = await this.productBusiness.getProduct(input);
-      res.status(200).send(output);
-    } catch (error) {
-      logger.error(error);
-      ErrorHandler.handleError(error, res);
-    }
-  };
-
-  // ------------------------------------------------------------------------------------------------------------------
   // AUX FIELDS - PRODUCTS
   // ------------------------------------------------------------------------------------------------------------------
 
@@ -124,8 +124,7 @@ export class ProductController {
     try {
       const categories = await this.productBusiness.getAllCategories()
 
-      return categories;
-
+      res.status(201).send(categories);
     } catch (error) {
       logger.error(error)
       ErrorHandler.handleError(error, res);
@@ -171,7 +170,7 @@ export class ProductController {
     try{
       const colors = await this.productBusiness.getAllColors()
 
-      return colors;
+      res.status(200).send(colors);
     } catch (error) {
       logger.error(error)
       ErrorHandler.handleError(error, res);
@@ -215,7 +214,7 @@ export class ProductController {
     try {
       const sizes = await this.productBusiness.getAllSizes();
 
-      return sizes;
+      res.status(200).send(sizes);
     } catch (error) {
       logger.error(error);
       ErrorHandler.handleError(error, res);
@@ -259,7 +258,7 @@ export class ProductController {
     try {
       const genders = await this.productBusiness.getAllGenders();
 
-      return genders;
+      res.status(200).send(genders);
     } catch (error) {
       logger.error(error);
       ErrorHandler.handleError(error, res);

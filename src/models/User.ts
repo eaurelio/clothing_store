@@ -26,7 +26,6 @@ export interface UserDBOutput {
     entity_type: EntityType;
     name: string;
     email: string;
-    // password: string;
     birthdate: string;
     role: USER_ROLES;
     created_at: string;
@@ -48,7 +47,7 @@ export interface Phone {
 }
 
 export enum USER_ROLES {
-    NORMAL = "NORMAL",
+    CLIENT = "CLIENT",
     ADMIN = "ADMIN"
 }
 
@@ -193,6 +192,6 @@ export class User {
     }
 
     setGender(gender: string): void {
-        this.gender = gender.toUpperCase();
+        this.gender = gender;
     }
 }
