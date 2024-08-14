@@ -26,6 +26,7 @@ userRouter.post("/getAllUsers", userController.getAllUsers)
 userRouter.post("/login", userController.login)
 userRouter.patch("/editUser/:id", userController.editUser)
 userRouter.patch("/changePassword/:id", userController.changePassword)
+userRouter.patch("/toggleUserActiveStatus", userController.toggleUserActiveStatus)
 
 userRouter.post("/addPhone/:id", userController.addPhone)
 userRouter.patch("/updatePhone/:id", userController.updatePhone)

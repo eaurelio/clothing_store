@@ -11,9 +11,9 @@ export interface UpdateWishListInputDTO {
 export interface UpdateWishListOutputDTO {
   message: string;
   wishlist: {
-    id: string;
+    wishlist_id: string;
     userId: string;
-    createdAt: string;
+    created_at: string;
     items: { wishlistId: string; productId: string }[];
   };
 }

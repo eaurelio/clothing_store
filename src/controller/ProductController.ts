@@ -8,6 +8,7 @@ import {
   CreateSizeSchema,
 } from "../dtos/products/createProduct.dto";
 import {
+  ToggleProductActiveStatusSchema,
   UpdateCategorySchema,
   UpdateColorSchema,
   UpdateGenderSchema,
@@ -24,9 +25,9 @@ import logger from "../logs/logger";
 export class ProductController {
   constructor(private productBusiness: ProductBusiness) {}
 
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
   // PRODUCTS
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
   public createProduct = async (req: Request, res: Response) => {
     try {
@@ -50,7 +51,7 @@ export class ProductController {
     }
   };
 
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
   public editProduct = async (req: Request, res: Response) => {
     try {
@@ -76,7 +77,7 @@ export class ProductController {
     }
   };
 
-   // ------------------------------------------------------------------------------------------------------------------
+   // --------------------------------------------------------------------
 
    public getProduct = async (req: Request, res: Response) => {
     try {
@@ -92,21 +93,41 @@ export class ProductController {
     }
   };
 
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
+
+  // public getAllProducts = async (req: Request, res: Response) => {
+  //   try {
+  //     const input = GetAllProductsSchema.parse({
+  //       name: req.body.name ? String(req.body.name).trim() : undefined,
+  //       category_id: req.body.category_id
+  //         ? Number(req.body.category_id)
+  //         : undefined,
+  //       color_id: req.body.color_id ? Number(req.body.color_id) : undefined,
+  //       size_id: req.body.size_id ? Number(req.body.size_id) : undefined,
+  //       gender_id: req.body.gender_id ? Number(req.body.gender_id) : undefined,
+  //       onlyActive: req.body.onlyActive
+  //     });
+
+  //     console.log(input);
+
+  //     const output = await this.productBusiness.getAllProducts(input);
+  //     res.status(200).send(output);
+  //   } catch (error) {
+  //     logger.error(error);
+  //     ErrorHandler.handleError(error, res);
+  //   }
+  // };
 
   public getAllProducts = async (req: Request, res: Response) => {
     try {
       const input = GetAllProductsSchema.parse({
-        name: req.body.name ? String(req.body.name).trim() : undefined,
-        category_id: req.body.category_id
-          ? Number(req.body.category_id)
-          : undefined,
-        color_id: req.body.color_id ? Number(req.body.color_id) : undefined,
-        size_id: req.body.size_id ? Number(req.body.size_id) : undefined,
-        gender_id: req.body.gender_id ? Number(req.body.gender_id) : undefined,
+        name: req.body.name,
+        category_id: req.body.category_id,
+        color_id: req.body.color_id,
+        size_id: req.body.size_id,
+        gender_id: req.body.gender_id,
+        onlyActive: req.body.onlyActive
       });
-
-      console.log(input);
 
       const output = await this.productBusiness.getAllProducts(input);
       res.status(200).send(output);
@@ -116,9 +137,26 @@ export class ProductController {
     }
   };
 
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
+
+  public toggleProductActiveStatus = async (req: Request, res: Response) => {
+    try {
+      const input = ToggleProductActiveStatusSchema.parse({
+        token: req.headers.authorization,
+        productId: req.body.productId
+      });
+
+      const output = await this.productBusiness.toggleProductActiveStatus(input);
+      res.status(200).send(output);
+    } catch (error) {
+      logger.error(error);
+      ErrorHandler.handleError(error, res);
+    }
+  };
+
+  // --------------------------------------------------------------------
   // AUX FIELDS - PRODUCTS
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
   public getAllCategories = async (req: Request, res: Response) => {
     try {
@@ -164,7 +202,7 @@ export class ProductController {
     }
   };
   
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
   public getAllColors = async (req: Request, res: Response) => {
     try{
@@ -208,7 +246,7 @@ export class ProductController {
     }
   };
 
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
   public getAllSizes = async (req: Request, res: Response) => {
     try {
@@ -252,7 +290,7 @@ export class ProductController {
     }
   };
 
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
   public getAllGenders = async (req: Request, res: Response) => {
     try {

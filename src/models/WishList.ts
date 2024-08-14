@@ -1,8 +1,14 @@
 export interface WishlistDB {
-  id: string;
+  wishlist_id: string;
   user_id: string;
-  createdAt: string; // Alterado para string
-  items: WishlistItemDB[]
+  created_at: string;
+  items?: WishlistItemDB[]; // Tornando `items` opcional
+}
+
+export interface WishlistDBInput {
+  wishlist_id: string;
+  user_id: string;
+  created_at: string;
 }
 
 export interface WishlistItemDB {
@@ -24,17 +30,17 @@ export interface WishlistItemDBOutput {
 
 export class Wishlist {
   constructor(
-    private id: string,
+    private wishlist_id: string,
     private userId: string,
     private createdAt: string
   ) {}
 
   getId(): string {
-    return this.id;
+    return this.wishlist_id;
   }
 
   setId(id: string): void {
-    this.id = id;
+    this.wishlist_id = id;
   }
 
   getUserId(): string {

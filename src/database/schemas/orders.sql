@@ -32,6 +32,7 @@ INSERT INTO order_status (status_name) VALUES ('Pending');
 INSERT INTO order_status (status_name) VALUES ('Processing');
 INSERT INTO order_status (status_name) VALUES ('Shipped');
 INSERT INTO order_status (status_name) VALUES ('Completed');
+INSERT INTO order_status (status_name) VALUES ('Canceled');
 
 
 select * from order_status;

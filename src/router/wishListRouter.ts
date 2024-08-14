@@ -6,12 +6,16 @@ import { ErrorHandler } from "../errors/ErrorHandler";
 import { WishlistController } from "../controller/WishListController";
 import { WishlistDatabase } from "../database/WishListDatabase";
 import { WishlistBusiness } from "../business/WishListBusiness";
+import { ProductDatabase } from "../database/ProductDatabase";
+import { UserDatabase } from "../database/UserDatabase";
 
 export const wishListRouter = express.Router()
 
 const wishListController = new WishlistController(
   new WishlistBusiness(
     new WishlistDatabase,
+    new UserDatabase,
+    new ProductDatabase,
     new IdGenerator,
     new TokenService,
     new HashManager,

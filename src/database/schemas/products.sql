@@ -17,6 +17,10 @@ CREATE TABLE colors (
     name TEXT NOT NULL
 );
 
+ALTER TABLE colors
+ADD COLUMN hex_code TEXT;
+
+
 -- Table Sizes
 CREATE TABLE sizes (
     size_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -48,6 +52,7 @@ CREATE TABLE products (
     FOREIGN KEY (gender_id) REFERENCES genders(gender_id)
 );
 
+//------------------------------------------------------------------------------------------------------------------
 
 -- Insert data into Categories
 INSERT INTO categories (name, description) VALUES ('T-Shirts', 'Casual and comfortable T-shirts');
@@ -69,6 +74,48 @@ INSERT INTO colors (name) VALUES ('Gray');
 INSERT INTO colors (name) VALUES ('Purple');
 INSERT INTO colors (name) VALUES ('Orange');
 INSERT INTO colors (name) VALUES ('Pink');
+
+-- ----------------------------------------------------------------------------------------------------------------
+
+PRAGMA foreign_keys=off;
+
+drop table colors;
+
+CREATE TABLE colors (
+    color_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL
+);
+
+ALTER TABLE colors
+ADD COLUMN hex_code TEXT;
+
+PRAGMA foreign_keys=on;
+
+INSERT INTO colors (name, hex_code) VALUES ('Red', '#FF0000');
+INSERT INTO colors (name, hex_code) VALUES ('Blue', '#0000FF');
+INSERT INTO colors (name, hex_code) VALUES ('Green', '#00FF00');
+INSERT INTO colors (name, hex_code) VALUES ('Black', '#000000');
+INSERT INTO colors (name, hex_code) VALUES ('White', '#FFFFFF');
+INSERT INTO colors (name, hex_code) VALUES ('Yellow', '#FFFF00');
+INSERT INTO colors (name, hex_code) VALUES ('Gray', '#808080');
+INSERT INTO colors (name, hex_code) VALUES ('Purple', '#800080');
+INSERT INTO colors (name, hex_code) VALUES ('Orange', '#FFA500');
+INSERT INTO colors (name, hex_code) VALUES ('Pink', '#FFC0CB');
+-- Additional colors
+INSERT INTO colors (name, hex_code) VALUES ('Brown', '#A52A2A');
+INSERT INTO colors (name, hex_code) VALUES ('Cyan', '#00FFFF');
+INSERT INTO colors (name, hex_code) VALUES ('Magenta', '#FF00FF');
+INSERT INTO colors (name, hex_code) VALUES ('Lime', '#00FF00');
+INSERT INTO colors (name, hex_code) VALUES ('Silver', '#C0C0C0');
+INSERT INTO colors (name, hex_code) VALUES ('Teal', '#008080');
+INSERT INTO colors (name, hex_code) VALUES ('Maroon', '#800000');
+INSERT INTO colors (name, hex_code) VALUES ('Olive', '#808000');
+INSERT INTO colors (name, hex_code) VALUES ('Navy', '#000080');
+INSERT INTO colors (name, hex_code) VALUES ('Fuchsia', '#FF00FF');
+
+
+select * from colors;
+-- ----------------------------------------------------------------------------------------------------------------
 
 -- Insert data into Sizes (with initials only)
 INSERT INTO sizes (name) VALUES ('S');

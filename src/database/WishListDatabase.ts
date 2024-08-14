@@ -1,5 +1,5 @@
 import { BaseDatabase } from "./connection/BaseDatabase";
-import { WishlistDB } from "../models/WishList";
+import { WishlistDB, WishlistDBInput } from "../models/WishList";
 import { WishlistItemDB } from "../models/WishList";
 
 export class WishlistDatabase extends BaseDatabase {
@@ -12,7 +12,7 @@ export class WishlistDatabase extends BaseDatabase {
     const result = await BaseDatabase.connection.raw(
       `
       SELECT 
-        wishlist_id AS id, 
+        wishlist_id, 
         user_id, 
         created_at AS createdAt
       FROM ${WishlistDatabase.TABLE_WISHLISTS}
@@ -21,14 +21,14 @@ export class WishlistDatabase extends BaseDatabase {
       [wishlist_id]
     );
   
-    return result[0]; // Retorna o primeiro elemento da consulta
+    return result[0];
   }
 
   public async findWishlistByUserId(user_id: string): Promise<WishlistDB | undefined> {
     const result = await BaseDatabase.connection.raw(
       `
       SELECT 
-        wishlist_id AS id, 
+        wishlist_id, 
         user_id, 
         created_at AS createdAt
       FROM ${WishlistDatabase.TABLE_WISHLISTS}
@@ -37,25 +37,26 @@ export class WishlistDatabase extends BaseDatabase {
       [user_id]
     );
   
-    return result;
+    return result[0];
   }
   
   
 
   // --------------------------------------------------------------------
 
-  public async insertWishlist(newWishlistDB: WishlistDB): Promise<void> {
+  public async insertWishlist(newWishlistDB: WishlistDBInput): Promise<void> {
     const columns = Object.keys(newWishlistDB);
     const placeholders = columns.map(() => "?").join(", ");
     const values = Object.values(newWishlistDB);
-
+  
     const query = `
       INSERT INTO ${WishlistDatabase.TABLE_WISHLISTS} (${columns.join(", ")})
       VALUES (${placeholders})
     `;
-
+  
     await BaseDatabase.connection.raw(query, values);
   }
+  
 
   // --------------------------------------------------------------------
 

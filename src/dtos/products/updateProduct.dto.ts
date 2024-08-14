@@ -44,6 +44,23 @@ export const UpdateProductSchema = z
   })
   .transform((data) => data as UpdateProductInputDTO);
 
+// --------------------------------------------------------------------
+
+export interface ToggleProductActiveStatusInputDTO {
+  productId: string;
+  token: string;
+}
+
+export interface ToggleProductActiveStatusOutputDTO {
+  message: string;
+}
+
+export const ToggleProductActiveStatusSchema = z.object({
+  productId: z.string(),
+  token: z.string()
+}).transform(data => data as ToggleProductActiveStatusInputDTO);
+
+// --------------------------------------------------------------------
 
 export interface UpdateCategoryInputDTO {
   token: string;
@@ -69,11 +86,12 @@ export const UpdateCategorySchema = z
   })
   .transform((data) => data as UpdateCategoryInputDTO);
 
-// DTOs para atualizar cores
+// --------------------------------------------------------------------
+
 export interface UpdateColorInputDTO {
   token: string;
   id: string;
-  name?: string; 
+  name?: string;
 }
 
 export interface UpdateColorOutputDTO {
@@ -92,7 +110,8 @@ export const UpdateColorSchema = z
   })
   .transform((data) => data as UpdateColorInputDTO);
 
-// DTOs para atualizar tamanhos
+// --------------------------------------------------------------------
+
 export interface UpdateSizeInputDTO {
   token: string;
   id: string;
@@ -115,7 +134,8 @@ export const UpdateSizeSchema = z
   })
   .transform((data) => data as UpdateSizeInputDTO);
 
-// DTOs para atualizar gêneros
+// --------------------------------------------------------------------
+
 export interface UpdateGenderInputDTO {
   token: string;
   id: string;

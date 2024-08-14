@@ -15,6 +15,8 @@ import {
   CreateSizeOutputDTO,
 } from "../dtos/products/createProduct.dto";
 import {
+  ToggleProductActiveStatusInputDTO,
+  ToggleProductActiveStatusOutputDTO,
   UpdateCategoryInputDTO,
   UpdateCategoryOutputDTO,
   UpdateColorInputDTO,
@@ -179,16 +181,17 @@ export class ProductBusiness {
   public getAllProducts = async (
     input: GetAllProductsInputDTO
   ): Promise<GetAllProductsOutputDTO> => {
-    const { name, category_id, color_id, size_id, gender_id } = input;
-
+    const { name, category_id, color_id, size_id, gender_id, onlyActive = true } = input;
+  
     const products: ProductDBOutput[] = await this.productDatabase.findProducts(
       name,
       category_id,
       color_id,
       size_id,
-      gender_id
+      gender_id,
+      onlyActive 
     );
-
+  
     const output: GetAllProductsOutputDTO = {
       products: products.map((product) => ({
         id: product.id,
@@ -203,10 +206,11 @@ export class ProductBusiness {
         gender: product.gender,
       })),
     };
-
+  
     return output;
   };
-
+  
+  
   // --------------------------------------------------------------------
 
   public editProduct = async (
@@ -230,24 +234,36 @@ export class ProductBusiness {
       throw new NotFoundError("Product not found");
     }
 
+    // const updatedProduct: ProductDB = {
+    //   ...productDB,
+    //   name: input.name !== undefined ? input.name : productDB.name,
+    //   description:
+    //     input.description !== undefined
+    //       ? input.description
+    //       : productDB.description,
+    //   price: input.price !== undefined ? input.price : productDB.price,
+    //   stock: input.stock !== undefined ? input.stock : productDB.stock,
+    //   category_id:
+    //     input.category_id !== undefined
+    //       ? input.category_id
+    //       : productDB.category_id,
+    //   color_id:
+    //     input.color_id !== undefined ? input.color_id : productDB.color_id,
+    //   size_id: input.size_id !== undefined ? input.size_id : productDB.size_id,
+    //   gender_id:
+    //     input.gender_id !== undefined ? input.gender_id : productDB.gender_id,
+    // };
+
     const updatedProduct: ProductDB = {
       ...productDB,
-      name: input.name !== undefined ? input.name : productDB.name,
-      description:
-        input.description !== undefined
-          ? input.description
-          : productDB.description,
-      price: input.price !== undefined ? input.price : productDB.price,
-      stock: input.stock !== undefined ? input.stock : productDB.stock,
-      category_id:
-        input.category_id !== undefined
-          ? input.category_id
-          : productDB.category_id,
-      color_id:
-        input.color_id !== undefined ? input.color_id : productDB.color_id,
-      size_id: input.size_id !== undefined ? input.size_id : productDB.size_id,
-      gender_id:
-        input.gender_id !== undefined ? input.gender_id : productDB.gender_id,
+      name: input.name ?? productDB.name,
+      description: input.description ?? productDB.description,
+      price: input.price ?? productDB.price,
+      stock: input.stock ?? productDB.stock,
+      category_id: input.category_id ?? productDB.category_id,
+      color_id: input.color_id ?? productDB.color_id,
+      size_id: input.size_id ?? productDB.size_id,
+      gender_id: input.gender_id ?? productDB.gender_id,
     };
 
     await this.productDatabase.updateProduct(id, updatedProduct);
@@ -280,6 +296,32 @@ export class ProductBusiness {
 
     return output;
   };
+
+  // --------------------------------------------------------------------
+
+  public toggleProductActiveStatus = async (
+    input: ToggleProductActiveStatusInputDTO
+  ): Promise<ToggleProductActiveStatusOutputDTO> => {
+    const { token, productId } = input;
+  
+    const authorizedUser = this.tokenService.verifyToken(token);
+    if (!authorizedUser || authorizedUser.role !== USER_ROLES.ADMIN) {
+      throw new UnauthorizedError("User not authorized");
+    }
+  
+    const product = await this.productDatabase.findProductById(productId);
+    if (!product) {
+      throw new NotFoundError("Product not found");
+    }
+  
+    const activate = !product.active;
+    await this.productDatabase.updateProductActiveStatus(productId, activate);
+  
+    return {
+      message: `Product ${activate ? "activated" : "deactivated"} successfully`,
+    };
+  };
+  
 
   // --------------------------------------------------------------------
   // AUX FIELDS - PRODUCTS
@@ -365,9 +407,9 @@ export class ProductBusiness {
 
     const updatedCategory = {
       ...categoryDB,
-      name: name !== undefined ? name : categoryDB.name,
+      name: name ?? categoryDB.name,
       description:
-        description !== undefined ? description : categoryDB.description,
+        description ?? categoryDB.description,
     };
 
     await this.productDatabase.updateCategory(id, updatedCategory);
@@ -454,7 +496,7 @@ export class ProductBusiness {
 
     const updatedColor = {
       ...colorDB,
-      name: name !== undefined ? name : colorDB.name,
+      name: name ?? colorDB.name,
     };
 
     await this.productDatabase.updateColor(id, updatedColor);
@@ -541,7 +583,7 @@ export class ProductBusiness {
 
     const updatedSize = {
       ...sizeDB,
-      name: name !== undefined ? name : sizeDB.name,
+      name: name ?? sizeDB.name,
     };
 
     await this.productDatabase.updateSize(id, updatedSize);
@@ -628,7 +670,7 @@ export class ProductBusiness {
 
     const updatedGender = {
       ...genderDB,
-      name: name !== undefined ? name : genderDB.name,
+      name: name ?? genderDB.name,
     };
 
     await this.productDatabase.updateGender(id, updatedGender);

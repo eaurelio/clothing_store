@@ -22,6 +22,7 @@ export interface ProductDBOutput {
   color: string | number;
   size: string | number;
   gender: string | number;
+  active?: boolean
 }
 
 export class Product {

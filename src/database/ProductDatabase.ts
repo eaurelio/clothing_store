@@ -20,16 +20,77 @@ export class ProductDatabase extends BaseDatabase {
 
   // PRODUCT DATA
 
+  // public async findProducts(
+  //   name?: string,
+  //   category_id?: number,
+  //   color_id?: number,
+  //   size_id?: number,
+  //   gender_id?: number
+  // ) {
+  //   let conditions: string[] = [];
+  //   let params: any[] = [];
+
+  //   if (name) {
+  //     conditions.push("products.name LIKE ?");
+  //     params.push(`%${name}%`);
+  //   }
+  //   if (category_id) {
+  //     conditions.push("products.category_id = ?");
+  //     params.push(category_id);
+  //   }
+  //   if (color_id) {
+  //     conditions.push("products.color_id = ?");
+  //     params.push(color_id);
+  //   }
+  //   if (size_id) {
+  //     conditions.push("products.size_id = ?");
+  //     params.push(size_id);
+  //   }
+  //   if (gender_id) {
+  //     conditions.push("products.gender_id = ?");
+  //     params.push(gender_id);
+  //   }
+
+  //   const whereClause =
+  //     conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+
+  //   const result = await BaseDatabase.connection.raw(
+  //     `
+  //     SELECT 
+  //       products.id, 
+  //       products.name, 
+  //       products.description, 
+  //       products.price, 
+  //       products.stock, 
+  //       products.created_at, 
+  //       categories.name AS category, 
+  //       colors.name AS color, 
+  //       sizes.name AS size, 
+  //       genders.name AS gender
+  //     FROM ${ProductDatabase.TABLE_PRODUCTS}
+  //     LEFT JOIN categories ON products.category_id = categories.category_id
+  //     LEFT JOIN colors ON products.color_id = colors.color_id
+  //     LEFT JOIN sizes ON products.size_id = sizes.size_id
+  //     LEFT JOIN genders ON products.gender_id = genders.gender_id
+  //     ${whereClause}
+  //   `,
+  //     params
+  //   );
+
+  //   return result;
+  // }
+
   public async findProducts(
     name?: string,
     category_id?: number,
     color_id?: number,
     size_id?: number,
-    gender_id?: number
+    gender_id?: number,
+    onlyActive?: boolean
   ) {
     let conditions: string[] = [];
     let params: any[] = [];
-
+  
     if (name) {
       conditions.push("products.name LIKE ?");
       params.push(`%${name}%`);
@@ -50,10 +111,14 @@ export class ProductDatabase extends BaseDatabase {
       conditions.push("products.gender_id = ?");
       params.push(gender_id);
     }
-
+  
+    if (onlyActive) {
+      conditions.push("products.active = TRUE");
+    }
+  
     const whereClause =
       conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
-
+  
     const result = await BaseDatabase.connection.raw(
       `
       SELECT 
@@ -76,9 +141,10 @@ export class ProductDatabase extends BaseDatabase {
     `,
       params
     );
-
+  
     return result;
   }
+  
 
   // --------------------------------------------------------------------
 
@@ -173,6 +239,20 @@ export class ProductDatabase extends BaseDatabase {
 
     await BaseDatabase.connection.raw(query, [...values, idToEdit]);
   }
+
+  // --------------------------------------------------------------------
+
+  public async updateProductActiveStatus(productId: string, active: boolean): Promise<void> {
+    await BaseDatabase.connection.raw(
+      `
+      UPDATE products
+      SET active = ?
+      WHERE id = ?
+    `,
+      [active, productId]
+    );
+}
+
 
   // --------------------------------------------------------------------
   // CATEGORY DATA

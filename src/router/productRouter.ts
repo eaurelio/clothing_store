@@ -25,6 +25,7 @@ productRouter.get("/getProduct/:id", productController.getProduct)
 productRouter.get("/getAllProducts", productController.getAllProducts)
 productRouter.post("/createProduct", productController.createProduct)
 productRouter.patch("/updateProduct/:id", productController.editProduct)
+productRouter.patch("/toggleProductActiveStatus", productController.toggleProductActiveStatus)
 
 productRouter.post("/createCategory", productController.createCategory)
 productRouter.post("/createColor", productController.createColor)

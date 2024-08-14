@@ -17,7 +17,8 @@ export interface UserDB {
     phones?: {
         number: string;
         type: string;
-    }[];
+    }[]
+    active?: string;
 }
 
 export interface UserDBOutput {

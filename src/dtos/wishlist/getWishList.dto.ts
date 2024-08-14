@@ -1,5 +1,4 @@
 import z from 'zod';
-import { WishlistDB } from "../../models/WishList";
 
 export interface GetWishListInputDTO {
   token: string;
@@ -7,9 +6,9 @@ export interface GetWishListInputDTO {
 
 export interface GetWishListOutputDTO {
   wishlist: {
-    id: string;
+    wishlist_id: string;
     userId: string;
-    createdAt: string;
+    created_at: string;
     items: { wishlistId: string; productId: string }[];
   };
 }

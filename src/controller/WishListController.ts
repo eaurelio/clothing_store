@@ -33,6 +33,8 @@ export class WishlistController {
     }
   };
 
+  // --------------------------------------------------------------------
+
   public getWishlist = async (req: Request, res: Response) => {
     try {
       const input = GetWishListSchema.parse({
@@ -47,11 +49,12 @@ export class WishlistController {
     }
   };
 
+  // --------------------------------------------------------------------
+
   public updateWishlist = async (req: Request, res: Response) => {
     try {
       const input = UpdateWishListSchema.parse({
         token: req.headers.authorization as string,
-        wishlistId: req.params.id,
         items: req.body.items.map((item: any) => ({ productId: item.productId })),
       });
 
@@ -63,11 +66,12 @@ export class WishlistController {
     }
   };
 
+  // --------------------------------------------------------------------
+
   public deleteWishlist = async (req: Request, res: Response) => {
     try {
       const input = DeleteWishListSchema.parse({
-        token: req.headers.authorization as string,
-        wishlistId: req.params.id,
+        token: req.headers.authorization as string
       });
 
       await this.wishlistBusiness.deleteWishlist(input);
