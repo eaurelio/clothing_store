@@ -3,6 +3,7 @@ import { UserBusiness } from "../business/UserBusiness";
 import { CreateUserSchema } from "../dtos/users/createUser.dto";
 import { LoginSchema } from "../dtos/users/login";
 import {
+  ToggleUserActiveStatusSchema,
   UpdatePasswordSchema,
   UpdateUserSchema,
 } from "../dtos/users/updateUser.dto";
@@ -14,19 +15,21 @@ import logger from "../logs/logger";
 export class UserController {
   constructor(private userBusiness: UserBusiness) {}
 
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
   // USER DATA
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
   public createUser = async (req: Request, res: Response) => {
     try {
       const input = CreateUserSchema.parse({
+        token: req.headers.authorization,
         personal_id: req.body.personal_id,
         entity_type: req.body.entity_type,
         name: req.body.name,
         email: req.body.email,
         password: req.body.password,
         birthdate: req.body.birthdate,
+        role: req.body.role,
         address: req.body.address,
         number: req.body.number,
         neighborhood: req.body.neighborhood,
@@ -44,7 +47,7 @@ export class UserController {
     }
   };
 
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
   public login = async (req: Request, res: Response) => {
     try {
@@ -61,16 +64,16 @@ export class UserController {
     }
   };
 
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
-  public getUserData = async (req: Request, res: Response) => {
+  public getUserById = async (req: Request, res: Response) => {
     try {
       const input = GetUserSchema.parse({
         userId: req.params.id as string,
         token: req.headers.authorization as string,
       });
 
-      const output = await this.userBusiness.getUserData(input);
+      const output = await this.userBusiness.getUserById(input);
       res.status(200).send(output);
     } catch (error) {
       logger.error(error);
@@ -78,13 +81,14 @@ export class UserController {
     }
   };
 
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
   public getAllUsers = async (req: Request, res: Response) => {
     try {
       const input = GetAllUserSchema.parse({
         q: req.query.q as string,
         token: req.headers.authorization as string,
+        onlyActive: req.body.onlyActive
       });
 
       const output = await this.userBusiness.getAllUsers(input);
@@ -95,7 +99,7 @@ export class UserController {
     }
   };
 
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
   public editUser = async (req: Request, res: Response) => {
     try {
@@ -125,7 +129,7 @@ export class UserController {
     }
   };
 
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
   public changePassword = async (req: Request, res: Response) => {
     try {
@@ -144,9 +148,26 @@ export class UserController {
     }
   };
 
-  // ------------------------------------------------------------------------------------------------------------------
+  public toggleUserActiveStatus = async (req: Request, res: Response) => {
+    try {
+      const input = ToggleUserActiveStatusSchema.parse({
+        email: req.body.email,
+        password: req.body.password,
+        activate: req.body.activate
+      });
+  
+      const output = await this.userBusiness.toggleUserActiveStatus(input);
+      res.status(200).send(output);
+    } catch (error) {
+      logger.error(error);
+      ErrorHandler.handleError(error, res);
+    }
+  };
+  
+
+  // --------------------------------------------------------------------
   // USER PHONE
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
   public addPhone = async (req: Request, res: Response) => {
     try {
@@ -166,7 +187,7 @@ export class UserController {
     }
   };
 
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
   public updatePhone = async (req: Request, res: Response) => {
     try {
@@ -186,7 +207,7 @@ export class UserController {
     }
   };
 
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
   public deletePhone = async (req: Request, res: Response) => {
     try {

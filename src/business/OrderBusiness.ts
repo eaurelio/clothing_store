@@ -9,8 +9,6 @@ import {
   GetOrdersOutputDTO,
 } from "../dtos/orders/getOrder.dto";
 import {
-  AddOrderItemInputDTO,
-  RemoveOrderItemInputDTO,
   UpdateOrderInputDTO,
   UpdateOrderOutputDTO,
 } from "../dtos/orders/updateOrder.dto";
@@ -24,10 +22,17 @@ import { NotFoundError } from "../errors/NotFoundError";
 import { HashManager } from "../services/HashManager";
 import { ErrorHandler } from "../errors/ErrorHandler";
 import { OrderItemDB } from "../models/OrderItem";
+import { ForbiddenError } from "../errors/ForbiddenError";
+import { ProductDatabase } from "../database/ProductDatabase";
+import { UserDatabase } from "../database/UserDatabase";
+import { USER_ROLES } from "../models/User";
+import { CancelOrderOutputDTO } from "../dtos/orders/deleteOrder.dto";
 
 export class OrderBusiness {
   constructor(
     private orderDatabase: OrderDatabase,
+    private productDatabase: ProductDatabase,
+    private userDatabase: UserDatabase,
     private idGenerator: IdGenerator,
     private tokenService: TokenService,
     private hashmanager: HashManager,
@@ -44,8 +49,32 @@ export class OrderBusiness {
       throw new UnauthorizedError("Invalid token");
     }
 
+    const user = await this.userDatabase.findUserById(userId);
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+
+    if (!user.active) {
+      throw new ForbiddenError("User account is deactivated");
+    }
+
     const id = this.idGenerator.generate();
     const orderDate = new Date().toISOString();
+
+    for (const item of items) {
+      const product = await this.productDatabase.findProductById(
+        item.productId
+      );
+      if (!product) {
+        throw new NotFoundError(`Product with ID ${item.productId} not found`);
+      }
+
+      if (!product.active) {
+        throw new ForbiddenError(
+          `Product with ID ${item.productId} is deactivated`
+        );
+      }
+    }
 
     const newOrder = new Order(id, userId, items, status_id, total, orderDate);
 
@@ -93,9 +122,11 @@ export class OrderBusiness {
     return output;
   };
 
-  public getOrder = async (
+  // --------------------------------------------------------------------
+
+  public getOrders = async (
     input: GetOrdersInputDTO
-  ): Promise<GetOrdersOutputDTO> => {
+  ): Promise<GetOrdersOutputDTO | GetAllOrdersOutputDTO> => {
     const { token, orderId } = input;
 
     const userId = this.tokenService.getUserIdFromToken(token);
@@ -103,48 +134,101 @@ export class OrderBusiness {
       throw new UnauthorizedError("Invalid token");
     }
 
-    const orderDB = await this.orderDatabase.findOrderById(orderId);
-
-    if (!orderDB || orderDB.user_id !== userId) {
-      throw new NotFoundError("Order not found");
+    const userDB = await this.userDatabase.findUserById(userId as string);
+    if (!userDB) {
+      throw new NotFoundError("User not found");
     }
 
-    const orderItemsDB = await this.orderDatabase.findOrderItemsByOrderId(
-      orderId
-    );
+    if (orderId) {
+      // Fetch a single order
+      const orderDB = await this.orderDatabase.findOrderById(orderId);
+      if (!orderDB || orderDB.user_id !== userId) {
+        throw new NotFoundError("Order not found");
+      }
 
-    const items = orderItemsDB.map((item: OrderItemDB) => ({
-      itemId: item.item_id,
-      productId: item.product_id,
-      quantity: item.quantity,
-      price: item.price,
-    }));
+      const orderItemsDB = await this.orderDatabase.findOrderItemsByOrderId(
+        orderId
+      );
+      const items = orderItemsDB.map((item: OrderItemDB) => ({
+        itemId: item.item_id,
+        productId: item.product_id,
+        quantity: item.quantity,
+        price: item.price,
+      }));
 
-    const output: GetOrdersOutputDTO = {
-      order: {
-        orderId: orderDB.order_id,
-        userId: orderDB.user_id,
-        status_name: orderDB.status_name,
-        total: orderDB.total,
-        orderDate: orderDB.order_date,
-        items: items,
-      },
-    };
+      return {
+        order: {
+          orderId: orderDB.order_id,
+          userId: orderDB.user_id,
+          status_name: orderDB.status_name,
+          total: orderDB.total,
+          orderDate: orderDB.order_date,
+          items: items,
+        },
+      };
+    } else {
+      // Fetch all orders for the user
+      const ordersDB = await this.orderDatabase.findOrdersByUserId(userId);
+      const ordersWithItems = await Promise.all(
+        ordersDB.map(async (order: OrderDBOutput) => {
+          const itemsDB = await this.orderDatabase.findOrderItemsByOrderId(
+            order.order_id
+          );
+          const items = itemsDB.map((item: OrderItemDB) => ({
+            itemId: item.item_id,
+            productId: item.product_id,
+            quantity: item.quantity,
+            price: item.price,
+          }));
 
-    return output;
+          return {
+            orderId: order.order_id,
+            userId: order.user_id,
+            status_name: order.status_name,
+            total: order.total,
+            orderDate: order.order_date,
+            items: items,
+          };
+        })
+      );
+
+      return {
+        orders: ordersWithItems,
+      };
+    }
   };
+
+  // --------------------------------------------------------------------
+
+  public getAllStatus = async () => {
+    const status = await this.orderDatabase.getAllStatus();
+    return status;
+  };
+
+  // --------------------------------------------------------------------
 
   public getAllOrders = async (
     input: GetAllOrdersInputDTO
   ): Promise<GetAllOrdersOutputDTO> => {
-    const { token } = input;
+    const { token, userId } = input;
 
-    const userId = this.tokenService.getUserIdFromToken(token);
-    if (!userId) {
+    const adminId = this.tokenService.getUserIdFromToken(token);
+    if (!adminId) {
       throw new UnauthorizedError("Invalid token");
     }
 
-    const ordersDB = await this.orderDatabase.findOrdersByUserId(userId);
+    const adminDB = await this.userDatabase.findUserById(adminId as string);
+    if (!adminDB) {
+      throw new NotFoundError("User not found");
+    }
+
+    if (adminDB.role !== USER_ROLES.ADMIN) {
+      throw new UnauthorizedError("Unauthorized user");
+    }
+
+    const ordersDB = await this.orderDatabase.findOrdersByUserId(
+      userId === undefined ? undefined : userId
+    );
 
     const ordersWithItems = await Promise.all(
       ordersDB.map(async (order: OrderDBOutput) => {
@@ -176,55 +260,7 @@ export class OrderBusiness {
     return output;
   };
 
-  // public updateOrder = async (
-  //   input: UpdateOrderInputDTO
-  // ): Promise<UpdateOrderOutputDTO> => {
-  //   const { token, orderId, status_id, total } = input;
-
-  //   const userId = this.tokenService.getUserIdFromToken(token);
-  //   if (!userId) {
-  //     throw new UnauthorizedError("Invalid token");
-  //   }
-
-  //   const orderDB = await this.orderDatabase.findOrderById(orderId);
-  //   if (!orderDB || orderDB.user_id !== userId) {
-  //     throw new NotFoundError("Order not found");
-  //   }
-
-  //   const updatedOrderDB: OrderDB = {
-  //     ...orderDB,
-  //     status_id: status_id !== undefined ? status_id : orderDB.status_id,
-  //     total: total !== undefined ? total : orderDB.total,
-  //   };
-
-  //   console.log(status_id)
-
-  //   await this.orderDatabase.updateOrder(orderId, updatedOrderDB);
-
-  //   const updatedItemsDB = await this.orderDatabase.findOrderItemsByOrderId(
-  //     orderId
-  //   );
-  //   const updatedItems = updatedItemsDB.map((item: OrderItemDB) => ({
-  //     itemId: item.item_id,
-  //     productId: item.product_id,
-  //     quantity: item.quantity,
-  //     price: item.price,
-  //   }));
-
-  //   const output: UpdateOrderOutputDTO = {
-  //     message: "Order updated successfully",
-  //     order: {
-  //       orderId: updatedOrderDB.order_id,
-  //       userId: updatedOrderDB.user_id,
-  //       orderDate: updatedOrderDB.order_date,
-  //       status: updatedOrderDB.status_id,
-  //       total: updatedOrderDB.total,
-  //       items: updatedItems,
-  //     },
-  //   };
-
-  //   return output;
-  // };
+  // --------------------------------------------------------------------
 
   public updateOrder = async (
     input: UpdateOrderInputDTO
@@ -236,15 +272,26 @@ export class OrderBusiness {
       throw new UnauthorizedError("Invalid token");
     }
 
+    const userDB = await this.userDatabase.findUserById(userId);
+    if (!userDB || !userDB.active) {
+      throw new ForbiddenError("User account is deactivated");
+    }
+
     const orderDB = await this.orderDatabase.findOrderById(orderId);
-    if (!orderDB || orderDB.user_id !== userId) {
+    if (!orderDB) {
       throw new NotFoundError("Order not found");
+    }
+
+    if (userDB.role !== USER_ROLES.ADMIN && orderDB.user_id !== userId) {
+      throw new ForbiddenError(
+        "You do not have permission to update this order"
+      );
     }
 
     const updatedOrderDB: OrderDB = {
       ...orderDB,
-      status_id: status_id !== undefined ? status_id : orderDB.status_id,
-      total: total !== undefined ? total : orderDB.total,
+      status_id: status_id ?? orderDB.status_id,
+      total: total ?? orderDB.total,
     };
 
     await this.orderDatabase.updateOrder(orderId, updatedOrderDB);
@@ -253,6 +300,13 @@ export class OrderBusiness {
 
     if (items) {
       for (const item of items) {
+        const productDB = await this.productDatabase.findProductById(
+          item.productId
+        );
+        if (!productDB || !productDB.active) {
+          throw new ForbiddenError(`Product ${item.productId} is deactivated`);
+        }
+
         const newOrderItemDB: OrderItemDB = {
           item_id: this.idGenerator.generate(),
           order_id: orderId,
@@ -289,157 +343,12 @@ export class OrderBusiness {
     return output;
   };
 
-  // public addOrderItem = async (
-  //   input: AddOrderItemInputDTO
-  // ): Promise<UpdateOrderOutputDTO> => {
-  //   const { token, orderId, productId, quantity, price } = input;
+  // --------------------------------------------------------------------
 
-  //   const userId = this.tokenService.getUserIdFromToken(token);
-  //   if (!userId) {
-  //     throw new UnauthorizedError("Invalid token");
-  //   }
-
-  //   const orderDB = await this.orderDatabase.findOrderById(orderId);
-  //   if (!orderDB || orderDB.user_id !== userId) {
-  //     throw new NotFoundError("Order not found");
-  //   }
-
-  //   const existingItem =
-  //     await this.orderDatabase.findOrderItemByOrderIdAndProductId(
-  //       orderId,
-  //       productId
-  //     );
-
-  //   if (existingItem) {
-  //     const newQuantity = existingItem.quantity + quantity;
-  //     if (newQuantity <= 0) {
-  //       await this.removeOrderItem({ token, orderId, productId });
-  //     } else {
-  //       await this.orderDatabase.updateOrderItemQuantity(
-  //         existingItem.item_id,
-  //         newQuantity
-  //       );
-  //     }
-  //   } else {
-  //     const newItemData: OrderItemDB = {
-  //       item_id: this.idGenerator.generate(),
-  //       order_id: orderId,
-  //       product_id: productId,
-  //       quantity,
-  //       price,
-  //     };
-
-  //     await this.orderDatabase.insertOrderItem(newItemData);
-  //   }
-
-  //   const updatedTotal = await this.calculateOrderTotal(orderId);
-  //   await this.orderDatabase.updateOrder(orderId, { total: updatedTotal });
-
-  //   const updatedOrderDB = await this.orderDatabase.findOrderById(orderId);
-
-  //   const updatedItemsDB = await this.orderDatabase.findOrderItemsByOrderId(
-  //     orderId
-  //   );
-  //   const updatedItems = updatedItemsDB.map((item: OrderItemDB) => ({
-  //     itemId: item.item_id,
-  //     productId: item.product_id,
-  //     quantity: item.quantity,
-  //     price: item.price,
-  //   }));
-
-  //   const output: UpdateOrderOutputDTO = {
-  //     message: "Order updated successfully",
-  //     order: {
-  //       orderId: updatedOrderDB.order_id,
-  //       userId: updatedOrderDB.user_id,
-  //       orderDate: updatedOrderDB.order_date,
-  //       status: updatedOrderDB.status_id,
-  //       total: updatedOrderDB.total,
-  //       items: updatedItems,
-  //     },
-  //   };
-
-  //   return output;
-  // };
-
-  // private calculateOrderTotal = async (orderId: string): Promise<number> => {
-  //   const items: OrderItemDB[] =
-  //     await this.orderDatabase.findOrderItemsByOrderId(orderId);
-  //   return items.reduce(
-  //     (total: number, item: OrderItemDB) => total + item.quantity * item.price,
-  //     0
-  //   );
-  // };
-
-  // public removeOrderItem = async (
-  //   input: RemoveOrderItemInputDTO
-  // ): Promise<UpdateOrderOutputDTO> => {
-  //   const { token, orderId, productId } = input;
-
-  //   const userId = this.tokenService.getUserIdFromToken(token);
-  //   if (!userId) {
-  //     throw new UnauthorizedError("Invalid token");
-  //   }
-
-  //   const orderDB = await this.orderDatabase.findOrderById(orderId);
-  //   if (!orderDB || orderDB.user_id !== userId) {
-  //     throw new NotFoundError("Order not found");
-  //   }
-
-  //   const existingItem =
-  //     await this.orderDatabase.findOrderItemByOrderIdAndProductId(
-  //       orderId,
-  //       productId
-  //     );
-
-  //   if (existingItem) {
-  //     const newQuantity = existingItem.quantity - 1;
-  //     if (newQuantity <= 0) {
-  //       await this.orderDatabase.deleteOrderItem(existingItem.item_id);
-  //     } else {
-  //       await this.orderDatabase.updateOrderItemQuantity(
-  //         existingItem.item_id,
-  //         newQuantity
-  //       );
-  //     }
-
-  //     const updatedTotal = await this.calculateOrderTotal(orderId);
-  //     await this.orderDatabase.updateOrder(orderId, { total: updatedTotal });
-  //   } else {
-  //     throw new NotFoundError("Item not found in the order");
-  //   }
-
-  //   const updatedOrderDB = await this.orderDatabase.findOrderById(orderId);
-
-  //   const updatedItemsDB = await this.orderDatabase.findOrderItemsByOrderId(
-  //     orderId
-  //   );
-  //   const updatedItems = updatedItemsDB.map((item: OrderItemDB) => ({
-  //     itemId: item.item_id,
-  //     productId: item.product_id,
-  //     quantity: item.quantity,
-  //     price: item.price,
-  //   }));
-
-  //   const output: UpdateOrderOutputDTO = {
-  //     message: "Order updated successfully",
-  //     order: {
-  //       orderId: updatedOrderDB.order_id,
-  //       userId: updatedOrderDB.user_id,
-  //       orderDate: updatedOrderDB.order_date,
-  //       status: updatedOrderDB.status_id,
-  //       total: updatedOrderDB.total,
-  //       items: updatedItems,
-  //     },
-  //   };
-
-  //   return output;
-  // };
-
-  public deleteOrder = async (input: {
+  public cancelOrder = async (input: {
     token: string;
     orderId: string;
-  }): Promise<void> => {
+  }): Promise<CancelOrderOutputDTO> => {
     const { token, orderId } = input;
 
     const userId = this.tokenService.getUserIdFromToken(token);
@@ -447,26 +356,32 @@ export class OrderBusiness {
       throw new UnauthorizedError("Invalid token");
     }
 
+    const userDB = await this.userDatabase.findUserById(userId);
+    if (!userDB || !userDB.active) {
+      throw new ForbiddenError("User account is deactivated");
+    }
+
     const orderDB = await this.orderDatabase.findOrderById(orderId);
-    if (!orderDB || orderDB.user_id !== userId) {
+    if (!orderDB) {
       throw new NotFoundError("Order not found");
     }
 
-    console.log(orderDB)
-
-    if (orderDB.status_id !== 1) {
-      throw new UnauthorizedError("Order cannot be deleted as its status is not 'Pending'");
+    if (userDB.role !== USER_ROLES.ADMIN && orderDB.user_id !== userId) {
+      throw new ForbiddenError(
+        "You do not have permission to cancel this order"
+      );
     }
 
-    await this.orderDatabase.deleteOrderItemsByOrderId(orderId);
+    if (orderDB.status_id !== 1) {
+      throw new UnauthorizedError(
+        "Order cannot be canceled as its status is not 'Pending'"
+      );
+    }
 
-    await this.orderDatabase.deleteOrder(orderId);
-  };
+    await this.orderDatabase.cancelOrderById(orderId);
 
-  public getAllStatus = async () => {
-    
-    const status = await this.orderDatabase.getAllStatus()
-
-    return status
+    return {
+      message: 'Order Cancelled sussesfully'
+    }
   };
 }

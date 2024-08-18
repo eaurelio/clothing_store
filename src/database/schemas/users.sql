@@ -18,7 +18,14 @@ CREATE TABLE users (
     country TEXT NOT NULL
 );
 
-select * from users
+ALTER TABLE users 
+ADD COLUMN active BOOLEAN DEFAULT true;
+
+ALTER TABLE users 
+ADD COLUMN last_login TEXT;
+
+select * from users;
+
 
 PRAGMA table_info(users);
 
@@ -30,7 +37,4 @@ CREATE TABLE phones (
     type TEXT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
-
-
-select * from phones;
 

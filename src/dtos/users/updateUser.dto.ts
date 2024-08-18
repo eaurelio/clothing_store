@@ -1,4 +1,5 @@
 import z from 'zod';
+import { LoginOutputDTO } from './login';
 
 export interface UpdateUserInputDTO {
   userId: string;
@@ -58,6 +59,7 @@ export const UpdateUserSchema = z.object({
   gender: z.string().min(1).optional(),
 }).transform(data => data as UpdateUserInputDTO);
 
+//----------------------------------------------------
 
 export interface UpdatePasswordInputDTO {
   userId: string;
@@ -76,3 +78,21 @@ export const UpdatePasswordSchema = z.object({
   oldPassword: z.string().min(8).max(16),
   newPassword: z.string().min(8).max(16)
 }).transform(data => data as UpdatePasswordInputDTO)
+
+//----------------------------------------------------
+
+export interface ToggleUserActiveStatusInputDTO {
+  email: string;
+  password: string;
+  activate: boolean; // True to activate, false to deactivate
+}
+
+export interface ToggleUserActiveStatusOutputDTO {
+  message: string;
+}
+
+export const ToggleUserActiveStatusSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+  activate: z.boolean() // True to activate, false to deactivate
+}).transform(data => data as ToggleUserActiveStatusInputDTO);

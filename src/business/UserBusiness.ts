@@ -17,6 +17,8 @@ import {
 } from "../models/User";
 import { IdGenerator } from "../services/idGenerator";
 import {
+  ToggleUserActiveStatusInputDTO,
+  ToggleUserActiveStatusOutputDTO,
   UpdatePasswordInputDTO,
   UpdatePasswordOutputDTO,
   UpdateUserInputDTO,
@@ -31,6 +33,8 @@ import TokenService from "../services/TokenService";
 import { PhoneDB } from "../models/Phones";
 import { ConflictError } from "../errors/ConflictError";
 import { ErrorHandler } from "../errors/ErrorHandler";
+import { GetAllUserInputDTO } from "../dtos/users/getUser.dto";
+import { ForbiddenError } from "../errors/ForbiddenError";
 
 export class UserBusiness {
   constructor(
@@ -41,20 +45,22 @@ export class UserBusiness {
     private errorHandler: ErrorHandler
   ) {}
 
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
   // USER DATA
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
   public createUser = async (
     input: CreateUserInputDTO
   ): Promise<CreateUserOutputDTO> => {
     const {
+      token,
       personal_id,
       entity_type,
       name,
       email,
       password,
       birthdate,
+      role,
       address,
       number,
       neighborhood,
@@ -78,6 +84,21 @@ export class UserBusiness {
       throw new ConflictError("'personal Id' already exists");
     }
 
+    let userRole = USER_ROLES.CLIENT;
+
+    if (token) {
+      const authorizedUser = this.tokenService.verifyToken(token);
+      if (authorizedUser?.role === USER_ROLES.ADMIN) {
+        if (role === USER_ROLES.ADMIN) {
+          userRole = USER_ROLES.ADMIN;
+        }
+      } else {
+        throw new ForbiddenError(
+          "User does not have permission to create an admin account"
+        );
+      }
+    }
+
     const id = this.idGenerator.generate();
     const hashedPassword = await this.hashManager.hash(password);
 
@@ -89,7 +110,7 @@ export class UserBusiness {
       email,
       hashedPassword,
       birthdate,
-      USER_ROLES.ADMIN,
+      userRole,
       new Date().toISOString(),
       address,
       number,
@@ -132,7 +153,7 @@ export class UserBusiness {
       }
     }
 
-    const token = this.tokenService.generateToken(
+    const newToken = this.tokenService.generateToken(
       newUser.getId(),
       newUser.getRole()
     );
@@ -144,14 +165,14 @@ export class UserBusiness {
         name: newUser.getName(),
         email: newUser.getEmail(),
         createdAt: newUser.getCreatedAt(),
-        token: token,
+        token: newToken,
       },
     };
 
     return output;
   };
 
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
   public login = async (input: LoginInputDTO): Promise<LoginOutputDTO> => {
     const { email, password } = input;
@@ -160,6 +181,10 @@ export class UserBusiness {
 
     if (!userDB) {
       throw new NotFoundError("'User' not registered");
+    }
+
+    if (!userDB.active) {
+      throw new ForbiddenError("User account is deactivated");
     }
 
     const hashedPassword = userDB.password;
@@ -171,6 +196,9 @@ export class UserBusiness {
     if (!isPasswordCorrect) {
       throw new BadRequestError("incorrect 'email' or 'password'");
     }
+
+    const lastLogin = new Date().toISOString();
+    await this.userDatabase.updateLastLogin(userDB.id, lastLogin);
 
     const token = this.tokenService.generateToken(userDB.id, userDB.role);
 
@@ -187,7 +215,7 @@ export class UserBusiness {
     return output;
   };
 
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
   public editUser = async (
     input: UpdateUserInputDTO
@@ -196,13 +224,17 @@ export class UserBusiness {
     const userIdFromToken = this.tokenService.getUserIdFromToken(token);
 
     if (userIdFromToken !== userId) {
-      throw new UnauthorizedError("You do not have access to change this user");
+      throw new ForbiddenError("You do not have access to change this user");
     }
 
     const userDB = await this.userDatabase.findUserById(userId);
 
     if (!userDB) {
       throw new NotFoundError("'UserId' not found");
+    }
+
+    if (!userDB.active) {
+      throw new ForbiddenError("User account is deactivated");
     }
 
     if (input.personal_id) {
@@ -222,30 +254,48 @@ export class UserBusiness {
       ? await this.hashManager.hash(input.password)
       : userDB.password;
 
+    // const updatedUser: UserDB = {
+    //   ...userDB,
+    //   personal_id:
+    //     input.personal_id !== undefined
+    //       ? input.personal_id
+    //       : userDB.personal_id,
+    //   entity_type:
+    //     input.entity_type !== undefined
+    //       ? (input.entity_type as EntityType)
+    //       : userDB.entity_type,
+    //   name: input.name !== undefined ? input.name : userDB.name,
+    //   email: input.email !== undefined ? input.email : userDB.email,
+    //   password: hashedPassword,
+    //   birthdate:
+    //     input.birthdate !== undefined ? input.birthdate : userDB.birthdate,
+    //   address: input.address !== undefined ? input.address : userDB.address,
+    //   number: input.number !== undefined ? input.number : userDB.number,
+    //   neighborhood:
+    //     input.neighborhood !== undefined
+    //       ? input.neighborhood
+    //       : userDB.neighborhood,
+    //   city: input.city !== undefined ? input.city : userDB.city,
+    //   country: input.country !== undefined ? input.country : userDB.country,
+    //   gender: input.gender !== undefined ? input.gender : userDB.gender,
+    //   role: userDB.role,
+    //   created_at: userDB.created_at,
+    // };
+
     const updatedUser: UserDB = {
       ...userDB,
-      personal_id:
-        input.personal_id !== undefined
-          ? input.personal_id
-          : userDB.personal_id,
-      entity_type:
-        input.entity_type !== undefined
-          ? (input.entity_type as EntityType)
-          : userDB.entity_type,
-      name: input.name !== undefined ? input.name : userDB.name,
-      email: input.email !== undefined ? input.email : userDB.email,
+      personal_id: input.personal_id ?? userDB.personal_id,
+      entity_type: (input.entity_type as EntityType) ?? userDB.entity_type,
+      name: input.name ?? userDB.name,
+      email: input.email ?? userDB.email,
       password: hashedPassword,
-      birthdate:
-        input.birthdate !== undefined ? input.birthdate : userDB.birthdate,
-      address: input.address !== undefined ? input.address : userDB.address,
-      number: input.number !== undefined ? input.number : userDB.number,
-      neighborhood:
-        input.neighborhood !== undefined
-          ? input.neighborhood
-          : userDB.neighborhood,
-      city: input.city !== undefined ? input.city : userDB.city,
-      country: input.country !== undefined ? input.country : userDB.country,
-      gender: input.gender !== undefined ? input.gender : userDB.gender,
+      birthdate: input.birthdate ?? userDB.birthdate,
+      address: input.address ?? userDB.address,
+      number: input.number ?? userDB.number,
+      neighborhood: input.neighborhood ?? userDB.neighborhood,
+      city: input.city ?? userDB.city,
+      country: input.country ?? userDB.country,
+      gender: input.gender ?? userDB.gender,
       role: userDB.role,
       created_at: userDB.created_at,
     };
@@ -273,6 +323,40 @@ export class UserBusiness {
     return output;
   };
 
+  // --------------------------------------------------------------------
+
+  // public changePassword = async (
+  //   input: UpdatePasswordInputDTO
+  // ): Promise<UpdatePasswordOutputDTO> => {
+  //   const { userId, token, oldPassword, newPassword } = input;
+
+  //   const userIdFromToken = this.tokenService.getUserIdFromToken(token);
+  //   if (userIdFromToken !== userId) {
+  //     throw new UnauthorizedError("Unauthorized access");
+  //   }
+
+  //   const user = await this.userDatabase.findUserById(userId);
+  //   if (!user) {
+  //     throw new NotFoundError("User not found");
+  //   }
+
+  //   const isOldPasswordCorrect = await this.hashManager.compare(
+  //     oldPassword,
+  //     user.password
+  //   );
+  //   if (!isOldPasswordCorrect) {
+  //     throw new BadRequestError("Old password is incorrect");
+  //   }
+
+  //   const hashedNewPassword = await this.hashManager.hash(newPassword);
+
+  //   await this.userDatabase.updatePassword(userId, hashedNewPassword);
+
+  //   return {
+  //     message: "Password updated successfully",
+  //   };
+  // };
+
   public changePassword = async (
     input: UpdatePasswordInputDTO
   ): Promise<UpdatePasswordOutputDTO> => {
@@ -286,6 +370,10 @@ export class UserBusiness {
     const user = await this.userDatabase.findUserById(userId);
     if (!user) {
       throw new NotFoundError("User not found");
+    }
+
+    if (!user.active) {
+      throw new ForbiddenError("User account is deactivated");
     }
 
     const isOldPasswordCorrect = await this.hashManager.compare(
@@ -305,26 +393,28 @@ export class UserBusiness {
     };
   };
 
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
-  public getUserData = async (input: any): Promise<UserDBOutput> => {
+  public getUserById = async (input: any): Promise<UserDBOutput> => {
     const { userId, token } = input;
 
     const userIdFromToken = this.tokenService.getUserIdFromToken(token);
     const userDB = await this.userDatabase.findUserById(
       userIdFromToken as string
     );
-    const authorizedUser = this.tokenService.verifyToken(token);
-
-    if (
-      authorizedUser?.userId !== userId &&
-      userDB?.role !== USER_ROLES.ADMIN
-    ) {
-      throw new UnauthorizedError("User not authorized");
-    }
 
     if (!userDB) {
       throw new NotFoundError("User not found");
+    }
+
+    const authorizedUser = this.tokenService.verifyToken(token);
+
+    if (authorizedUser?.userId !== userId && userDB.role !== USER_ROLES.ADMIN) {
+      throw new UnauthorizedError("User not authorized");
+    }
+
+    if (!userDB.active) {
+      throw new ForbiddenError("User account is deactivated");
     }
 
     const userFromDatabase = await this.userDatabase.findUserById(userId);
@@ -336,22 +426,28 @@ export class UserBusiness {
     return userOutput;
   };
 
-  public getAllUsers = async (input: any): Promise<UserDB[]> => {
-    const { q, token } = input;
+  // --------------------------------------------------------------------
+
+  public getAllUsers = async (input: GetAllUserInputDTO): Promise<UserDB[]> => {
+    const { q, token, onlyActive = true } = input;
 
     const userId = this.tokenService.getUserIdFromToken(token);
     const userDB = await this.userDatabase.findUserById(userId as string);
-    const authorizedUser = this.tokenService.verifyToken(token);
-
-    if (authorizedUser?.role !== USER_ROLES.ADMIN) {
-      throw new UnauthorizedError("User not authorized");
-    }
 
     if (!userDB) {
       throw new NotFoundError("User not found");
     }
 
-    const usersDB = await this.userDatabase.findUsers(q);
+    const authorizedUser = this.tokenService.verifyToken(token);
+    if (authorizedUser?.role !== USER_ROLES.ADMIN) {
+      throw new UnauthorizedError("User not authorized");
+    }
+
+    if (!userDB.active) {
+      throw new ForbiddenError("User account is deactivated");
+    }
+
+    const usersDB = await this.userDatabase.findUsers(q, onlyActive);
 
     const usersOutput = await Promise.all(
       usersDB.map(async (userDB) => {
@@ -365,16 +461,83 @@ export class UserBusiness {
     return usersOutput;
   };
 
+  // --------------------------------------------------------------------
+
+  public async toggleUserActiveStatus(
+    input: ToggleUserActiveStatusInputDTO
+  ): Promise<ToggleUserActiveStatusOutputDTO> {
+    const { email, password, activate } = input;
+
+    const userDB = await this.userDatabase.findUserByEmail(email);
+    if (!userDB) {
+      throw new NotFoundError("User not found");
+    }
+
+    const isPasswordCorrect = await this.hashManager.compare(
+      password,
+      userDB.password
+    );
+    if (!isPasswordCorrect) {
+      throw new BadRequestError("Incorrect password");
+    }
+
+    await this.userDatabase.updateUserActiveStatus(userDB.id, activate);
+
+    return {
+      message: `User ${activate ? "activated" : "deactivated"} successfully`,
+    };
+  }
+
+  // --------------------------------------------------------------------
   // PHONES
+  // --------------------------------------------------------------------
+
+  // public addPhone = async (input: PhoneInputDTO): Promise<PhoneOutputDTO> => {
+  //   const { userId, token, number, type } = input;
+
+  //   const userIdFromToken = this.tokenService.getUserIdFromToken(token);
+
+  //   const authorizedUser = this.tokenService.verifyToken(token);
+  //   if (!authorizedUser || authorizedUser.userId !== userIdFromToken) {
+  //     throw new UnauthorizedError("Unauthorized user");
+  //   }
+
+  //   const userDB = await this.userDatabase.findUserById(userId);
+  //   if (!userDB) {
+  //     throw new NotFoundError("User not found");
+  //   }
+
+  //   const phoneId = await this.idGenerator.generate();
+
+  //   const phoneData = {
+  //     phone_id: phoneId,
+  //     user_id: userId,
+  //     number,
+  //     type,
+  //   };
+
+  //   await this.userDatabase.insertPhone(phoneData);
+
+  //   const updatedPhone = await this.userDatabase.findPhoneById(phoneId);
+
+  //   if (!updatedPhone) {
+  //     throw new NotFoundError("Failed to retrieve updated phone data");
+  //   }
+
+  //   const output: PhoneOutputDTO = {
+  //     message: "Phone updated successfully",
+  //     phones: [updatedPhone],
+  //   };
+
+  //   return output;
+  // };
 
   public addPhone = async (input: PhoneInputDTO): Promise<PhoneOutputDTO> => {
-    const { userId, token, number, type } = input;
+    const { token, number, type } = input;
 
-    const userIdFromToken = this.tokenService.getUserIdFromToken(token);
-
-    const authorizedUser = this.tokenService.verifyToken(token);
-    if (!authorizedUser || authorizedUser.userId !== userIdFromToken) {
-      throw new UnauthorizedError("Unauthorized user");
+    const userId = this.tokenService.getUserIdFromToken(token);
+    if (!userId) {
+      throw new UnauthorizedError("Invalid token or user not authorized");
     }
 
     const userDB = await this.userDatabase.findUserById(userId);
@@ -382,9 +545,13 @@ export class UserBusiness {
       throw new NotFoundError("User not found");
     }
 
+    if (!userDB.active) {
+      throw new ForbiddenError("User account is deactivated");
+    }
+
     const phoneId = await this.idGenerator.generate();
 
-    const phoneData = {
+    const phoneData: PhoneDB = {
       phone_id: phoneId,
       user_id: userId,
       number,
@@ -400,86 +567,91 @@ export class UserBusiness {
     }
 
     const output: PhoneOutputDTO = {
-      message: "Phone updated successfully",
+      message: "Phone added successfully",
       phones: [updatedPhone],
     };
 
     return output;
   };
 
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
   public updatePhone = async (
     input: PhoneInputDTO
   ): Promise<PhoneOutputDTO> => {
-    const { userId, token, phoneId, number, type } = input;
-
-    const userIdFromToken = this.tokenService.getUserIdFromToken(token);
-
-    const authorizedUser = this.tokenService.verifyToken(token);
-    if (!authorizedUser || authorizedUser.userId !== userIdFromToken) {
-      throw new UnauthorizedError("Unauthorized user");
+    const { token, phoneId, number, type } = input;
+  
+    const userId = this.tokenService.getUserIdFromToken(token);
+    if (!userId) {
+      throw new UnauthorizedError("Invalid token or user not authorized");
     }
-
+  
     const userDB = await this.userDatabase.findUserById(userId);
     if (!userDB) {
       throw new NotFoundError("User not found");
     }
-
+  
+    if (!userDB.active) {
+      throw new ForbiddenError("User account is deactivated");
+    }
+  
     const phoneDB = await this.userDatabase.findPhoneById(phoneId);
     if (!phoneDB || phoneDB.user_id !== userId) {
       throw new NotFoundError("Phone not found or does not belong to the user");
     }
-
+  
     await this.userDatabase.updatePhone(phoneId, { number, type });
-
+  
     const updatedPhone = await this.userDatabase.findPhoneById(phoneId);
-
     if (!updatedPhone) {
       throw new NotFoundError("Failed to retrieve updated phone data");
     }
-
+  
     const output: PhoneOutputDTO = {
       message: "Phone updated successfully",
       phones: [updatedPhone],
     };
-
+  
     return output;
   };
+  
 
-  // ------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
   public deletePhone = async (
     input: PhoneDeleteDTO
   ): Promise<PhoneOutputDTO> => {
-    const { userId, token, phoneId } = input;
-
-    const userIdFromToken = this.tokenService.getUserIdFromToken(token);
-
-    const authorizedUser = this.tokenService.verifyToken(token);
-    if (!authorizedUser || authorizedUser.userId !== userIdFromToken) {
-      throw new UnauthorizedError("Unauthorized user");
+    const { token, phoneId } = input;
+  
+    const userId = this.tokenService.getUserIdFromToken(token);
+    if (!userId) {
+      throw new UnauthorizedError("Invalid token or user not authorized");
     }
-
+  
     const userDB = await this.userDatabase.findUserById(userId);
     if (!userDB) {
       throw new NotFoundError("User not found");
     }
-
+  
+    if (!userDB.active) {
+      throw new ForbiddenError("User account is deactivated");
+    }
+  
     const phoneDB = await this.userDatabase.findPhoneById(phoneId);
     if (!phoneDB || phoneDB.user_id !== userId) {
       throw new NotFoundError("Phone not found or does not belong to the user");
     }
-
+  
     await this.userDatabase.deletePhoneById(phoneId);
-
+  
     const updatedPhones = await this.userDatabase.getPhones(userId);
-
+  
     const output: PhoneOutputDTO = {
       message: "Phone deleted successfully",
       phones: updatedPhones,
     };
-
+  
     return output;
   };
+  
 }

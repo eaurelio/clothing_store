@@ -4,6 +4,7 @@ import { BadRequestError } from "./BadRequestError";
 import { NotFoundError } from "./NotFoundError";
 import { UnauthorizedError } from "./UnauthorizedError";
 import { ConflictError } from "./ConflictError";
+import { ForbiddenError } from "./ForbiddenError";
 
 export class ErrorHandler {
   public static handleError(error: any, res: Response): void {
@@ -14,7 +15,8 @@ export class ErrorHandler {
       error instanceof BadRequestError ||
       error instanceof NotFoundError ||
       error instanceof UnauthorizedError ||
-      error instanceof ConflictError
+      error instanceof ConflictError || 
+      error instanceof ForbiddenError
     ) {
       res.status(error.statusCode).json({ message: error.message });
     } else {
