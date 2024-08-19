@@ -1,7 +1,7 @@
 import z from 'zod';
 
 export interface DeleteWishListInputDTO {
-  token: string;
+  userId: string;
 }
 
 export interface DeleteWishListOutputDTO {
@@ -9,5 +9,5 @@ export interface DeleteWishListOutputDTO {
 }
 
 export const DeleteWishListSchema = z.object({
-  token: z.string(),
+  userId: z.string(),
 }).transform(data => data as DeleteWishListInputDTO)

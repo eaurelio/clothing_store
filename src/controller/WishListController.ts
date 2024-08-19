@@ -21,7 +21,7 @@ export class WishlistController {
   public createWishlist = async (req: Request, res: Response) => {
     try {
       const input = CreateWishListSchema.parse({
-        token: req.headers.authorization as string,
+        userId: req.params.id,
         items: req.body.items,
       });
 
@@ -38,7 +38,7 @@ export class WishlistController {
   public getWishlist = async (req: Request, res: Response) => {
     try {
       const input = GetWishListSchema.parse({
-        token: req.headers.authorization as string,
+        userId: req.params.id
       });
 
       const output = await this.wishlistBusiness.getWishlist(input);
@@ -54,7 +54,7 @@ export class WishlistController {
   public updateWishlist = async (req: Request, res: Response) => {
     try {
       const input = UpdateWishListSchema.parse({
-        token: req.headers.authorization as string,
+        userId: req.params.id,
         items: req.body.items.map((item: any) => ({ productId: item.productId })),
       });
 
@@ -71,7 +71,7 @@ export class WishlistController {
   public deleteWishlist = async (req: Request, res: Response) => {
     try {
       const input = DeleteWishListSchema.parse({
-        token: req.headers.authorization as string
+        userId: req.params.id
       });
 
       await this.wishlistBusiness.deleteWishlist(input);

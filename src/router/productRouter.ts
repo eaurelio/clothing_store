@@ -7,6 +7,8 @@ import { ProductController } from "../controller/ProductController"
 import { ProductBusiness } from "../business/ProductBusiness"
 import { UserDatabase } from "../database/UserDatabase";
 import { ErrorHandler } from "../errors/ErrorHandler";
+import { ensureAdmin } from "../middlewares/ensureAdminMiddleware";
+import { USER_ROLES } from "../models/User";
 
 export const productRouter = express.Router()
 
@@ -21,21 +23,21 @@ const productController = new ProductController(
   )
 )
 
-productRouter.get("/getProduct/:id", productController.getProduct)
-productRouter.get("/getAllProducts", productController.getAllProducts)
-productRouter.post("/createProduct", productController.createProduct)
-productRouter.patch("/updateProduct/:id", productController.editProduct)
-productRouter.patch("/toggleProductActiveStatus", productController.toggleProductActiveStatus)
+productRouter.get("/getProduct/:id", productController.getProduct) //
+productRouter.get("/getAllProducts", productController.getAllProducts) //
+productRouter.post("/createProduct", ensureAdmin(USER_ROLES.ADMIN), productController.createProduct) //
+productRouter.patch("/editProduct/:id", ensureAdmin(USER_ROLES.ADMIN), productController.editProduct) //
+productRouter.patch("/toggleProductActiveStatus/:id", ensureAdmin(USER_ROLES.ADMIN), productController.toggleProductActiveStatus) //
 
-productRouter.post("/createCategory", productController.createCategory)
-productRouter.post("/createColor", productController.createColor)
-productRouter.post("/createSize", productController.createSize)
-productRouter.post("/createGender", productController.createGender)
+productRouter.post("/createCategory", ensureAdmin(USER_ROLES.ADMIN), productController.createCategory) //
+productRouter.post("/createColor", ensureAdmin(USER_ROLES.ADMIN), productController.createColor) //
+productRouter.post("/createSize", ensureAdmin(USER_ROLES.ADMIN), productController.createSize) //
+productRouter.post("/createGender", ensureAdmin(USER_ROLES.ADMIN), productController.createGender) //
 
-productRouter.patch("/updateCategory/:id", productController.updateCategory)
-productRouter.patch("/updateColor/:id", productController.updateColor)
-productRouter.patch("/updateSize/:id", productController.updateSize)
-productRouter.patch("/updateGender/:id", productController.updateGender)
+productRouter.patch("/updateCategory/:id", ensureAdmin(USER_ROLES.ADMIN), productController.updateCategory) //
+productRouter.patch("/updateColor/:id", ensureAdmin(USER_ROLES.ADMIN), productController.updateColor) //
+productRouter.patch("/updateSize/:id", ensureAdmin(USER_ROLES.ADMIN), productController.updateSize) //
+productRouter.patch("/updateGender/:id", ensureAdmin(USER_ROLES.ADMIN), productController.updateGender)
 
 productRouter.get('/getAllCategories', productController.getAllCategories)
 productRouter.get('/getAllColors', productController.getAllColors)

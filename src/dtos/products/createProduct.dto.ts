@@ -43,7 +43,6 @@ export const CreateProductSchema = z.object({
 // --------------------------------------------------------------------
 
 export interface CreateCategoryInputDTO {
-  token: string;
   name: string;
   description?: string;
 }
@@ -58,7 +57,6 @@ export interface CreateCategoryOutputDTO {
 }
 
 export const CreateCategorySchema = z.object({
-  token: z.string().min(1),
   name: z.string().min(1),
   description: z.string().optional(),
 }).transform(data => data as CreateCategoryInputDTO);
@@ -66,8 +64,8 @@ export const CreateCategorySchema = z.object({
 // --------------------------------------------------------------------
 
 export interface CreateColorInputDTO {
-  token: string;
   name: string;
+  hex_code?: string;
 }
 
 export interface CreateColorOutputDTO {
@@ -79,14 +77,13 @@ export interface CreateColorOutputDTO {
 }
 
 export const CreateColorSchema = z.object({
-  token: z.string().min(1),
   name: z.string().min(3),
+  hex_code: z.string().min(4)
 }).transform(data => data as CreateColorInputDTO);
 
 // --------------------------------------------------------------------
 
 export interface CreateSizeInputDTO {
-  token: string;
   name: string;
 }
 
@@ -99,14 +96,12 @@ export interface CreateSizeOutputDTO {
 }
 
 export const CreateSizeSchema = z.object({
-  token: z.string().min(1),
   name: z.string().min(1),
 }).transform(data => data as CreateSizeInputDTO);
 
 // --------------------------------------------------------------------
 
 export interface CreateGenderInputDTO {
-  token: string;
   name: string;
 }
 
@@ -119,6 +114,5 @@ export interface CreateGenderOutputDTO {
 }
 
 export const CreateGenderSchema = z.object({
-  token: z.string().min(1),
   name: z.string().min(1),
 }).transform(data => data as CreateGenderInputDTO);

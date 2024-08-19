@@ -3,7 +3,6 @@ import { LoginOutputDTO } from './login';
 
 export interface UpdateUserInputDTO {
   userId: string;
-  token: string;
   personal_id?: string;
   entity_type?: string;
   name?: string;
@@ -44,7 +43,6 @@ export interface UpdateUserOutputDTO {
 
 export const UpdateUserSchema = z.object({
   userId: z.string(),
-  token: z.string(),
   personal_id: z.string().min(6).optional(),
   entity_type: z.string().min(6).optional(),
   name: z.string().min(2).optional(),
@@ -63,7 +61,6 @@ export const UpdateUserSchema = z.object({
 
 export interface UpdatePasswordInputDTO {
   userId: string;
-  token: string;
   oldPassword: string;
   newPassword: string;
 }
@@ -74,7 +71,6 @@ export interface UpdatePasswordOutputDTO {
 
 export const UpdatePasswordSchema = z.object({
   userId: z.string(),
-  token: z.string(),
   oldPassword: z.string().min(8).max(16),
   newPassword: z.string().min(8).max(16)
 }).transform(data => data as UpdatePasswordInputDTO)
@@ -84,7 +80,6 @@ export const UpdatePasswordSchema = z.object({
 export interface ToggleUserActiveStatusInputDTO {
   email: string;
   password: string;
-  activate: boolean; // True to activate, false to deactivate
 }
 
 export interface ToggleUserActiveStatusOutputDTO {
@@ -93,6 +88,5 @@ export interface ToggleUserActiveStatusOutputDTO {
 
 export const ToggleUserActiveStatusSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8),
-  activate: z.boolean() // True to activate, false to deactivate
+  password: z.string().min(8)
 }).transform(data => data as ToggleUserActiveStatusInputDTO);

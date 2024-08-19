@@ -1,9 +1,8 @@
 import z from "zod";
 
 export interface UpdateOrderInputDTO {
-  token: string;
   orderId: string;
-  status_id?: number;
+  statusId?: number;
   items?: {
     productId: string;
     quantity: number;
@@ -29,25 +28,10 @@ export interface UpdateOrderOutputDTO {
   };
 }
 
-export interface AddOrderItemInputDTO {
-  token: string;
-  orderId: string;
-  productId: string;
-  quantity: number;
-  price: number;
-}
-
-export interface RemoveOrderItemInputDTO {
-  token: string;
-  orderId: string;
-  productId: string;
-}
-
 export const UpdateOrderSchema = z
   .object({
-    token: z.string(),
     orderId: z.string(),
-    status_id: z.number().optional(),
+    statusId: z.number().optional(),
     items: z
       .array(
         z.object({
@@ -60,3 +44,5 @@ export const UpdateOrderSchema = z
     total: z.number().optional(),
   })
   .transform((data) => data as UpdateOrderInputDTO);
+
+

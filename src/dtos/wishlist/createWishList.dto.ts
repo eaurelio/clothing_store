@@ -2,7 +2,7 @@ import z from 'zod';
 import { WishlistItemDB } from "../../models/WishList";
 
 export interface CreateWishListInputDTO {
-  token: string;
+  userId: string;
   items: { productId: string }[];
 }
 
@@ -13,7 +13,7 @@ export interface CreateWishListOutputDTO {
 }
 
 export const CreateWishListSchema = z.object({
-  token: z.string(),
+  userId: z.string(),
   items: z.array(
     z.object({
       productId: z.string()

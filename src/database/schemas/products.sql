@@ -46,6 +46,7 @@ CREATE TABLE products (
     color_id INTEGER,
     size_id INTEGER,
     gender_id INTEGER,
+    active BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (category_id) REFERENCES categories(category_id),
     FOREIGN KEY (color_id) REFERENCES colors(color_id),
     FOREIGN KEY (size_id) REFERENCES sizes(size_id),
@@ -165,7 +166,8 @@ SELECT
     categories.name AS category, 
     colors.name AS color, 
     sizes.name AS size, 
-    genders.name AS gender
+    genders.name AS gender,
+    active as active
 FROM products
 LEFT JOIN categories ON products.category_id = categories.category_id
 LEFT JOIN colors ON products.color_id = colors.color_id
@@ -182,5 +184,4 @@ select * from sizes;
 
 select * from genders;
 
-select * from products
-where name like '%blue%'
+VACUUM;

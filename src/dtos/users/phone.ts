@@ -8,7 +8,7 @@ export interface Phone {
 }
 
 export interface PhoneInputDTO {
-  token: string,
+  userId: string,
   phoneId: string,
   number: string,
   type: string
@@ -19,20 +19,21 @@ export interface PhoneOutputDTO {
   phones: Phone[]
 }
 
-export interface PhoneDeleteDTO {
-  token: string,
-  phoneId: string
-}
-
 export const PhoneInputSchema = z.object({
   userId: z.string(),
-  token: z.string(),
   phoneId: z.string(),
   number: z.string(),
   type: z.string().optional()
 }).transform(data => data as PhoneInputDTO)
 
+// --------------------------------------------------------------------
+
+export interface PhoneDeleteDTO {
+  userId: string,
+  phoneId: string
+}
+
 export const PhoneDeleteSchema = z.object({
-  token: z.string(),
+  userId: z.string(),
   phoneId: z.string()
 }).transform(data => data as PhoneDeleteDTO)

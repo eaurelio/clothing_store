@@ -1,4 +1,5 @@
 import z from 'zod';
+import { USER_ROLES } from '../../models/User';
 
 export interface CreateUserInputDTO {
   token?: string;
@@ -9,7 +10,7 @@ export interface CreateUserInputDTO {
   email: string;
   password: string;
   birthdate: string; 
-  role?: string;
+  role?: USER_ROLES;
   address: string; 
   number: string; 
   neighborhood: string; 
@@ -54,5 +55,11 @@ export const CreateUserSchema = z.object({
   neighborhood: z.string().min(2).max(20),
   city: z.string().min(2).max(20),
   country: z.string().min(2).max(20),
+  phones: z.array(
+    z.object({
+      number: z.string(),
+      type: z.string()
+    })
+  )
 }).transform(data => data as CreateUserInputDTO);
 

@@ -31,9 +31,8 @@ export class OrderController {
   public createOrder = async (req: Request, res: Response) => {
     try {
       const input: CreateOrderInputDTO = CreateOrderSchema.parse({
-        token: req.headers.authorization as string,
+        userId: req.body.userId,
         items: req.body.items,
-        status_id: req.body.status_id,
         total: req.body.total,
       });
 
@@ -49,14 +48,14 @@ export class OrderController {
 
   // --------------------------------------------------------------------
 
-  public getOrders = async (req: Request, res: Response) => {
+  public getUserOrders = async (req: Request, res: Response) => {
     try {
       const input = GetOrdersSchema.parse({
         orderId: req.params.id,
-        token: req.headers.authorization as string,
+        userId: req.body.id
       });
 
-      const output: GetOrdersOutputDTO | GetAllOrdersOutputDTO = await this.orderBusiness.getOrders(
+      const output: GetOrdersOutputDTO | GetAllOrdersOutputDTO = await this.orderBusiness.getUserOrders(
         input
       );
       res.status(200).send(output);
@@ -71,8 +70,7 @@ export class OrderController {
   public getAllOrders = async (req: Request, res: Response) => {
     try {
       const input = GetAllOrdersSchema.parse({
-        userId: req.body.userId,
-        token: req.headers.authorization as string,
+        userId: req.body.userId
       });
 
       const output: GetAllOrdersOutputDTO =
@@ -100,9 +98,8 @@ export class OrderController {
   public updateOrder = async (req: Request, res: Response) => {
     try {
       const input: UpdateOrderInputDTO = UpdateOrderSchema.parse({
-        token: req.headers.authorization as string,
         orderId: req.params.id,
-        status_id: req.body.status_id,
+        statusId: req.body.statusId,
         items: req.body.items,
         total: req.body.total,
       });
@@ -124,7 +121,6 @@ export class OrderController {
   public cancelOrder = async (req: Request, res: Response) => {
     try {
       const input: CancelOrderInputDTO = CancelOrderSchema.parse({
-        token: req.headers.authorization as string,
         orderId: req.params.id,
       });
 

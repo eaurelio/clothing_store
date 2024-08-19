@@ -1,7 +1,7 @@
 import z from "zod";
 
 export interface GetOrdersInputDTO {
-  token: string;
+  userId: string;
   orderId?: string;
 }
 
@@ -23,7 +23,7 @@ export interface GetOrdersOutputDTO {
 
 export const GetOrdersSchema = z
   .object({
-    token: z.string(),
+    userId: z.string(),
     orderId: z.string().optional()
   })
   .transform((data) => data as GetOrdersInputDTO);
@@ -32,7 +32,6 @@ export const GetOrdersSchema = z
 
 export interface GetAllOrdersInputDTO {
   userId?: string | undefined;
-  token: string;
 }
 
 export interface GetAllOrdersOutputDTO {
@@ -53,7 +52,6 @@ export interface GetAllOrdersOutputDTO {
 
 export const GetAllOrdersSchema = z
   .object({
-    userId: z.string().optional(),
-    token: z.string(),
+    userId: z.string().optional()
   })
   .transform((data) => data as GetAllOrdersInputDTO);

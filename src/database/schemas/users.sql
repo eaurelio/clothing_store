@@ -8,7 +8,7 @@ CREATE TABLE users (
     gender TEXT,
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
-    role TEXT NOT NULL DEFAULT 'NORMAL',
+    role TEXT NOT NULL,
     created_at TEXT DEFAULT (DATETIME()) NOT NULL,
     birthdate TEXT NOT NULL,
     address TEXT NOT NULL,
@@ -38,3 +38,4 @@ CREATE TABLE phones (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
+select * from phones
