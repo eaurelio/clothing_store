@@ -93,3 +93,7 @@
 {"level":"error","statusCode":403,"timestamp":"2024-08-18T23:40:15.664Z"}
 {"level":"error","statusCode":403,"timestamp":"2024-08-18T23:40:23.606Z"}
 {"level":"error","statusCode":403,"timestamp":"2024-08-19T00:04:43.550Z"}
+{"level":"error","statusCode":403,"timestamp":"2024-08-19T00:22:51.140Z"}
+{"code":"SQLITE_CONSTRAINT","errno":19,"level":"error","timestamp":"2024-08-19T00:24:24.208Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-19T00:25:15.700Z"}
+{"level":"error","timestamp":"2024-08-19T00:31:12.501Z"}

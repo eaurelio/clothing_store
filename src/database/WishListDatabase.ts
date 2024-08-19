@@ -122,11 +122,11 @@ export class WishlistDatabase extends BaseDatabase {
 
   // --------------------------------------------------------------------
 
-  public async deleteWishlist(wishlist_id: string): Promise<void> {
+  public async deleteWishlist(user_id: string): Promise<void> {
     const query = `
     DELETE FROM ${WishlistDatabase.TABLE_WISHLISTS}
-    WHERE wishlist_id = ?
+    WHERE user_id = ?
   `;
-    await BaseDatabase.connection.raw(query, [wishlist_id]);
+    await BaseDatabase.connection.raw(query, [user_id]);
   }
 }
