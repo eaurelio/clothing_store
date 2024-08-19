@@ -379,15 +379,22 @@ export class ProductDatabase extends BaseDatabase {
 
 // --------------------------------------------------------------------
 
-  public async insertColor(newColorDB: ColorDB) {
-    await BaseDatabase.connection.raw(
-      `
-      INSERT INTO ${ProductDatabase.TABLE_COLORS} (name)
-      VALUES (?)
-    `,
-      [newColorDB.name]
-    );
-  }
+public async insertColor(newColorDB: ColorDB) {
+  const fields = Object.keys(newColorDB);
+  const values = Object.values(newColorDB);
+
+  const placeholders = fields.map(() => '?').join(', ');
+
+  const query = `
+    INSERT INTO ${ProductDatabase.TABLE_COLORS} (${fields.join(', ')})
+    VALUES (${placeholders})
+  `;
+
+  console.log(values)
+
+  await BaseDatabase.connection.raw(query, values);
+}
+
 
   // --------------------------------------------------------------------
 

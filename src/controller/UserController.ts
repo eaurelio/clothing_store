@@ -70,7 +70,6 @@ export class UserController {
     try {
       const input = GetUserSchema.parse({
         userId: req.params.id as string,
-        token: req.headers.authorization as string,
       });
 
       const output = await this.userBusiness.getUserById(input);
@@ -83,11 +82,10 @@ export class UserController {
 
   // --------------------------------------------------------------------
 
-  public getAllUsers = async (req: Request, res: Response) => {
+  public getUsers = async (req: Request, res: Response) => {
     try {
       const input = GetAllUserSchema.parse({
         q: req.query.q as string,
-        token: req.headers.authorization as string,
         onlyActive: req.body.onlyActive
       });
 
@@ -105,7 +103,6 @@ export class UserController {
     try {
       const input = UpdateUserSchema.parse({
         userId: req.params.id,
-        token: req.headers.authorization,
         personal_id: req.body.personal_id,
         entity_type: req.body.entity_type,
         name: req.body.name,
@@ -135,7 +132,6 @@ export class UserController {
     try {
       const input = UpdatePasswordSchema.parse({
         userId: req.params.id,
-        token: req.headers.authorization,
         oldPassword: req.body.oldPassword,
         newPassword: req.body.newPassword,
       });
@@ -152,8 +148,7 @@ export class UserController {
     try {
       const input = ToggleUserActiveStatusSchema.parse({
         email: req.body.email,
-        password: req.body.password,
-        activate: req.body.activate
+        password: req.body.password
       });
   
       const output = await this.userBusiness.toggleUserActiveStatus(input);
@@ -173,7 +168,6 @@ export class UserController {
     try {
       const input = PhoneInputSchema.parse({
         userId: req.params.id,
-        token: req.headers.authorization,
         phoneId: req.body.phoneId,
         number: req.body.number,
         type: req.body.type,
@@ -193,7 +187,6 @@ export class UserController {
     try {
       const input = PhoneInputSchema.parse({
         userId: req.params.id,
-        token: req.headers.authorization,
         phoneId: req.body.phoneId,
         number: req.body.number,
         type: req.body.type,
@@ -213,7 +206,7 @@ export class UserController {
     try {
       const input = PhoneDeleteSchema.parse({
         userId: req.params.id,
-        token: req.headers.authorization,
+        // token: req.headers.authorization,
         phoneId: req.body.phoneId,
       });
 

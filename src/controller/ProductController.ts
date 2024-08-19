@@ -56,7 +56,6 @@ export class ProductController {
   public editProduct = async (req: Request, res: Response) => {
     try {
       const input = UpdateProductSchema.parse({
-        token: req.headers.authorization,
         id: req.params.id,
         name: req.body.name,
         description: req.body.description,
@@ -142,8 +141,7 @@ export class ProductController {
   public toggleProductActiveStatus = async (req: Request, res: Response) => {
     try {
       const input = ToggleProductActiveStatusSchema.parse({
-        token: req.headers.authorization,
-        productId: req.body.productId
+        productId: req.params.id
       });
 
       const output = await this.productBusiness.toggleProductActiveStatus(input);
@@ -172,7 +170,6 @@ export class ProductController {
   public createCategory = async (req: Request, res: Response) => {
     try {
       const input = CreateCategorySchema.parse({
-        token: req.headers.authorization as string,
         name: req.body.name,
         description: req.body.description,
       });
@@ -188,7 +185,6 @@ export class ProductController {
   public updateCategory = async (req: Request, res: Response) => {
     try {
       const input = UpdateCategorySchema.parse({
-        token: req.headers.authorization as string,
         id: req.params.id,
         name: req.body.name,
         description: req.body.description,
@@ -218,8 +214,8 @@ export class ProductController {
   public createColor = async (req: Request, res: Response) => {
     try {
       const input = CreateColorSchema.parse({
-        token: req.headers.authorization as string,
         name: req.body.name,
+        hex_code: req.body.hex_code
       });
 
       const output = await this.productBusiness.createColor(input);
@@ -233,9 +229,9 @@ export class ProductController {
   public updateColor = async (req: Request, res: Response) => {
     try {
       const input = UpdateColorSchema.parse({
-        token: req.headers.authorization as string,
         id: req.params.id,
         name: req.body.name,
+        hex_code: req.body.hex_code,
       });
 
       const output = await this.productBusiness.updateColor(input);
@@ -262,7 +258,6 @@ export class ProductController {
   public createSize = async (req: Request, res: Response) => {
     try {
       const input = CreateSizeSchema.parse({
-        token: req.headers.authorization as string,
         name: req.body.name,
       });
 
@@ -306,7 +301,6 @@ export class ProductController {
   public createGender = async (req: Request, res: Response) => {
     try {
       const input = CreateGenderSchema.parse({
-        token: req.headers.authorization as string,
         name: req.body.name,
       });
 

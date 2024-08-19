@@ -52,8 +52,11 @@ export class UserDatabase extends BaseDatabase {
 
     const result = await BaseDatabase.connection.raw(query, params);
 
+    console.log('----------------------------------',result)
+
     return result;
 }
+
 
 
   // --------------------------------------------------------------------
@@ -144,7 +147,6 @@ export class UserDatabase extends BaseDatabase {
   // --------------------------------------------------------------------
 
   public async updateLastLogin(id: string, updatedAt: string): Promise<void> {
-    console.log(id, updatedAt)
     await BaseDatabase.connection.raw(
       `
       UPDATE ${UserDatabase.TABLE_USERS}
@@ -217,6 +219,7 @@ export class UserDatabase extends BaseDatabase {
   // --------------------------------------------------------------------
 
   public async insertPhone(phoneData: PhoneDB): Promise<void> {
+    console.log(phoneData)
     const columns = Object.keys(phoneData);
     const placeholders = columns.map(() => "?").join(", ");
     const values = Object.values(phoneData);

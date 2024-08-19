@@ -26,7 +26,7 @@ import { ForbiddenError } from "../errors/ForbiddenError";
 import { ProductDatabase } from "../database/ProductDatabase";
 import { UserDatabase } from "../database/UserDatabase";
 import { USER_ROLES } from "../models/User";
-import { CancelOrderOutputDTO } from "../dtos/orders/deleteOrder.dto";
+import { CancelOrderInputDTO, CancelOrderOutputDTO } from "../dtos/orders/deleteOrder.dto";
 
 export class OrderBusiness {
   constructor(
@@ -42,24 +42,12 @@ export class OrderBusiness {
   public createOrder = async (
     input: CreateOrderInputDTO
   ): Promise<CreateOrderOutputDTO> => {
-    const { token, items, status_id, total } = input;
+    const { items, total, userId } = input;
 
-    const userId = this.tokenService.getUserIdFromToken(token);
-    if (!userId) {
-      throw new UnauthorizedError("Invalid token");
-    }
-
-    const user = await this.userDatabase.findUserById(userId);
-    if (!user) {
-      throw new NotFoundError("User not found");
-    }
-
-    if (!user.active) {
-      throw new ForbiddenError("User account is deactivated");
-    }
-
-    const id = this.idGenerator.generate();
+    
+    const orderId = this.idGenerator.generate();
     const orderDate = new Date().toISOString();
+    const status_id = 1;
 
     for (const item of items) {
       const product = await this.productDatabase.findProductById(
@@ -76,7 +64,7 @@ export class OrderBusiness {
       }
     }
 
-    const newOrder = new Order(id, userId, items, status_id, total, orderDate);
+    const newOrder = new Order(orderId, userId, items, status_id, total, orderDate);
 
     const newOrderDB: OrderDB = {
       order_id: newOrder.getOrderId(),
@@ -124,20 +112,10 @@ export class OrderBusiness {
 
   // --------------------------------------------------------------------
 
-  public getOrders = async (
+  public getUserOrders = async (
     input: GetOrdersInputDTO
   ): Promise<GetOrdersOutputDTO | GetAllOrdersOutputDTO> => {
-    const { token, orderId } = input;
-
-    const userId = this.tokenService.getUserIdFromToken(token);
-    if (!userId) {
-      throw new UnauthorizedError("Invalid token");
-    }
-
-    const userDB = await this.userDatabase.findUserById(userId as string);
-    if (!userDB) {
-      throw new NotFoundError("User not found");
-    }
+    const { orderId, userId } = input;
 
     if (orderId) {
       // Fetch a single order
@@ -210,21 +188,7 @@ export class OrderBusiness {
   public getAllOrders = async (
     input: GetAllOrdersInputDTO
   ): Promise<GetAllOrdersOutputDTO> => {
-    const { token, userId } = input;
-
-    const adminId = this.tokenService.getUserIdFromToken(token);
-    if (!adminId) {
-      throw new UnauthorizedError("Invalid token");
-    }
-
-    const adminDB = await this.userDatabase.findUserById(adminId as string);
-    if (!adminDB) {
-      throw new NotFoundError("User not found");
-    }
-
-    if (adminDB.role !== USER_ROLES.ADMIN) {
-      throw new UnauthorizedError("Unauthorized user");
-    }
+    const { userId } = input;
 
     const ordersDB = await this.orderDatabase.findOrdersByUserId(
       userId === undefined ? undefined : userId
@@ -265,32 +229,16 @@ export class OrderBusiness {
   public updateOrder = async (
     input: UpdateOrderInputDTO
   ): Promise<UpdateOrderOutputDTO> => {
-    const { token, orderId, status_id, total, items } = input;
-
-    const userId = this.tokenService.getUserIdFromToken(token);
-    if (!userId) {
-      throw new UnauthorizedError("Invalid token");
-    }
-
-    const userDB = await this.userDatabase.findUserById(userId);
-    if (!userDB || !userDB.active) {
-      throw new ForbiddenError("User account is deactivated");
-    }
+    const { orderId, statusId, total, items } = input;
 
     const orderDB = await this.orderDatabase.findOrderById(orderId);
     if (!orderDB) {
       throw new NotFoundError("Order not found");
     }
 
-    if (userDB.role !== USER_ROLES.ADMIN && orderDB.user_id !== userId) {
-      throw new ForbiddenError(
-        "You do not have permission to update this order"
-      );
-    }
-
     const updatedOrderDB: OrderDB = {
       ...orderDB,
-      status_id: status_id ?? orderDB.status_id,
+      statusId: statusId ?? orderDB.status_id,
       total: total ?? orderDB.total,
     };
 
@@ -345,31 +293,12 @@ export class OrderBusiness {
 
   // --------------------------------------------------------------------
 
-  public cancelOrder = async (input: {
-    token: string;
-    orderId: string;
-  }): Promise<CancelOrderOutputDTO> => {
-    const { token, orderId } = input;
-
-    const userId = this.tokenService.getUserIdFromToken(token);
-    if (!userId) {
-      throw new UnauthorizedError("Invalid token");
-    }
-
-    const userDB = await this.userDatabase.findUserById(userId);
-    if (!userDB || !userDB.active) {
-      throw new ForbiddenError("User account is deactivated");
-    }
+  public cancelOrder = async (input: CancelOrderInputDTO): Promise<CancelOrderOutputDTO> => {
+    const { orderId } = input;
 
     const orderDB = await this.orderDatabase.findOrderById(orderId);
     if (!orderDB) {
       throw new NotFoundError("Order not found");
-    }
-
-    if (userDB.role !== USER_ROLES.ADMIN && orderDB.user_id !== userId) {
-      throw new ForbiddenError(
-        "You do not have permission to cancel this order"
-      );
     }
 
     if (orderDB.status_id !== 1) {

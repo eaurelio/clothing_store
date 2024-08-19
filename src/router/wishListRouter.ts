@@ -8,6 +8,8 @@ import { WishlistDatabase } from "../database/WishListDatabase";
 import { WishlistBusiness } from "../business/WishListBusiness";
 import { ProductDatabase } from "../database/ProductDatabase";
 import { UserDatabase } from "../database/UserDatabase";
+import { authMiddleware } from "../middlewares/authMiddleware";
+import { USER_ROLES } from "../models/User";
 
 export const wishListRouter = express.Router()
 
@@ -23,7 +25,7 @@ const wishListController = new WishlistController(
   )
 )
 
-wishListRouter.get('/getWishList', wishListController.getWishlist)
-wishListRouter.post('/createWishList', wishListController.createWishlist)
-wishListRouter.patch('/updateWishList', wishListController.updateWishlist)
-wishListRouter.delete('/deleteWishList', wishListController.deleteWishlist)
+wishListRouter.get('/getWishList/:id', authMiddleware([USER_ROLES.CLIENT]), wishListController.getWishlist)
+wishListRouter.post('/createWishList/:id', authMiddleware([USER_ROLES.CLIENT]), wishListController.createWishlist)
+wishListRouter.patch('/updateWishList/:id', authMiddleware([USER_ROLES.CLIENT]), wishListController.updateWishlist)
+wishListRouter.delete('/deleteWishList', authMiddleware([USER_ROLES.CLIENT]), wishListController.deleteWishlist)

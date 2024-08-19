@@ -4,7 +4,7 @@ import { WishlistItemDB } from "../../models/WishList";
 import { GetWishListOutputDTO } from './getWishList.dto';
 
 export interface UpdateWishListInputDTO {
-  token: string;
+  userId: string;
   items: { productId: string }[];
 }
 
@@ -19,7 +19,7 @@ export interface UpdateWishListOutputDTO {
 }
 
 export const UpdateWishListSchema = z.object({
-  token: z.string(),
+  userId: z.string(),
   items: z.array(
     z.object({
       productId: z.string()

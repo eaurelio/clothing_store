@@ -80,16 +80,16 @@ export class ProductBusiness {
       gender_id,
     } = input;
 
-    const userId = this.tokenService.getUserIdFromToken(token);
-    const userDB = await this.userDatabase.findUserById(userId as string);
+    // const userId = this.tokenService.getUserIdFromToken(token);
+    // const userDB = await this.userDatabase.findUserById(userId as string);
 
-    if (!userDB) {
-      throw new NotFoundError("User not found");
-    }
+    // if (!userDB) {
+    //   throw new NotFoundError("User not found");
+    // }
 
-    if (userDB.role !== USER_ROLES.ADMIN) {
-      throw new UnauthorizedError("Unauthorized user");
-    }
+    // if (userDB.role !== USER_ROLES.ADMIN) {
+    //   throw new UnauthorizedError("Unauthorized user");
+    // }
 
     const existingProduct = await this.productDatabase.findProductByName(name);
     if (existingProduct) {
@@ -216,43 +216,13 @@ export class ProductBusiness {
   public editProduct = async (
     input: UpdateProductInputDTO
   ): Promise<UpdateProductOutputDTO> => {
-    const { id, token } = input;
-    const userId = this.tokenService.getUserIdFromToken(token);
-    const userDB = await this.userDatabase.findUserById(userId as string);
-
-    if (!userDB) {
-      throw new NotFoundError("User not found");
-    }
-
-    if (userDB.role !== USER_ROLES.ADMIN) {
-      throw new UnauthorizedError("Unauthorized user");
-    }
+    const { id } = input;
 
     const productDB = await this.productDatabase.findPureProductById(id);
 
     if (!productDB) {
       throw new NotFoundError("Product not found");
     }
-
-    // const updatedProduct: ProductDB = {
-    //   ...productDB,
-    //   name: input.name !== undefined ? input.name : productDB.name,
-    //   description:
-    //     input.description !== undefined
-    //       ? input.description
-    //       : productDB.description,
-    //   price: input.price !== undefined ? input.price : productDB.price,
-    //   stock: input.stock !== undefined ? input.stock : productDB.stock,
-    //   category_id:
-    //     input.category_id !== undefined
-    //       ? input.category_id
-    //       : productDB.category_id,
-    //   color_id:
-    //     input.color_id !== undefined ? input.color_id : productDB.color_id,
-    //   size_id: input.size_id !== undefined ? input.size_id : productDB.size_id,
-    //   gender_id:
-    //     input.gender_id !== undefined ? input.gender_id : productDB.gender_id,
-    // };
 
     const updatedProduct: ProductDB = {
       ...productDB,
@@ -302,19 +272,15 @@ export class ProductBusiness {
   public toggleProductActiveStatus = async (
     input: ToggleProductActiveStatusInputDTO
   ): Promise<ToggleProductActiveStatusOutputDTO> => {
-    const { token, productId } = input;
+    const { productId } = input;
   
-    const authorizedUser = this.tokenService.verifyToken(token);
-    if (!authorizedUser || authorizedUser.role !== USER_ROLES.ADMIN) {
-      throw new UnauthorizedError("User not authorized");
-    }
-  
-    const product = await this.productDatabase.findProductById(productId);
+    const product = await this.productDatabase.findPureProductById(productId);
     if (!product) {
       throw new NotFoundError("Product not found");
     }
   
     const activate = !product.active;
+
     await this.productDatabase.updateProductActiveStatus(productId, activate);
   
     return {
@@ -336,18 +302,7 @@ export class ProductBusiness {
   public createCategory = async (
     input: CreateCategoryInputDTO
   ): Promise<CreateCategoryOutputDTO> => {
-    const { token, name, description } = input;
-
-    const userId = this.tokenService.getUserIdFromToken(token);
-    const userDB = await this.userDatabase.findUserById(userId as string);
-
-    if (!userDB) {
-      throw new NotFoundError("User not found");
-    }
-
-    if (userDB.role !== USER_ROLES.ADMIN) {
-      throw new UnauthorizedError("Unauthorized user");
-    }
+    const { name, description } = input;
 
     const existingCategory = await this.productDatabase.findCategoryByName(
       name
@@ -386,18 +341,7 @@ export class ProductBusiness {
   public updateCategory = async (
     input: UpdateCategoryInputDTO
   ): Promise<UpdateCategoryOutputDTO> => {
-    const { token, id, name, description } = input;
-
-    const userId = this.tokenService.getUserIdFromToken(token);
-    const userDB = await this.userDatabase.findUserById(userId as string);
-
-    if (!userDB) {
-      throw new NotFoundError("User not found");
-    }
-
-    if (userDB.role !== USER_ROLES.ADMIN) {
-      throw new UnauthorizedError("Unauthorized user");
-    }
+    const { id, name, description } = input;
 
     const categoryDB = await this.productDatabase.findCategoryById(id);
 
@@ -432,18 +376,7 @@ export class ProductBusiness {
   public createColor = async (
     input: CreateColorInputDTO
   ): Promise<CreateColorOutputDTO> => {
-    const { token, name } = input;
-
-    const userId = this.tokenService.getUserIdFromToken(token);
-    const userDB = await this.userDatabase.findUserById(userId as string);
-
-    if (!userDB) {
-      throw new NotFoundError("User not found");
-    }
-
-    if (userDB.role !== USER_ROLES.ADMIN) {
-      throw new UnauthorizedError("Unauthorized user");
-    }
+    const { name, hex_code } = input;
 
     const existingColor = await this.productDatabase.findColorByName(name);
     if (existingColor) {
@@ -452,6 +385,7 @@ export class ProductBusiness {
 
     const newColorDB: ColorDB = {
       name,
+      hex_code
     };
 
     await this.productDatabase.insertColor(newColorDB);
@@ -475,18 +409,7 @@ export class ProductBusiness {
   public updateColor = async (
     input: UpdateColorInputDTO
   ): Promise<UpdateColorOutputDTO> => {
-    const { token, id, name } = input;
-
-    const userId = this.tokenService.getUserIdFromToken(token);
-    const userDB = await this.userDatabase.findUserById(userId as string);
-
-    if (!userDB) {
-      throw new NotFoundError("User not found");
-    }
-
-    if (userDB.role !== USER_ROLES.ADMIN) {
-      throw new UnauthorizedError("Unauthorized user");
-    }
+    const { id, name, hex_code } = input;
 
     const colorDB = await this.productDatabase.findColorById(id);
 
@@ -497,6 +420,7 @@ export class ProductBusiness {
     const updatedColor = {
       ...colorDB,
       name: name ?? colorDB.name,
+      hex_code: hex_code ?? colorDB.hex_code
     };
 
     await this.productDatabase.updateColor(id, updatedColor);
@@ -519,18 +443,7 @@ export class ProductBusiness {
   public createSize = async (
     input: CreateSizeInputDTO
   ): Promise<CreateSizeOutputDTO> => {
-    const { token, name } = input;
-
-    const userId = this.tokenService.getUserIdFromToken(token);
-    const userDB = await this.userDatabase.findUserById(userId as string);
-
-    if (!userDB) {
-      throw new NotFoundError("User not found");
-    }
-
-    if (userDB.role !== USER_ROLES.ADMIN) {
-      throw new UnauthorizedError("Unauthorized user");
-    }
+    const { name } = input;
 
     const existingSize = await this.productDatabase.findSizeByName(name);
     if (existingSize) {
@@ -562,18 +475,7 @@ export class ProductBusiness {
   public updateSize = async (
     input: UpdateSizeInputDTO
   ): Promise<UpdateSizeOutputDTO> => {
-    const { token, id, name } = input;
-
-    const userId = this.tokenService.getUserIdFromToken(token);
-    const userDB = await this.userDatabase.findUserById(userId as string);
-
-    if (!userDB) {
-      throw new NotFoundError("User not found");
-    }
-
-    if (userDB.role !== USER_ROLES.ADMIN) {
-      throw new UnauthorizedError("Unauthorized user");
-    }
+    const { id, name } = input;
 
     const sizeDB = await this.productDatabase.findSizeById(id);
 
@@ -606,18 +508,7 @@ export class ProductBusiness {
   public createGender = async (
     input: CreateGenderInputDTO
   ): Promise<CreateGenderOutputDTO> => {
-    const { token, name } = input;
-
-    const userId = this.tokenService.getUserIdFromToken(token);
-    const userDB = await this.userDatabase.findUserById(userId as string);
-
-    if (!userDB) {
-      throw new NotFoundError("User not found");
-    }
-
-    if (userDB.role !== USER_ROLES.ADMIN) {
-      throw new UnauthorizedError("Unauthorized user");
-    }
+    const { name } = input;
 
     const existingGender = await this.productDatabase.findGenderByName(name);
     if (existingGender) {
@@ -649,18 +540,7 @@ export class ProductBusiness {
   public updateGender = async (
     input: UpdateGenderInputDTO
   ): Promise<UpdateGenderOutputDTO> => {
-    const { token, id, name } = input;
-
-    const userId = this.tokenService.getUserIdFromToken(token);
-    const userDB = await this.userDatabase.findUserById(userId as string);
-
-    if (!userDB) {
-      throw new NotFoundError("User not found");
-    }
-
-    if (userDB.role !== USER_ROLES.ADMIN) {
-      throw new UnauthorizedError("Unauthorized user");
-    }
+    const {id, name } = input;
 
     const genderDB = await this.productDatabase.findGenderById(id);
 

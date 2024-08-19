@@ -133,6 +133,7 @@ export interface CategoryDB {
   
   export interface ColorDB {
     name: string;
+    hex_code?: string
   }
   export interface ColorDBOutput {
     color_id: number,
