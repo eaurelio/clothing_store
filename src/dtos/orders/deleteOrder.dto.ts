@@ -10,7 +10,7 @@ export interface DeleteOrderOutputDTO {
 
 export const DeleteOrderSchema = z
   .object({
-    orderId: z.string().min(1),
+    orderId: z.string(),
   })
   .transform((data) => data as DeleteOrderInputDTO);
 
@@ -26,6 +26,6 @@ export interface CancelOrderOutputDTO {
 
 export const CancelOrderSchema = z
   .object({
-    orderId: z.string().min(1),
+    orderId: z.string(),
   })
   .transform((data) => data as CancelOrderInputDTO);

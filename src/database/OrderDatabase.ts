@@ -17,7 +17,8 @@ export class OrderDatabase extends BaseDatabase {
         orders.user_id, 
         orders.order_date, 
         order_status.status_name AS status_name, 
-        orders.total
+        orders.total,
+        orders.tracking_code
       FROM ${OrderDatabase.TABLE_ORDERS} orders
       INNER JOIN order_status 
         ON orders.status_id = order_status.status_id
@@ -28,6 +29,28 @@ export class OrderDatabase extends BaseDatabase {
 
     return result[0];
   }
+
+  // --------------------------------------------------------------------
+
+  public async findPureOrderById(order_id: string) {
+    const result = await BaseDatabase.connection.raw(
+      `
+      SELECT 
+        orders.order_id, 
+        orders.user_id, 
+        orders.order_date, 
+        orders.status_id, 
+        orders.total,
+        orders.tracking_code
+      FROM ${OrderDatabase.TABLE_ORDERS} orders
+      WHERE orders.order_id = ?
+      `,
+      [order_id]
+    );
+  
+    return result[0];
+  }
+  
 
   // --------------------------------------------------------------------
 
@@ -74,6 +97,7 @@ export class OrderDatabase extends BaseDatabase {
     await BaseDatabase.connection.raw(query, [...values, order_id]);
   }
 
+  
   // --------------------------------------------------------------------
 
   public async findOrderItemsByOrderId(order_id: string) {
@@ -91,89 +115,51 @@ export class OrderDatabase extends BaseDatabase {
 
   // --------------------------------------------------------------------
 
-  // public async findOrdersByUserId(userId: string) {
-  //   const result = await BaseDatabase.connection.raw(
-  //     `
-  //     SELECT 
-  //       orders.order_id, 
-  //       orders.user_id, 
-  //       orders.order_date, 
-  //       order_status.status_name AS status_name, 
-  //       orders.total
-  //     FROM ${OrderDatabase.TABLE_ORDERS} orders
-  //     INNER JOIN order_status 
-  //       ON orders.status_id = order_status.status_id
-  //     WHERE orders.user_id = ?
-  //     `,
-  //     [userId]
-  //   );
-
-  //   return result;
-  // }
-
-//   public async findOrdersByUserId(userId: string, orderId?: string) {
-//     let query = `
-//       SELECT 
-//         orders.order_id, 
-//         orders.user_id, 
-//         orders.order_date, 
-//         order_status.status_name AS status_name, 
-//         orders.total
-//       FROM ${OrderDatabase.TABLE_ORDERS} orders
-//       INNER JOIN order_status 
-//         ON orders.status_id = order_status.status_id
-//       WHERE orders.user_id = ?
-//     `;
-
-//     const parameters = [userId];
-
-//     if (orderId) {
-//         query += ` AND orders.order_id = ?`;
-//         parameters.push(orderId);
-//     }
-
-//     const result = await BaseDatabase.connection.raw(query, parameters);
-
-//     return result;
-// }
-
 public async findOrdersByUserId(userId?: string, orderId?: string) {
-  const result = await BaseDatabase.connection.raw(
-    `
+  let query = `
     SELECT 
       orders.order_id, 
       orders.user_id, 
       orders.order_date, 
       order_status.status_name AS status_name, 
-      orders.total
+      orders.total,
+      orders.tracking_code
     FROM ${OrderDatabase.TABLE_ORDERS} orders
     INNER JOIN order_status 
       ON orders.status_id = order_status.status_id
-    WHERE 
-      (orders.user_id = ? OR ? IS NULL)
-      AND (orders.order_id = ? OR ? IS NULL)
-    `,
-    [userId, userId, orderId, orderId]
-  );
+    WHERE 1=1
+  `;
+  const params: (string | undefined)[] = [];
+
+  if (userId) {
+    query += ' AND orders.user_id = ?';
+    params.push(userId);
+  }
+
+  if (orderId) {
+    query += ' AND orders.order_id = ?';
+    params.push(orderId);
+  }
+
+  const result = await BaseDatabase.connection.raw(query, params);
 
   return result;
 }
 
-
   // --------------------------------------------------------------------
 
-  public async insertOrderItem(newOrderItemDB: OrderItemDB): Promise<void> {
-    const columns = Object.keys(newOrderItemDB);
-    const placeholders = columns.map(() => "?").join(", ");
-    const values = Object.values(newOrderItemDB);
+  // public async insertOrderItem(newOrderItemDB: OrderItemDB): Promise<void> {
+  //   const columns = Object.keys(newOrderItemDB);
+  //   const placeholders = columns.map(() => "?").join(", ");
+  //   const values = Object.values(newOrderItemDB);
 
-    const query = `
-      INSERT INTO ${OrderDatabase.TABLE_ORDER_ITEMS} (${columns.join(", ")})
-      VALUES (${placeholders})
-    `;
+  //   const query = `
+  //     INSERT INTO ${OrderDatabase.TABLE_ORDER_ITEMS} (${columns.join(", ")})
+  //     VALUES (${placeholders})
+  //   `;
 
-    await BaseDatabase.connection.raw(query, values);
-  }
+  //   await BaseDatabase.connection.raw(query, values);
+  // }
 
   public async deleteOrderItemsByOrderId(order_id: string): Promise<void> {
     await BaseDatabase.connection.raw(
@@ -184,6 +170,23 @@ public async findOrdersByUserId(userId?: string, orderId?: string) {
       [order_id]
     );
   }
+
+  public async insertOrderItem(orderItem: OrderItemDB): Promise<void> {
+    await BaseDatabase.connection.raw(
+      `
+      INSERT INTO order_items (item_id, order_id, product_id, quantity, price)
+      VALUES (?, ?, ?, ?, ?)
+      `,
+      [
+        orderItem.item_id,
+        orderItem.order_id,
+        orderItem.product_id,
+        orderItem.quantity,
+        orderItem.price
+      ]
+    );
+  }
+  
 
   // --------------------------------------------------------------------
 

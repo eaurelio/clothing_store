@@ -10,6 +10,7 @@ import { ProductDatabase } from "../database/ProductDatabase";
 import { UserDatabase } from "../database/UserDatabase";
 import { authMiddleware } from "../middlewares/authMiddleware";
 import { USER_ROLES } from "../models/User";
+import { ensureAdmin } from "../middlewares/ensureAdminMiddleware";
 
 export const orderRouter = express.Router()
 
@@ -26,8 +27,9 @@ const orderController = new OrderController(
 )
 
 orderRouter.get("/getUserOrders/:id", authMiddleware([USER_ROLES.CLIENT]), orderController.getUserOrders)
-orderRouter.get("/getAllOrders", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), orderController.getAllOrders)
+orderRouter.get("/getAllOrders", ensureAdmin(USER_ROLES.ADMIN), orderController.getAllOrders)
 orderRouter.get("/getAllStatus", orderController.getAllStatus)
 orderRouter.post("/createOrder", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), orderController.createOrder)
-orderRouter.patch("/updateOrder/:id", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), orderController.updateOrder)
-orderRouter.delete("/cancelOrder/:id", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), orderController.cancelOrder)
+orderRouter.patch("/updateOrder/:id", ensureAdmin(USER_ROLES.ADMIN), orderController.updateOrder)
+orderRouter.patch("/cancelOrder/:id", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), orderController.cancelOrder)
+orderRouter.delete("/deleteOrder/:id", ensureAdmin(USER_ROLES.ADMIN), orderController.deleteOrder)

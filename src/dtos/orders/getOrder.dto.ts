@@ -12,6 +12,7 @@ export interface GetOrdersOutputDTO {
     status_name: string;
     total: number;
     orderDate: string;
+    trackingCode: string;
     items: {
       itemId: string;
       productId: string;
@@ -41,6 +42,7 @@ export interface GetAllOrdersOutputDTO {
     status: string;
     total: number;
     orderDate: string;
+    trackingCode: string;
     items: {
       itemId: string;
       productId: string;

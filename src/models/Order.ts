@@ -6,6 +6,7 @@ export interface OrderDB {
   status_id: number;
   total: number;
   order_date: string;
+  tracking_code?: string;
 }
 
 export interface OrderDBOutput {
@@ -15,6 +16,7 @@ export interface OrderDBOutput {
   status_name: string;
   total: number;
   order_date: string;
+  tracking_code: string;
 }
 
 export class Order {

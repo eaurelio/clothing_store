@@ -2,13 +2,14 @@ import z from "zod";
 
 export interface UpdateOrderInputDTO {
   orderId: string;
-  statusId?: number;
+  statusId: number;
   items?: {
     productId: string;
     quantity: number;
     price: number;
   }[];
   total?: number;
+  trackingCode?: string;
 }
 
 export interface UpdateOrderOutputDTO {
@@ -19,6 +20,7 @@ export interface UpdateOrderOutputDTO {
     orderDate: string;
     status: string | number;
     total: number;
+    trackingCode?: string;
     items: {
       itemId: string;
       productId: string;
@@ -42,6 +44,7 @@ export const UpdateOrderSchema = z
       )
       .optional(),
     total: z.number().optional(),
+    trackingCode: z.string().optional()
   })
   .transform((data) => data as UpdateOrderInputDTO);
 
