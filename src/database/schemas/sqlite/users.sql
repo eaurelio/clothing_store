@@ -16,7 +16,11 @@ CREATE TABLE users (
     neighborhood TEXT NOT NULL,
     city TEXT NOT NULL,
     country TEXT NOT NULL
+    active boolean default true,
+    last_login text
 );
+
+pragma table_info(users);
 
 ALTER TABLE users 
 ADD COLUMN active BOOLEAN DEFAULT true;
@@ -37,5 +41,7 @@ CREATE TABLE phones (
     type TEXT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+pragma table_info(phones);
 
 select * from phones

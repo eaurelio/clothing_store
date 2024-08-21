@@ -1,3 +1,4 @@
+-- Active: 1724253606382@@127.0.0.1@3306
 drop table orders;
 
 -- Criar a tabela order_status com status_id autoincremental
@@ -60,3 +61,5 @@ where user_id = '270bfc10-1dd8-43f3-aef9-678cc5ab8084'
 
 select * from order_items
 where order_id = 'd202bf34-f7c4-4271-a09d-e21ff28a9b1a'
+
+PRAGMA table_info(order_items);
