@@ -1,21 +1,50 @@
-import { HashManager } from "../services/HashManager";
-import { UserDatabase } from "../database/UserDatabase";
+// import { HashManager } from "../services/HashManager";
+// import { UserDatabase } from "../database/UserDatabase";
+// import {
+//   CreateUserInputDTO,
+//   CreateUserOutputDTO,
+// } from "../dtos/users/createUser.dto";
+// import { LoginInputDTO, LoginOutputDTO } from "../dtos/users/login";
+// import {
+//   User,
+//   UserDB,
+//   USER_ROLES,
+//   EntityType,
+//   UserDBOutput,
+// } from "../models/User";
+// import { IdGenerator } from "../services/idGenerator";
+// import {
+//   ToggleUserActiveStatusInputDTO,
+//   ToggleUserActiveStatusOutputDTO,
+//   UpdatePasswordInputDTO,
+//   UpdatePasswordOutputDTO,
+//   UpdateUserInputDTO,
+//   UpdateUserOutputDTO,
+// } from "../dtos/users/updateUser.dto";
+// import {
+//   PhoneDeleteDTO,
+//   PhoneInputDTO,
+//   PhoneOutputDTO,
+//   PhoneUpdateInputDTO,
+//   PhoneUpdateOutputDTO,
+// } from "../dtos/users/phone";
+// import TokenService from "../services/TokenService";
+// import { PhoneDB } from "../models/Phones";
+// import { ConflictError, ForbiddenError, BadRequestError, NotFoundError } from "../errors/Errors";
+// import { ErrorHandler } from "../errors/ErrorHandler";
+// import { GetAllUserInputDTO } from "../dtos/users/getUser.dto";
+
+// User DTOs
 import {
   CreateUserInputDTO,
   CreateUserOutputDTO,
 } from "../dtos/users/createUser.dto";
-import { LoginInputDTO, LoginOutputDTO } from "../dtos/users/login";
-import { BadRequestError } from "../errors/BadRequestError";
-import { NotFoundError } from "../errors/NotFoundError";
-import { UnauthorizedError } from "../errors/UnauthorizedError";
+
 import {
-  User,
-  UserDB,
-  USER_ROLES,
-  EntityType,
-  UserDBOutput,
-} from "../models/User";
-import { IdGenerator } from "../services/idGenerator";
+  LoginInputDTO,
+  LoginOutputDTO
+} from "../dtos/users/login";
+
 import {
   ToggleUserActiveStatusInputDTO,
   ToggleUserActiveStatusOutputDTO,
@@ -24,6 +53,7 @@ import {
   UpdateUserInputDTO,
   UpdateUserOutputDTO,
 } from "../dtos/users/updateUser.dto";
+
 import {
   PhoneDeleteDTO,
   PhoneInputDTO,
@@ -31,12 +61,32 @@ import {
   PhoneUpdateInputDTO,
   PhoneUpdateOutputDTO,
 } from "../dtos/users/phone";
-import TokenService from "../services/TokenService";
-import { PhoneDB } from "../models/Phones";
-import { ConflictError } from "../errors/ConflictError";
-import { ErrorHandler } from "../errors/ErrorHandler";
+
 import { GetAllUserInputDTO } from "../dtos/users/getUser.dto";
-import { ForbiddenError } from "../errors/ForbiddenError";
+
+// Models
+import {
+  User,
+  UserDB,
+  USER_ROLES,
+  EntityType,
+  UserDBOutput,
+} from "../models/User";
+
+import { PhoneDB } from "../models/Phones";
+
+// Database
+import { UserDatabase } from "../database/UserDatabase";
+
+// Services
+import TokenService from "../services/TokenService";
+import { IdGenerator } from "../services/idGenerator";
+import { HashManager } from "../services/HashManager";
+
+// Errors
+import { ConflictError, ForbiddenError, BadRequestError, NotFoundError } from "../errors/Errors";
+import { ErrorHandler } from "../errors/ErrorHandler";
+
 
 export class UserBusiness {
   constructor(
@@ -283,23 +333,25 @@ export class UserBusiness {
     return output;
   };
   
-  
-
   // --------------------------------------------------------------------
 
   public changePassword = async (
     input: UpdatePasswordInputDTO
   ): Promise<UpdatePasswordOutputDTO> => {
-    const { userId, oldPassword, newPassword } = input;
+    const { userId, email, oldPassword, newPassword } = input;
   
     const user = await this.userDatabase.findUserById(userId);
-  
+    
     if (!user) {
       throw new NotFoundError("User not found");
     }
   
     if (!user.active) {
       throw new ForbiddenError("User account is deactivated");
+    }
+  
+    if (user.email !== email) {
+      throw new BadRequestError("Email does not match our records");
     }
   
     const isOldPasswordCorrect = await this.hashManager.compare(
@@ -327,8 +379,7 @@ export class UserBusiness {
     };
   };
   
-
-
+  
   // --------------------------------------------------------------------
 
 public getUserById = async (input: any): Promise<UserDBOutput> => {

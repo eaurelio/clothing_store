@@ -61,6 +61,7 @@ export const UpdateUserSchema = z.object({
 
 export interface UpdatePasswordInputDTO {
   userId: string;
+  email: string;
   oldPassword: string;
   newPassword: string;
 }
@@ -71,6 +72,7 @@ export interface UpdatePasswordOutputDTO {
 
 export const UpdatePasswordSchema = z.object({
   userId: z.string(),
+  email: z.string(),
   oldPassword: z.string().min(8).max(16),
   newPassword: z.string().min(8).max(16)
 }).transform(data => data as UpdatePasswordInputDTO)

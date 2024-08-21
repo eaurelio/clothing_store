@@ -1,3 +1,4 @@
+-- Active: 1724253606382@@127.0.0.1@3306
 drop table wishlist_items;
 
 CREATE TABLE wishlists (

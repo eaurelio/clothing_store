@@ -1,35 +1,77 @@
+// import {
+//   CreateWishListInputDTO,
+//   CreateWishListOutputDTO,
+// } from "./../dtos/wishlist/createWishList.dto";
+
+// import {
+//   GetWishListInputDTO,
+//   GetWishListOutputDTO,
+// } from "./../dtos/wishlist/getWishList.dto";
+// import {
+//   UpdateWishListInputDTO,
+//   UpdateWishListOutputDTO,
+// } from "./../dtos/wishlist/updateWishList.dto";
+// import {
+//   DeleteWishListInputDTO,
+//   DeleteWishListOutputDTO,
+// } from "./../dtos/wishlist/deleteWishList.dto";
+
+// import {
+//   WishlistDBInput,
+//   WishlistDBOutput,
+// } from "../models/WishList";
+// import { WishlistDatabase } from "../database/WishListDatabase";
+// import TokenService from "../services/TokenService";
+// import { IdGenerator } from "../services/idGenerator";
+// import { NotFoundError } from "../errors/Errors";
+// import { ErrorHandler } from "../errors/ErrorHandler";
+// import { WishlistItemDB } from "../models/WishList";
+// import { HashManager } from "../services/HashManager";
+// import { UserDatabase } from "../database/UserDatabase";
+// import { ProductDatabase } from "../database/ProductDatabase";
+
+// DTOs
 import {
   CreateWishListInputDTO,
   CreateWishListOutputDTO,
-} from "./../dtos/wishlist/createWishList.dto";
+} from "../dtos/wishlist/createWishList.dto";
 
 import {
   GetWishListInputDTO,
   GetWishListOutputDTO,
-} from "./../dtos/wishlist/getWishList.dto";
+} from "../dtos/wishlist/getWishList.dto";
+
 import {
   UpdateWishListInputDTO,
   UpdateWishListOutputDTO,
-} from "./../dtos/wishlist/updateWishList.dto";
+} from "../dtos/wishlist/updateWishList.dto";
+
 import {
   DeleteWishListInputDTO,
   DeleteWishListOutputDTO,
-} from "./../dtos/wishlist/deleteWishList.dto";
+} from "../dtos/wishlist/deleteWishList.dto";
 
+// Models
 import {
   WishlistDBInput,
   WishlistDBOutput,
+  WishlistItemDB
 } from "../models/WishList";
+
+// Database
 import { WishlistDatabase } from "../database/WishListDatabase";
-import TokenService from "../services/TokenService";
-import { IdGenerator } from "../services/idGenerator";
-import { NotFoundError } from "../errors/NotFoundError";
-import { ErrorHandler } from "../errors/ErrorHandler";
-import { WishlistItemDB } from "../models/WishList";
-import { HashManager } from "../services/HashManager";
-import { ForbiddenError } from "../errors/ForbiddenError";
 import { UserDatabase } from "../database/UserDatabase";
 import { ProductDatabase } from "../database/ProductDatabase";
+
+// Services
+import TokenService from "../services/TokenService";
+import { IdGenerator } from "../services/idGenerator";
+import { HashManager } from "../services/HashManager";
+
+// Errors
+import { NotFoundError } from "../errors/Errors";
+import { ErrorHandler } from "../errors/ErrorHandler";
+
 
 export class WishlistBusiness {
   constructor(
@@ -41,6 +83,10 @@ export class WishlistBusiness {
     private hashmanager: HashManager,
     private errorHandler: ErrorHandler
   ) {}
+
+  // --------------------------------------------------------------------
+  // WISHLIST
+  // --------------------------------------------------------------------
 
   public createWishlist = async (
     input: CreateWishListInputDTO
@@ -104,8 +150,6 @@ export class WishlistBusiness {
     return output;
   };
   
-  
-
   // --------------------------------------------------------------------
 
   public getWishlist = async (
@@ -152,8 +196,6 @@ export class WishlistBusiness {
     return output;
   };
   
-
-
   // --------------------------------------------------------------------
 
   public updateWishlist = async (

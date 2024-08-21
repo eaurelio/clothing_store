@@ -1,10 +1,9 @@
-import { ForbiddenError } from './../errors/ForbiddenError';
-import { UnauthorizedError } from './../errors/UnauthorizedError';
+import { ForbiddenError, UnauthorizedError } from './../errors/Errors';
 import { Request, Response, NextFunction } from 'express';
 import TokenService from '../services/TokenService';
 import { ErrorHandler } from '../errors/ErrorHandler';
 import { USER_ROLES, UserDB } from '../models/User'; 
-import { UserDatabase } from '../database/UserDatabase'; // Importando o UserDatabase
+import { UserDatabase } from '../database/UserDatabase';
 
 export const authMiddleware = (requiredRoles?: USER_ROLES[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
@@ -13,41 +12,38 @@ export const authMiddleware = (requiredRoles?: USER_ROLES[]) => {
       const token = req.headers.authorization;
 
       if (!token) {
-        throw new UnauthorizedError('Token não fornecido');
+        throw new UnauthorizedError('Token is required');
       }
 
       const payload = tokenService.verifyToken(token);
 
       if (!payload) {
-        throw new UnauthorizedError('Token inválido ou expirado');
+        throw new UnauthorizedError('Invalid or expired Token');
       }
 
       const role = payload.role;
       if (!(role in USER_ROLES)) {
-        throw new UnauthorizedError('Papel de usuário inválido');
+        throw new UnauthorizedError('Invalid userRole');
       }
 
       const userRole = role as USER_ROLES;
 
-      // Consultando o banco de dados para verificar se o usuário está ativo
       const userDatabase = new UserDatabase();
       const userFromDb = await userDatabase.findUserById(payload.userId);
 
       if (!userFromDb || !userFromDb.active) {
-        throw new ForbiddenError('Conta desativada. Acesse o suporte para mais informações.');
+        throw new ForbiddenError('Account deactivated');
       }
 
-      // Ajuste para garantir que o user esteja no formato UserDB
       const user: Partial<UserDB> = {
         id: payload.userId,
         role: userRole,
-        // Adicione outros campos conforme necessário
       };
 
       req.user = user as UserDB;
 
       if (requiredRoles && !requiredRoles.includes(userRole)) {
-        throw new ForbiddenError('Você não tem permissão para acessar esta rota');
+        throw new ForbiddenError('You have not permission to access this route');
       }
 
       next();

@@ -130,3 +130,5 @@
 {"code":"SQLITE_ERROR","errno":1,"level":"error","timestamp":"2024-08-20T19:21:38.165Z"}
 {"level":"error","statusCode":400,"timestamp":"2024-08-20T20:04:58.876Z"}
 {"level":"error","name":"UnauthorizedError","statusCode":401,"timestamp":"2024-08-20T20:54:25.887Z"}
+{"issues":[{"code":"invalid_type","expected":"string","message":"Required","path":["email"],"received":"undefined"},{"code":"too_big","exact":false,"inclusive":true,"maximum":16,"message":"String must contain at most 16 character(s)","path":["newPassword"],"type":"string"}],"level":"error","name":"ZodError","timestamp":"2024-08-21T15:43:36.575Z"}
+{"level":"error","statusCode":400,"timestamp":"2024-08-21T15:51:23.185Z"}

@@ -1,5 +1,33 @@
+// import { Request, Response } from "express";
+// import { ProductBusiness } from "../business/ProductBusiness";
+// import {
+//   CreateCategorySchema,
+//   CreateColorSchema,
+//   CreateGenderSchema,
+//   CreateProductSchema,
+//   CreateSizeSchema,
+// } from "../dtos/products/createProduct.dto";
+// import {
+//   ToggleProductActiveStatusSchema,
+//   UpdateCategorySchema,
+//   UpdateColorSchema,
+//   UpdateGenderSchema,
+//   UpdateProductSchema,
+//   UpdateSizeSchema,
+// } from "../dtos/products/updateProduct.dto";
+// import {
+//   GetAllProductsSchema,
+// } from "../dtos/products/getProduct.dto";
+// import { ErrorHandler } from "../errors/ErrorHandler";
+// import logger from "../logs/logger";
+
+// Express
 import { Request, Response } from "express";
+
+// Business Logic
 import { ProductBusiness } from "../business/ProductBusiness";
+
+// DTOs
 import {
   CreateCategorySchema,
   CreateColorSchema,
@@ -18,8 +46,13 @@ import {
 import {
   GetAllProductsSchema,
 } from "../dtos/products/getProduct.dto";
+
+// Errors
 import { ErrorHandler } from "../errors/ErrorHandler";
+
+// Logging
 import logger from "../logs/logger";
+
 
 export class ProductController {
   constructor(private productBusiness: ProductBusiness) {}

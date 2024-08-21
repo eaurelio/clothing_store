@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { USER_ROLES } from '../models/User';
-import { ForbiddenError } from '../errors/ForbiddenError';
+import { ForbiddenError } from '../errors/Errors';
 import { ErrorHandler } from '../errors/ErrorHandler';
 
 export const ensureAdmin = (requiredRole: USER_ROLES) => {
@@ -8,7 +8,7 @@ export const ensureAdmin = (requiredRole: USER_ROLES) => {
     try {
       const userRole = USER_ROLES.ADMIN;
       if (userRole !== requiredRole) {
-        throw new ForbiddenError('Você não tem permissão para acessar esta rota');
+        throw new ForbiddenError('You have not permission to access this route');
       }
 
       next();
