@@ -16,7 +16,6 @@ import {
   UpdateSizeSchema,
 } from "../dtos/products/updateProduct.dto";
 import {
-  GetProductSchema,
   GetAllProductsSchema,
 } from "../dtos/products/getProduct.dto";
 import { ErrorHandler } from "../errors/ErrorHandler";
@@ -78,38 +77,13 @@ export class ProductController {
 
    // --------------------------------------------------------------------
 
-   public getProduct = async (req: Request, res: Response) => {
-    try {
-      const input = GetProductSchema.parse({
-        id: req.params.id,
-      });
-
-      const output = await this.productBusiness.getProduct(input);
-      res.status(200).send(output);
-    } catch (error) {
-      logger.error(error);
-      ErrorHandler.handleError(error, res);
-    }
-  };
-
-  // --------------------------------------------------------------------
-
-  // public getAllProducts = async (req: Request, res: Response) => {
+  //  public getProduct = async (req: Request, res: Response) => {
   //   try {
-  //     const input = GetAllProductsSchema.parse({
-  //       name: req.body.name ? String(req.body.name).trim() : undefined,
-  //       category_id: req.body.category_id
-  //         ? Number(req.body.category_id)
-  //         : undefined,
-  //       color_id: req.body.color_id ? Number(req.body.color_id) : undefined,
-  //       size_id: req.body.size_id ? Number(req.body.size_id) : undefined,
-  //       gender_id: req.body.gender_id ? Number(req.body.gender_id) : undefined,
-  //       onlyActive: req.body.onlyActive
+  //     const input = GetProductSchema.parse({
+  //       id: req.params.id,
   //     });
 
-  //     console.log(input);
-
-  //     const output = await this.productBusiness.getAllProducts(input);
+  //     const output = await this.productBusiness.getProduct(input);
   //     res.status(200).send(output);
   //   } catch (error) {
   //     logger.error(error);
@@ -117,18 +91,21 @@ export class ProductController {
   //   }
   // };
 
-  public getAllProducts = async (req: Request, res: Response) => {
+  // --------------------------------------------------------------------
+
+  public getProducts = async (req: Request, res: Response) => {
     try {
       const input = GetAllProductsSchema.parse({
+        id: req.body.id,
         name: req.body.name,
         category_id: req.body.category_id,
         color_id: req.body.color_id,
         size_id: req.body.size_id,
         gender_id: req.body.gender_id,
-        onlyActive: req.body.onlyActive
+        active: req.body.active
       });
 
-      const output = await this.productBusiness.getAllProducts(input);
+      const output = await this.productBusiness.getProducts(input);
       res.status(200).send(output);
     } catch (error) {
       logger.error(error);
@@ -272,7 +249,6 @@ export class ProductController {
   public updateSize = async (req: Request, res: Response) => {
     try {
       const input = UpdateSizeSchema.parse({
-        token: req.headers.authorization as string,
         id: req.params.id,
         name: req.body.name,
       });
@@ -315,7 +291,6 @@ export class ProductController {
   public updateGender = async (req: Request, res: Response) => {
     try {
       const input = UpdateGenderSchema.parse({
-        token: req.headers.authorization as string,
         id: req.params.id,
         name: req.body.name,
       });

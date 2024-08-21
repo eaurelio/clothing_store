@@ -9,7 +9,6 @@ export interface Phone {
 
 export interface PhoneInputDTO {
   userId: string,
-  phoneId: string,
   number: string,
   type: string
 }
@@ -21,10 +20,29 @@ export interface PhoneOutputDTO {
 
 export const PhoneInputSchema = z.object({
   userId: z.string(),
-  phoneId: z.string(),
   number: z.string(),
   type: z.string().optional()
 }).transform(data => data as PhoneInputDTO)
+
+// --------------------------------------------------------------------
+export interface PhoneUpdateInputDTO {
+  userId: string,
+  phoneId: string,
+  number: string,
+  type: string
+}
+
+export interface PhoneUpdateOutputDTO {
+  message: string,
+  phones: Phone[]
+}
+
+export const PhoneUpdtateInputSchema = z.object({
+  userId: z.string(),
+  phoneId: z.string(),
+  number: z.string(),
+  type: z.string().optional()
+}).transform(data => data as PhoneUpdateInputDTO)
 
 // --------------------------------------------------------------------
 

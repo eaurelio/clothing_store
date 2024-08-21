@@ -10,30 +10,6 @@ export class UserDatabase extends BaseDatabase {
   // USER DATA
   // --------------------------------------------------------------------
 
-  // public async findUsers(q: string | undefined): Promise<UserDB[]> {
-  //   let usersDB;
-
-  //   if (q) {
-  //     const result = await BaseDatabase.connection.raw(
-  //       `
-  //       SELECT * FROM ${UserDatabase.TABLE_USERS}
-  //       WHERE name LIKE ?
-  //     `,
-  //       [`%${q}%`]
-  //     );
-
-  //     usersDB = result;
-  //   } else {
-  //     const result = await BaseDatabase.connection.raw(`
-  //       SELECT * FROM ${UserDatabase.TABLE_USERS}
-  //     `);
-
-  //     usersDB = result;
-  //   }
-
-  //   return usersDB;
-  // }
-
   public async findUsers(q: string | undefined, onlyActive: boolean): Promise<UserDB[]> {
     let query = `
         SELECT * FROM ${UserDatabase.TABLE_USERS}
@@ -52,12 +28,8 @@ export class UserDatabase extends BaseDatabase {
 
     const result = await BaseDatabase.connection.raw(query, params);
 
-    console.log('----------------------------------',result)
-
     return result;
 }
-
-
 
   // --------------------------------------------------------------------
 
@@ -183,7 +155,6 @@ export class UserDatabase extends BaseDatabase {
     );
   }
   
-
   // --------------------------------------------------------------------
   // PHONE USER
   // --------------------------------------------------------------------
@@ -219,7 +190,6 @@ export class UserDatabase extends BaseDatabase {
   // --------------------------------------------------------------------
 
   public async insertPhone(phoneData: PhoneDB): Promise<void> {
-    console.log(phoneData)
     const columns = Object.keys(phoneData);
     const placeholders = columns.map(() => "?").join(", ");
     const values = Object.values(phoneData);
@@ -239,7 +209,6 @@ export class UserDatabase extends BaseDatabase {
     phoneData: Partial<PhoneDB>
   ): Promise<void> {
     const columns = Object.keys(phoneData);
-    // const placeholders = columns.map(() => '?').join(', ');
     const values = Object.values(phoneData);
 
     const setClause = columns.map((col) => `${col} = ?`).join(", ");

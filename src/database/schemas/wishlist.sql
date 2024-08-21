@@ -14,3 +14,6 @@ CREATE TABLE wishlist_items (
   FOREIGN KEY (wishlist_id) REFERENCES wishlists(wishlist_id),
   FOREIGN KEY (product_id) REFERENCES products(id)
 );
+
+
+select * from wishlists

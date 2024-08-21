@@ -13,9 +13,13 @@ CREATE TABLE orders (
     order_date DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     status_id INTEGER NOT NULL,
     total DECIMAL(10, 2) NOT NULL,
+    tracking_code TEXT,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (status_id) REFERENCES order_status(status_id)
 );
+
+select * from orders;
+
 
 -- Criar a tabela order_items
 CREATE TABLE order_items (
@@ -50,3 +54,9 @@ FROM orders
 INNER JOIN order_status 
   ON orders.status_id = order_status.status_id;
 
+
+select * from orders
+where user_id = '270bfc10-1dd8-43f3-aef9-678cc5ab8084'
+
+select * from order_items
+where order_id = 'd202bf34-f7c4-4271-a09d-e21ff28a9b1a'

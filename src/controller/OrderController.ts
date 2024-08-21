@@ -51,8 +51,8 @@ export class OrderController {
   public getUserOrders = async (req: Request, res: Response) => {
     try {
       const input = GetOrdersSchema.parse({
-        orderId: req.params.id,
-        userId: req.body.id
+        userId: req.params.id,
+        orderId: req.body.orderId
       });
 
       const output: GetOrdersOutputDTO | GetAllOrdersOutputDTO = await this.orderBusiness.getUserOrders(
@@ -101,12 +101,11 @@ export class OrderController {
         orderId: req.params.id,
         statusId: req.body.statusId,
         items: req.body.items,
+        trackingCode: req.body.trackingCode,
         total: req.body.total,
       });
 
-      console.log(input)
-
-      const output: UpdateOrderOutputDTO = await this.orderBusiness.updateOrder(
+      const output = await this.orderBusiness.updateOrder(
         input
       );
       res.status(200).send(output);
@@ -125,6 +124,20 @@ export class OrderController {
       });
 
       await this.orderBusiness.cancelOrder(input);
+      res.status(200).send({ message: "Order deleted successfully" });
+    } catch (error) {
+      logger.error(error);
+      ErrorHandler.handleError(error, res);
+    }
+  };
+
+  public deleteOrder = async (req: Request, res: Response) => {
+    try {
+      const input: DeleteOrderInputDTO = DeleteOrderSchema.parse({
+        orderId: req.params.id,
+      });
+
+      await this.orderBusiness.deleteOrder(input);
       res.status(200).send({ message: "Order deleted successfully" });
     } catch (error) {
       logger.error(error);

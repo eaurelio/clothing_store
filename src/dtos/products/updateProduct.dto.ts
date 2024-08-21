@@ -24,7 +24,7 @@ export interface UpdateProductOutputDTO {
     color_id: number;
     size_id: number;
     gender_id: number;
-    createdAt: string;
+    created_at: string;
   };
 }
 

@@ -1,23 +1,16 @@
 import z from 'zod';
 import { ProductDB, ProductDBOutput } from '../../models/Products';
 
-export interface GetProductInputDTO {
-  id: string;
-}
-
-export const GetProductSchema = z.object({
-  id: z.string()
-}).transform(data => data as GetProductInputDTO);
-
 // --------------------------------------------------------------------
 
 export interface GetAllProductsInputDTO {
+  id?: string;
   name?: string; 
   category_id?: number;
   color_id?: number;
   size_id?: number;
   gender_id?: number;
-  onlyActive?: boolean;
+  active?: boolean;
 }
 
 export interface GetProductOutputDTO {
@@ -29,12 +22,13 @@ export interface GetAllProductsOutputDTO {
 }
 
 export const GetAllProductsSchema = z.object({
+  id: z.string().optional(),
   name: z.string().optional(),
   category_id: z.number().optional(),
   color_id: z.number().optional(),
   size_id: z.number().optional(),
   gender_id: z.number().optional(),
-  onlyActive: z.boolean().optional()
+  active: z.boolean().optional()
 }).transform(data => data as GetAllProductsInputDTO);
 
 // --------------------------------------------------------------------
