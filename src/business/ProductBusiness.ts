@@ -29,7 +29,6 @@ import {
   UpdateSizeOutputDTO,
 } from "../dtos/products/updateProduct.dto";
 import {
-  GetProductInputDTO,
   GetProductOutputDTO,
   GetAllProductsInputDTO,
   GetAllProductsOutputDTO,
@@ -69,7 +68,6 @@ export class ProductBusiness {
     input: CreateProductInputDTO
   ): Promise<CreateProductOutputDTO> => {
     const {
-      token,
       name,
       description,
       price,
@@ -79,17 +77,6 @@ export class ProductBusiness {
       size_id,
       gender_id,
     } = input;
-
-    // const userId = this.tokenService.getUserIdFromToken(token);
-    // const userDB = await this.userDatabase.findUserById(userId as string);
-
-    // if (!userDB) {
-    //   throw new NotFoundError("User not found");
-    // }
-
-    // if (userDB.role !== USER_ROLES.ADMIN) {
-    //   throw new UnauthorizedError("Unauthorized user");
-    // }
 
     const existingProduct = await this.productDatabase.findProductByName(name);
     if (existingProduct) {
@@ -148,48 +135,19 @@ export class ProductBusiness {
 
   // --------------------------------------------------------------------
 
-  public getProduct = async (
-    input: GetProductInputDTO
-  ): Promise<GetProductOutputDTO> => {
-    const { id } = input;
-
-    const product = await this.productDatabase.findProductById(id);
-    if (!product) {
-      throw new NotFoundError("Product not found");
-    }
-
-    const output: GetProductOutputDTO = {
-      product: {
-        id: product.id,
-        name: product.name,
-        description: product.description,
-        price: product.price,
-        stock: product.stock,
-        createdAt: product.createdAt,
-        category: product.category,
-        color: product.color,
-        size: product.size,
-        gender: product.gender,
-      },
-    };
-
-    return output;
-  };
-
-  // --------------------------------------------------------------------
-
-  public getAllProducts = async (
+  public getProducts = async (
     input: GetAllProductsInputDTO
   ): Promise<GetAllProductsOutputDTO> => {
-    const { name, category_id, color_id, size_id, gender_id, onlyActive = true } = input;
+    const { id, name, category_id, color_id, size_id, gender_id, active = true } = input;
   
     const products: ProductDBOutput[] = await this.productDatabase.findProducts(
+      id, 
       name,
       category_id,
       color_id,
       size_id,
       gender_id,
-      onlyActive 
+      active 
     );
   
     const output: GetAllProductsOutputDTO = {
@@ -197,9 +155,10 @@ export class ProductBusiness {
         id: product.id,
         name: product.name,
         description: product.description,
+        active: product.active,
         price: product.price,
         stock: product.stock,
-        createdAt: product.createdAt,
+        created_at: product.created_at,
         category: product.category,
         color: product.color,
         size: product.size,
@@ -209,7 +168,6 @@ export class ProductBusiness {
   
     return output;
   };
-  
   
   // --------------------------------------------------------------------
 
@@ -256,11 +214,11 @@ export class ProductBusiness {
         description: updatedProductData.description,
         price: updatedProductData.price,
         stock: updatedProductData.stock,
-        createdAt: updatedProductData.createdAt,
-        category_id: updatedProductData.category,
-        color_id: updatedProductData.color,
-        size_id: updatedProductData.size,
-        gender_id: updatedProductData.gender,
+        created_at: updatedProductData.created_at,
+        category_id: updatedProductData.category_id,
+        color_id: updatedProductData.color_id,
+        size_id: updatedProductData.size_id,
+        gender_id: updatedProductData.gender_id,
       },
     };
 
@@ -288,7 +246,6 @@ export class ProductBusiness {
     };
   };
   
-
   // --------------------------------------------------------------------
   // AUX FIELDS - PRODUCTS
   // --------------------------------------------------------------------
@@ -325,8 +282,6 @@ export class ProductBusiness {
     if (!newCategory) {
       throw new Error("Failed to create category");
     }
-
-    console.log(newCategory);
 
     const output: CreateCategoryOutputDTO = {
       message: "Category created successfully",

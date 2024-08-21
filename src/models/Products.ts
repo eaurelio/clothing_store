@@ -15,14 +15,14 @@ export interface ProductDBOutput {
   id: string;
   name: string;
   description?: string;
+  active?: boolean
   price: number;
   stock: number;
-  createdAt: string | number;
+  created_at: string | number;
   category: string | number;
   color: string | number;
   size: string | number;
   gender: string | number;
-  active?: boolean
 }
 
 export class Product {

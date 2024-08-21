@@ -24,6 +24,8 @@ export class WishlistDatabase extends BaseDatabase {
     return result[0];
   }
 
+  // --------------------------------------------------------------------
+
   public async findWishlistByUserId(user_id: string): Promise<WishlistDB | undefined> {
     const result = await BaseDatabase.connection.raw(
       `
@@ -39,8 +41,6 @@ export class WishlistDatabase extends BaseDatabase {
   
     return result[0];
   }
-  
-  
 
   // --------------------------------------------------------------------
 

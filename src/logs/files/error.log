@@ -126,3 +126,7 @@
 {"code":"SQLITE_ERROR","errno":1,"level":"error","timestamp":"2024-08-19T19:13:59.935Z"}
 {"code":"SQLITE_ERROR","errno":1,"level":"error","timestamp":"2024-08-19T19:28:13.550Z"}
 {"level":"error","statusCode":404,"timestamp":"2024-08-19T19:36:27.605Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-20T19:00:07.752Z"}
+{"code":"SQLITE_ERROR","errno":1,"level":"error","timestamp":"2024-08-20T19:21:38.165Z"}
+{"level":"error","statusCode":400,"timestamp":"2024-08-20T20:04:58.876Z"}
+{"level":"error","name":"UnauthorizedError","statusCode":401,"timestamp":"2024-08-20T20:54:25.887Z"}

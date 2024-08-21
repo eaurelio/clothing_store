@@ -25,7 +25,6 @@ import { OrderItemDB } from "../models/OrderItem";
 import { ForbiddenError } from "../errors/ForbiddenError";
 import { ProductDatabase } from "../database/ProductDatabase";
 import { UserDatabase } from "../database/UserDatabase";
-import { USER_ROLES } from "../models/User";
 import {
   CancelOrderInputDTO,
   CancelOrderOutputDTO,
@@ -44,6 +43,9 @@ export class OrderBusiness {
     private errorHandler: ErrorHandler
   ) {}
 
+  // --------------------------------------------------------------------
+  // ORDERS
+  // --------------------------------------------------------------------
 
   public createOrder = async (
     input: CreateOrderInputDTO
@@ -246,115 +248,6 @@ export class OrderBusiness {
   };
 
   // --------------------------------------------------------------------
-
-  // public updateOrder = async (
-  //   input: UpdateOrderInputDTO
-  // ): Promise<UpdateOrderOutputDTO> => {
-  //   const { orderId, statusId, total, items } = input;
-
-  //   const orderDB = await this.orderDatabase.findOrderById(orderId);
-  //   if (!orderDB) {
-  //     throw new NotFoundError("Order not found");
-  //   }
-
-  //   const updatedOrderDB: OrderDB = {
-  //     ...orderDB,
-  //     statusId: statusId ?? orderDB.status_id,
-  //     total: total ?? orderDB.total,
-  //   };
-
-  //   await this.orderDatabase.updateOrder(orderId, updatedOrderDB);
-
-  //   await this.orderDatabase.deleteOrderItemsByOrderId(orderId);
-
-  //   if (items) {
-  //     for (const item of items) {
-  //       const productDB = await this.productDatabase.findProductById(
-  //         item.productId
-  //       );
-  //       if (!productDB || !productDB.active) {
-  //         throw new ForbiddenError(`Product ${item.productId} is deactivated`);
-  //       }
-
-  //       const newOrderItemDB: OrderItemDB = {
-  //         item_id: this.idGenerator.generate(),
-  //         order_id: orderId,
-  //         product_id: item.productId,
-  //         quantity: item.quantity,
-  //         price: item.price,
-  //       };
-  //       await this.orderDatabase.insertOrderItem(newOrderItemDB);
-  //     }
-  //   }
-
-  //   const updatedItemsDB = await this.orderDatabase.findOrderItemsByOrderId(
-  //     orderId
-  //   );
-  //   const updatedItems = updatedItemsDB.map((item: OrderItemDB) => ({
-  //     itemId: item.item_id,
-  //     productId: item.product_id,
-  //     quantity: item.quantity,
-  //     price: item.price,
-  //   }));
-
-  //   const output: UpdateOrderOutputDTO = {
-  //     message: "Order updated successfully",
-  //     order: {
-  //       orderId: updatedOrderDB.order_id,
-  //       userId: updatedOrderDB.user_id,
-  //       orderDate: updatedOrderDB.order_date,
-  //       status: updatedOrderDB.status_id,
-  //       total: updatedOrderDB.total,
-  //       items: updatedItems,
-  //     },
-  //   };
-
-  //   return output;
-  // };
-
-  // public updateOrder = async (
-  //   input: UpdateOrderInputDTO
-  // ): Promise<UpdateOrderOutputDTO> => {
-  //   const { orderId, statusId, total } = input;
-  
-  //   // Verifica se o pedido existe
-  //   const orderDB = await this.orderDatabase.findOrderById(orderId);
-  //   if (!orderDB) {
-  //     throw new NotFoundError("Order not found");
-  //   }
-  
-  //   // Atualiza o pedido na base de dados
-  //   const updatedOrderDB: Partial<OrderDB> = {
-  //     status_id: statusId ?? orderDB.status_id,
-  //     total: total ?? orderDB.total,
-  //   };
-  
-  //   await this.orderDatabase.updateOrder(orderId, updatedOrderDB);
-  
-  //   // Recupera os itens atualizados do pedido
-  //   const updatedItemsDB = await this.orderDatabase.findOrderItemsByOrderId(orderId);
-  //   const updatedItems = updatedItemsDB.map((item: OrderItemDB) => ({
-  //     itemId: item.item_id,
-  //     productId: item.product_id,
-  //     quantity: item.quantity,
-  //     price: item.price,
-  //   }));
-  
-  //   // Prepara a resposta
-  //   const output: UpdateOrderOutputDTO = {
-  //     message: "Order updated successfully",
-  //     order: {
-  //       orderId: orderId,
-  //       userId: orderDB.user_id,
-  //       orderDate: orderDB.order_date,
-  //       status: updatedOrderDB.status_id ?? orderDB.status_id,
-  //       total: updatedOrderDB.total ?? orderDB.total,
-  //       items: updatedItems,
-  //     },
-  //   };
-  
-  //   return output;
-  // };
 
   public updateOrder = async (
     input: UpdateOrderInputDTO

@@ -23,8 +23,7 @@ const productController = new ProductController(
   )
 )
 
-productRouter.get("/getProduct/:id", productController.getProduct) //
-productRouter.get("/getAllProducts", productController.getAllProducts) //
+productRouter.get("/getProducts", productController.getProducts) //
 productRouter.post("/createProduct", ensureAdmin(USER_ROLES.ADMIN), productController.createProduct) //
 productRouter.patch("/editProduct/:id", ensureAdmin(USER_ROLES.ADMIN), productController.editProduct) //
 productRouter.patch("/toggleProductActiveStatus/:id", ensureAdmin(USER_ROLES.ADMIN), productController.toggleProductActiveStatus) //

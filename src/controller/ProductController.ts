@@ -16,7 +16,6 @@ import {
   UpdateSizeSchema,
 } from "../dtos/products/updateProduct.dto";
 import {
-  GetProductSchema,
   GetAllProductsSchema,
 } from "../dtos/products/getProduct.dto";
 import { ErrorHandler } from "../errors/ErrorHandler";
@@ -78,34 +77,35 @@ export class ProductController {
 
    // --------------------------------------------------------------------
 
-   public getProduct = async (req: Request, res: Response) => {
-    try {
-      const input = GetProductSchema.parse({
-        id: req.params.id,
-      });
+  //  public getProduct = async (req: Request, res: Response) => {
+  //   try {
+  //     const input = GetProductSchema.parse({
+  //       id: req.params.id,
+  //     });
 
-      const output = await this.productBusiness.getProduct(input);
-      res.status(200).send(output);
-    } catch (error) {
-      logger.error(error);
-      ErrorHandler.handleError(error, res);
-    }
-  };
+  //     const output = await this.productBusiness.getProduct(input);
+  //     res.status(200).send(output);
+  //   } catch (error) {
+  //     logger.error(error);
+  //     ErrorHandler.handleError(error, res);
+  //   }
+  // };
 
   // --------------------------------------------------------------------
 
-  public getAllProducts = async (req: Request, res: Response) => {
+  public getProducts = async (req: Request, res: Response) => {
     try {
       const input = GetAllProductsSchema.parse({
+        id: req.body.id,
         name: req.body.name,
         category_id: req.body.category_id,
         color_id: req.body.color_id,
         size_id: req.body.size_id,
         gender_id: req.body.gender_id,
-        onlyActive: req.body.onlyActive
+        active: req.body.active
       });
 
-      const output = await this.productBusiness.getAllProducts(input);
+      const output = await this.productBusiness.getProducts(input);
       res.status(200).send(output);
     } catch (error) {
       logger.error(error);

@@ -8,7 +8,7 @@ import {
   UpdateUserSchema,
 } from "../dtos/users/updateUser.dto";
 import { GetUserSchema, GetAllUserSchema } from "../dtos/users/getUser.dto";
-import { PhoneDeleteSchema, PhoneInputSchema } from "../dtos/users/phone";
+import { PhoneDeleteSchema, PhoneInputSchema, PhoneUpdtateInputSchema } from "../dtos/users/phone";
 import { ErrorHandler } from "../errors/ErrorHandler";
 import logger from "../logs/logger";
 
@@ -168,7 +168,6 @@ export class UserController {
     try {
       const input = PhoneInputSchema.parse({
         userId: req.params.id,
-        phoneId: req.body.phoneId,
         number: req.body.number,
         type: req.body.type,
       });
@@ -185,7 +184,7 @@ export class UserController {
 
   public updatePhone = async (req: Request, res: Response) => {
     try {
-      const input = PhoneInputSchema.parse({
+      const input = PhoneUpdtateInputSchema.parse({
         userId: req.params.id,
         phoneId: req.body.phoneId,
         number: req.body.number,

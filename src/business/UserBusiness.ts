@@ -28,6 +28,8 @@ import {
   PhoneDeleteDTO,
   PhoneInputDTO,
   PhoneOutputDTO,
+  PhoneUpdateInputDTO,
+  PhoneUpdateOutputDTO,
 } from "../dtos/users/phone";
 import TokenService from "../services/TokenService";
 import { PhoneDB } from "../models/Phones";
@@ -139,8 +141,6 @@ export class UserBusiness {
     };
 
     await this.userDatabase.insertUser(newUserDB);
-
-    console.log(phones)
 
     if (phones && phones.length > 0) {
       for (const phone of phones) {
@@ -451,8 +451,8 @@ public getUserById = async (input: any): Promise<UserDBOutput> => {
   // --------------------------------------------------------------------
 
   public updatePhone = async (
-    input: PhoneInputDTO
-  ): Promise<PhoneOutputDTO> => {
+    input: PhoneUpdateInputDTO
+  ): Promise<PhoneUpdateOutputDTO> => {
     const { userId, phoneId, number, type } = input;
   
     const userDB = await this.userDatabase.findUserById(userId);
