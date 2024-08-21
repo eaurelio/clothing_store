@@ -23,19 +23,19 @@ const productController = new ProductController(
   )
 )
 
-productRouter.get("/getProducts", productController.getProducts) //
-productRouter.post("/createProduct", ensureAdmin(USER_ROLES.ADMIN), productController.createProduct) //
-productRouter.patch("/editProduct/:id", ensureAdmin(USER_ROLES.ADMIN), productController.editProduct) //
-productRouter.patch("/toggleProductActiveStatus/:id", ensureAdmin(USER_ROLES.ADMIN), productController.toggleProductActiveStatus) //
+productRouter.get("/getProducts", productController.getProducts)
+productRouter.post("/createProduct", ensureAdmin(USER_ROLES.ADMIN), productController.createProduct)
+productRouter.patch("/editProduct/:id", ensureAdmin(USER_ROLES.ADMIN), productController.editProduct)
+productRouter.patch("/toggleProductActiveStatus/:id", ensureAdmin(USER_ROLES.ADMIN), productController.toggleProductActiveStatus)
 
-productRouter.post("/createCategory", ensureAdmin(USER_ROLES.ADMIN), productController.createCategory) //
-productRouter.post("/createColor", ensureAdmin(USER_ROLES.ADMIN), productController.createColor) //
-productRouter.post("/createSize", ensureAdmin(USER_ROLES.ADMIN), productController.createSize) //
-productRouter.post("/createGender", ensureAdmin(USER_ROLES.ADMIN), productController.createGender) //
+productRouter.post("/createCategory", ensureAdmin(USER_ROLES.ADMIN), productController.createCategory)
+productRouter.post("/createColor", ensureAdmin(USER_ROLES.ADMIN), productController.createColor)
+productRouter.post("/createSize", ensureAdmin(USER_ROLES.ADMIN), productController.createSize)
+productRouter.post("/createGender", ensureAdmin(USER_ROLES.ADMIN), productController.createGender)
 
-productRouter.patch("/updateCategory/:id", ensureAdmin(USER_ROLES.ADMIN), productController.updateCategory) //
-productRouter.patch("/updateColor/:id", ensureAdmin(USER_ROLES.ADMIN), productController.updateColor) //
-productRouter.patch("/updateSize/:id", ensureAdmin(USER_ROLES.ADMIN), productController.updateSize) //
+productRouter.patch("/updateCategory/:id", ensureAdmin(USER_ROLES.ADMIN), productController.updateCategory)
+productRouter.patch("/updateColor/:id", ensureAdmin(USER_ROLES.ADMIN), productController.updateColor)
+productRouter.patch("/updateSize/:id", ensureAdmin(USER_ROLES.ADMIN), productController.updateSize)
 productRouter.patch("/updateGender/:id", ensureAdmin(USER_ROLES.ADMIN), productController.updateGender)
 
 productRouter.get('/getAllCategories', productController.getAllCategories)

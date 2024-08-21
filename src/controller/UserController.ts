@@ -1,5 +1,24 @@
+// import { Request, Response } from "express";
+// import { UserBusiness } from "../business/UserBusiness";
+// import { CreateUserSchema } from "../dtos/users/createUser.dto";
+// import { LoginSchema } from "../dtos/users/login";
+// import {
+//   ToggleUserActiveStatusSchema,
+//   UpdatePasswordSchema,
+//   UpdateUserSchema,
+// } from "../dtos/users/updateUser.dto";
+// import { GetUserSchema, GetAllUserSchema } from "../dtos/users/getUser.dto";
+// import { PhoneDeleteSchema, PhoneInputSchema, PhoneUpdtateInputSchema } from "../dtos/users/phone";
+// import { ErrorHandler } from "../errors/ErrorHandler";
+// import logger from "../logs/logger";
+
+// Express
 import { Request, Response } from "express";
+
+// Business Logic
 import { UserBusiness } from "../business/UserBusiness";
+
+// DTOs
 import { CreateUserSchema } from "../dtos/users/createUser.dto";
 import { LoginSchema } from "../dtos/users/login";
 import {
@@ -9,8 +28,13 @@ import {
 } from "../dtos/users/updateUser.dto";
 import { GetUserSchema, GetAllUserSchema } from "../dtos/users/getUser.dto";
 import { PhoneDeleteSchema, PhoneInputSchema, PhoneUpdtateInputSchema } from "../dtos/users/phone";
+
+// Errors
 import { ErrorHandler } from "../errors/ErrorHandler";
+
+// Logging
 import logger from "../logs/logger";
+
 
 export class UserController {
   constructor(private userBusiness: UserBusiness) {}
@@ -132,6 +156,7 @@ export class UserController {
     try {
       const input = UpdatePasswordSchema.parse({
         userId: req.params.id,
+        email: req.body.email,
         oldPassword: req.body.oldPassword,
         newPassword: req.body.newPassword,
       });

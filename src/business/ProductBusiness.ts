@@ -1,7 +1,78 @@
-import { CategoryDBOutput, ColorDBOutput, GenderDB, GenderDBOutPut, SizeDBOutput } from "./../models/Products";
-import { UserDatabase } from "./../database/UserDatabase";
+// import { CategoryDBOutput, ColorDBOutput, GenderDB, GenderDBOutPut, SizeDBOutput } from "./../models/Products";
+// import { UserDatabase } from "./../database/UserDatabase";
+// import { HashManager } from "./../services/HashManager";
+// import { ProductDatabase } from "../database/ProductDatabase";
+// import {
+//   CreateCategoryInputDTO,
+//   CreateCategoryOutputDTO,
+//   CreateColorInputDTO,
+//   CreateColorOutputDTO,
+//   CreateGenderInputDTO,
+//   CreateGenderOutputDTO,
+//   CreateProductInputDTO,
+//   CreateProductOutputDTO,
+//   CreateSizeInputDTO,
+//   CreateSizeOutputDTO,
+// } from "../dtos/products/createProduct.dto";
+// import {
+//   ToggleProductActiveStatusInputDTO,
+//   ToggleProductActiveStatusOutputDTO,
+//   UpdateCategoryInputDTO,
+//   UpdateCategoryOutputDTO,
+//   UpdateColorInputDTO,
+//   UpdateColorOutputDTO,
+//   UpdateGenderInputDTO,
+//   UpdateGenderOutputDTO,
+//   UpdateProductInputDTO,
+//   UpdateProductOutputDTO,
+//   UpdateSizeInputDTO,
+//   UpdateSizeOutputDTO,
+// } from "../dtos/products/updateProduct.dto";
+// import {
+//   GetProductOutputDTO,
+//   GetAllProductsInputDTO,
+//   GetAllProductsOutputDTO,
+// } from "../dtos/products/getProduct.dto";
+// import {
+//   CategoryDB,
+//   ColorDB,
+//   Product,
+//   ProductDB,
+//   ProductDBOutput,
+//   SizeDB,
+// } from "../models/Products";
+// import { BadRequestError, NotFoundError, ConflictError } from "../errors/Errors";
+// import { IdGenerator } from "../services/idGenerator";
+// import TokenService from "../services/TokenService";
+// import { ErrorHandler } from "../errors/ErrorHandler";
+
+// Services
 import { HashManager } from "./../services/HashManager";
+import { IdGenerator } from "../services/idGenerator";
+import TokenService from "../services/TokenService";
+
+// Database
+import { UserDatabase } from "./../database/UserDatabase";
 import { ProductDatabase } from "../database/ProductDatabase";
+
+// Models
+import {
+  CategoryDB,
+  ColorDB,
+  Product,
+  ProductDB,
+  ProductDBOutput,
+  SizeDB,
+} from "../models/Products";
+import {
+  CategoryDBOutput,
+  ColorDBOutput,
+  GenderDB,
+  GenderDBOutPut,
+  SizeDBOutput,
+} from "./../models/Products";
+
+// DTOs
 import {
   CreateCategoryInputDTO,
   CreateCategoryOutputDTO,
@@ -33,22 +104,11 @@ import {
   GetAllProductsInputDTO,
   GetAllProductsOutputDTO,
 } from "../dtos/products/getProduct.dto";
-import {
-  CategoryDB,
-  ColorDB,
-  Product,
-  ProductDB,
-  ProductDBOutput,
-  SizeDB,
-} from "../models/Products";
-import { BadRequestError } from "../errors/BadRequestError";
-import { NotFoundError } from "../errors/NotFoundError";
-import { IdGenerator } from "../services/idGenerator";
-import TokenService from "../services/TokenService";
-import { UnauthorizedError } from "../errors/UnauthorizedError";
-import { USER_ROLES } from "../models/User";
-import { ConflictError } from "../errors/ConflictError";
+
+// Errors
+import { BadRequestError, NotFoundError, ConflictError } from "../errors/Errors";
 import { ErrorHandler } from "../errors/ErrorHandler";
+
 
 export class ProductBusiness {
   constructor(

@@ -2,7 +2,7 @@ export interface WishlistDB {
   wishlist_id: string;
   user_id: string;
   created_at: string;
-  items?: WishlistItemDB[]; // Tornando `items` opcional
+  items?: WishlistItemDB[];
 }
 
 export interface WishlistDBInput {

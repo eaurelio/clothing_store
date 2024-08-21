@@ -12,7 +12,6 @@ export interface PhoneDBOutput {
   type: string;
 }
 
-// Classe Phone
 export class Phone {
   constructor(
       private phoneId: string,

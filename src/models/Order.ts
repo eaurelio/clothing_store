@@ -24,7 +24,7 @@ export class Order {
     private orderId: string,
     private userId: string,
     private items: { productId: string; quantity: number; price: number }[],
-    private statusId: number, // Ajustado para number
+    private statusId: number,
     private total: number,
     private orderDate: string
   ) {}
@@ -64,12 +64,10 @@ export class Order {
   }
 
   getStatusId(): number {
-    // Ajustado para number
     return this.statusId;
   }
 
   setStatusId(statusId: number): void {
-    // Ajustado para number
     this.statusId = statusId;
   }
 
