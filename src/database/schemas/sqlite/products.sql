@@ -1,3 +1,4 @@
+-- Active: 1724253606382@@127.0.0.1@3306
 drop table categories;
 drop table colors;
 drop table sizes;
@@ -52,6 +53,8 @@ CREATE TABLE products (
     FOREIGN KEY (size_id) REFERENCES sizes(size_id),
     FOREIGN KEY (gender_id) REFERENCES genders(gender_id)
 );
+
+pragma table_info(products);
 
 //------------------------------------------------------------------------------------------------------------------
 

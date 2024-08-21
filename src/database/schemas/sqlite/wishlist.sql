@@ -9,7 +9,6 @@ CREATE TABLE wishlists (
 );
 
 CREATE TABLE wishlist_items (
-  -- wishlist_item_id TEXT PRIMARY KEY,
   wishlist_id TEXT NOT NULL,
   product_id TEXT NOT NULL,
   FOREIGN KEY (wishlist_id) REFERENCES wishlists(wishlist_id),
