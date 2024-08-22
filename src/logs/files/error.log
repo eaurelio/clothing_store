@@ -152,3 +152,10 @@
 {"level":"error","timestamp":"2024-08-22T00:51:48.219Z"}
 {"level":"error","name":"UnauthorizedError","statusCode":401,"timestamp":"2024-08-22T02:23:08.648Z"}
 {"code":"22P02","file":"numutils.c","length":179,"level":"error","line":"617","name":"error","routine":"pg_strtoint32_safe","severity":"ERROR","timestamp":"2024-08-22T02:38:51.714Z","where":"unnamed portal parameter $1 = '...'"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-22T17:07:09.383Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-22T17:07:21.641Z"}
+{"code":"22P02","file":"numutils.c","length":179,"level":"error","line":"617","name":"error","routine":"pg_strtoint32_safe","severity":"ERROR","timestamp":"2024-08-22T17:07:35.921Z","where":"unnamed portal parameter $1 = '...'"}
+{"code":"23502","column":"wishlist_id","detail":"Failing row contains (null, dcc69f2e-8107-48c8-9e51-e17c8a351719).","file":"execMain.c","length":260,"level":"error","line":"2003","name":"error","routine":"ExecConstraints","schema":"public","severity":"ERROR","table":"wishlist_items","timestamp":"2024-08-22T17:10:37.672Z"}
+{"code":"23502","column":"wishlist_id","detail":"Failing row contains (null, dcc69f2e-8107-48c8-9e51-e17c8a351719).","file":"execMain.c","length":260,"level":"error","line":"2003","name":"error","routine":"ExecConstraints","schema":"public","severity":"ERROR","table":"wishlist_items","timestamp":"2024-08-22T17:17:43.894Z"}
+{"code":"23502","column":"wishlist_id","detail":"Failing row contains (null, dcc69f2e-8107-48c8-9e51-e17c8a351719).","file":"execMain.c","length":260,"level":"error","line":"2003","name":"error","routine":"ExecConstraints","schema":"public","severity":"ERROR","table":"wishlist_items","timestamp":"2024-08-22T17:18:17.089Z"}
+{"code":"23502","column":"wishlist_id","detail":"Failing row contains (null, dcc69f2e-8107-48c8-9e51-e17c8a351719).","file":"execMain.c","length":260,"level":"error","line":"2003","name":"error","routine":"ExecConstraints","schema":"public","severity":"ERROR","table":"wishlist_items","timestamp":"2024-08-22T17:20:24.510Z"}

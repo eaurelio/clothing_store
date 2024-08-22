@@ -180,7 +180,7 @@ export class WishlistBusiness {
     const items = activeItems
       .filter(({ productDB }) => productDB?.active)
       .map(({ item }) => ({
-        wishlistId: item.wishlist_id,
+        // wishlistId: item.wishlist_id,
         productId: item.product_id,
       }));
   
@@ -240,7 +240,7 @@ export class WishlistBusiness {
         wishlistDB.wishlist_id
       );
     const updatedItems = updatedItemsDB.map((item: WishlistItemDB) => ({
-      wishlistId: item.wishlist_id,
+      // wishlistId: item.wishlist_id,
       productId: item.product_id,
     }));
   

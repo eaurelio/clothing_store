@@ -9,7 +9,7 @@ export interface GetWishListOutputDTO {
     wishlist_id: string;
     userId: string;
     created_at: string;
-    items: { wishlistId: string; productId: string }[];
+    items: { productId: string }[];
   };
 }
 

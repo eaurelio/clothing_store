@@ -186,6 +186,10 @@ SELECT id, price
 FROM products;
 
 -------------------------------------------------------------------------------
+-- Excluir tabelas se existirem
+DROP TABLE IF EXISTS wishlist_items;
+DROP TABLE IF EXISTS wishlists;
+
 CREATE TABLE wishlists (
     wishlist_id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL,
@@ -193,12 +197,59 @@ CREATE TABLE wishlists (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
-drop table wishlist_items;
-
 CREATE TABLE wishlist_items (
-    wishlist_id SERIAL PRIMARY KEY,
+    wishlist_id TEXT NOT NULL,
     product_id TEXT NOT NULL,
     FOREIGN KEY (wishlist_id) REFERENCES wishlists(wishlist_id),
-    FOREIGN KEY (product_id) REFERENCES products(id)
-    -- PRIMARY KEY (wishlist_id, product_id)
+    FOREIGN KEY (product_id) REFERENCES products(id),
+    PRIMARY KEY (wishlist_id, product_id)
 );
+
+select * from wishlist_items;
+
+----------------------------------------------------------------
+
+CREATE TABLE tickets (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    type_id INT,
+    description TEXT NOT NULL,
+    status_id INT,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    phone_number TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_type
+        FOREIGN KEY (type_id)
+        REFERENCES ticket_types(id)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_status
+        FOREIGN KEY (status_id)
+        REFERENCES ticket_status(id)
+        ON DELETE SET NULL
+);
+
+
+CREATE TABLE ticket_status (
+    id SERIAL PRIMARY KEY,
+    status VARCHAR(50) UNIQUE NOT NULL
+);
+
+INSERT INTO ticket_status (status) VALUES ('Pending');
+INSERT INTO ticket_status (status) VALUES ('In Progress');
+INSERT INTO ticket_status (status) VALUES ('Resolved');
+INSERT INTO ticket_status (status) VALUES ('Cancelled');
+
+
+CREATE TABLE ticket_types (
+    id SERIAL PRIMARY KEY,
+    type_name VARCHAR(255) UNIQUE NOT NULL
+);
+
+INSERT INTO ticket_types (type_name) VALUES ('reset_password');
+INSERT INTO ticket_types (type_name) VALUES ('order_issue');
+INSERT INTO ticket_types (type_name) VALUES ('product_problem');
+INSERT INTO ticket_types (type_name) VALUES ('account_issue');
+INSERT INTO ticket_types (type_name) VALUES ('refund_request');
+INSERT INTO ticket_types (type_name) VALUES ('general_inquiry');
