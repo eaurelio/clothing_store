@@ -42,7 +42,7 @@ import { UserDatabase } from "../database/UserDatabase";
 
 // Models
 import { Order, OrderDB, OrderDBOutput } from "../models/Order";
-import { OrderItemDB } from "../models/OrderItem";
+import { OrderItemDB, OrderItemDOutput } from "../models/OrderItem";
 
 // DTOs
 import {
@@ -140,7 +140,7 @@ export class OrderBusiness {
     if (validItems.length > 0) {
       for (const item of validItems) {
         const itemData = {
-          item_id: await this.idGenerator.generate(),
+          // item_id: await this.idGenerator.generate(),
           order_id: newOrder.getOrderId(),
           product_id: item.productId,
           quantity: item.quantity,
@@ -187,7 +187,7 @@ export class OrderBusiness {
       const orderItemsDB = await this.orderDatabase.findOrderItemsByOrderId(
         orderId
       );
-      const items = orderItemsDB.map((item: OrderItemDB) => ({
+      const items = orderItemsDB.map((item: OrderItemDOutput) => ({
         itemId: item.item_id,
         productId: item.product_id,
         quantity: item.quantity,
@@ -213,7 +213,7 @@ export class OrderBusiness {
           const itemsDB = await this.orderDatabase.findOrderItemsByOrderId(
             order.order_id
           );
-          const items = itemsDB.map((item: OrderItemDB) => ({
+          const items = itemsDB.map((item: OrderItemDOutput) => ({
             itemId: item.item_id,
             productId: item.product_id,
             quantity: item.quantity,
@@ -261,7 +261,7 @@ export class OrderBusiness {
         const itemsDB = await this.orderDatabase.findOrderItemsByOrderId(
           order.order_id
         );
-        const items = itemsDB.map((item: OrderItemDB) => ({
+        const items = itemsDB.map((item: OrderItemDOutput) => ({
           itemId: item.item_id,
           productId: item.product_id,
           quantity: item.quantity,
@@ -324,7 +324,6 @@ export class OrderBusiness {
         }
   
         const newOrderItemDB: OrderItemDB = {
-          item_id: this.idGenerator.generate(),
           order_id: orderId,
           product_id: item.productId,
           quantity: item.quantity,
@@ -336,7 +335,7 @@ export class OrderBusiness {
     }
   
     const updatedItemsDB = await this.orderDatabase.findOrderItemsByOrderId(orderId);
-    const updatedItems = updatedItemsDB.map((item: OrderItemDB) => ({
+    const updatedItems = updatedItemsDB.map((item: OrderItemDOutput) => ({
       itemId: item.item_id,
       productId: item.product_id,
       quantity: item.quantity,

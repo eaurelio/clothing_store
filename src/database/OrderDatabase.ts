@@ -27,7 +27,7 @@ export class OrderDatabase extends BaseDatabase {
       [order_id]
     );
 
-    return result[0];
+    return result.rows[0];
   }
 
   // --------------------------------------------------------------------
@@ -48,7 +48,7 @@ export class OrderDatabase extends BaseDatabase {
       [order_id]
     );
   
-    return result[0];
+    return result.rows[0];
   }
   
 
@@ -59,7 +59,7 @@ export class OrderDatabase extends BaseDatabase {
           SELECT * FROM ${OrderDatabase.TABLE_STATUS}
         `);
 
-    return result;
+    return result.rows;
   }
 
   // --------------------------------------------------------------------
@@ -110,7 +110,7 @@ export class OrderDatabase extends BaseDatabase {
       [order_id]
     );
 
-    return result;
+    return result.rows;
   }
 
   // --------------------------------------------------------------------
@@ -143,7 +143,7 @@ public async findOrdersByUserId(userId?: string, orderId?: string) {
 
   const result = await BaseDatabase.connection.raw(query, params);
 
-  return result;
+  return result.rows;
 }
 
   // --------------------------------------------------------------------
@@ -174,11 +174,10 @@ public async findOrdersByUserId(userId?: string, orderId?: string) {
   public async insertOrderItem(orderItem: OrderItemDB): Promise<void> {
     await BaseDatabase.connection.raw(
       `
-      INSERT INTO order_items (item_id, order_id, product_id, quantity, price)
-      VALUES (?, ?, ?, ?, ?)
+      INSERT INTO order_items (order_id, product_id, quantity, price)
+      VALUES (?, ?, ?, ?)
       `,
       [
-        orderItem.item_id,
         orderItem.order_id,
         orderItem.product_id,
         orderItem.quantity,

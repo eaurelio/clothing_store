@@ -89,10 +89,9 @@ export class ProductDatabase extends BaseDatabase {
       params
     );
   
-    return result;
+    return result.rows;
   }
   
-
   // --------------------------------------------------------------------
 
   public async findProductById(id: string) {
@@ -119,7 +118,7 @@ export class ProductDatabase extends BaseDatabase {
       [id]
     );
 
-    return result[0];
+    return result.rows[0];
   }
 
   // --------------------------------------------------------------------
@@ -134,7 +133,7 @@ export class ProductDatabase extends BaseDatabase {
       [id]
     );
 
-    return result[0];
+    return result.rows[0];
   }
 
   // --------------------------------------------------------------------
@@ -149,7 +148,7 @@ export class ProductDatabase extends BaseDatabase {
       [name]
     );
 
-    return result[0];
+    return result.rows[0];
   }
 
   // --------------------------------------------------------------------
@@ -166,6 +165,19 @@ export class ProductDatabase extends BaseDatabase {
 
     await BaseDatabase.connection.raw(query, values);
   }
+
+  // public async insertProduct(newProductDB: ProductDB): Promise<void> {
+  //   const columns = Object.keys(newProductDB);
+  //   const values = Object.values(newProductDB);
+  
+  //   const placeholders = columns.map((_, index) => `$${index + 1}`).join(", ");
+  //   const query = `
+  //     INSERT INTO ${ProductDatabase.TABLE_PRODUCTS} (${columns.join(", ")})
+  //     VALUES (${placeholders})
+  //   `;
+  
+  //   await BaseDatabase.connection.raw(query, values);
+  // }
 
   // --------------------------------------------------------------------
 
@@ -200,7 +212,6 @@ export class ProductDatabase extends BaseDatabase {
     );
 }
 
-
   // --------------------------------------------------------------------
   // CATEGORY DATA
   // --------------------------------------------------------------------
@@ -211,7 +222,7 @@ export class ProductDatabase extends BaseDatabase {
       FROM ${ProductDatabase.TABLE_CATEGORIES}
     `);
 
-    return result;
+    return result.rows;
   }
 
   // --------------------------------------------------------------------
@@ -226,7 +237,7 @@ export class ProductDatabase extends BaseDatabase {
       [category_id]
     );
 
-    return result[0];
+    return result.rows[0];
   }
 
   // --------------------------------------------------------------------
@@ -243,7 +254,7 @@ export class ProductDatabase extends BaseDatabase {
       [name]
     );
 
-    return result[0];
+    return result.rows[0];
   }
 
   // --------------------------------------------------------------------
@@ -291,7 +302,7 @@ export class ProductDatabase extends BaseDatabase {
         FROM ${ProductDatabase.TABLE_COLORS}
     `);
 
-    return result;
+    return result.rows;
   }
 
   // --------------------------------------------------------------------
@@ -306,7 +317,7 @@ export class ProductDatabase extends BaseDatabase {
       [color_id]
     );
 
-    return result[0];
+    return result.rows[0];
   }
 
 // --------------------------------------------------------------------
@@ -321,7 +332,7 @@ export class ProductDatabase extends BaseDatabase {
       [name]
     );
 
-    return result[0];
+    return result.rows[0];
   }
 
 // --------------------------------------------------------------------
@@ -339,7 +350,6 @@ public async insertColor(newColorDB: ColorDB) {
 
   await BaseDatabase.connection.raw(query, values);
 }
-
 
   // --------------------------------------------------------------------
 
@@ -362,7 +372,7 @@ public async insertColor(newColorDB: ColorDB) {
       FROM ${ProductDatabase.TABLE_SIZES}
     `);
 
-    return result;
+    return result.rows;
   }
 
   public async findSizeById(size_id: string): Promise<SizeDB | undefined> {
@@ -375,7 +385,7 @@ public async insertColor(newColorDB: ColorDB) {
       [size_id]
     );
 
-    return result[0];
+    return result.rows[0];
   }
 
   // --------------------------------------------------------------------
@@ -390,7 +400,7 @@ public async insertColor(newColorDB: ColorDB) {
       [name]
     );
 
-    return result[0];
+    return result.rows[0];
   }
 
   // --------------------------------------------------------------------
@@ -428,7 +438,7 @@ public async insertColor(newColorDB: ColorDB) {
       FROM ${ProductDatabase.TABLE_GENDERS}
     `);
 
-    return result;
+    return result.rows;
   }
 
   // --------------------------------------------------------------------
@@ -445,7 +455,7 @@ public async insertColor(newColorDB: ColorDB) {
       [gender_id]
     );
 
-    return result[0];
+    return result.rows[0];
   }
 
   // --------------------------------------------------------------------
@@ -460,7 +470,7 @@ public async insertColor(newColorDB: ColorDB) {
       [name]
     );
 
-    return result[0];
+    return result.rows[0];
   }
 
   // --------------------------------------------------------------------
@@ -488,3 +498,4 @@ public async insertColor(newColorDB: ColorDB) {
     );
   }
 }
+

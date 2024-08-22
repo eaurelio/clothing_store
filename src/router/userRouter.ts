@@ -24,7 +24,7 @@ const userController = new UserController(
 
 userRouter.post("/createUser", userController.createUser);
 userRouter.post("/login", userController.login);
-userRouter.post("/getUserById/:id", authMiddleware([USER_ROLES.CLIENT]), userController.getUserById);
+userRouter.post("/getUserById/:id", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), userController.getUserById);
 userRouter.post("/getUsers", ensureAdmin(USER_ROLES.ADMIN), userController.getUsers);
 userRouter.patch("/editUser/:id", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), userController.editUser);
 userRouter.patch("/changePassword/:id", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), userController.changePassword);

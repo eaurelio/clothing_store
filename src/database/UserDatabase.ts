@@ -10,25 +10,42 @@ export class UserDatabase extends BaseDatabase {
   // USER DATA
   // --------------------------------------------------------------------
 
-  public async findUsers(q: string | undefined, onlyActive: boolean): Promise<UserDB[]> {
-    let query = `
-        SELECT * FROM ${UserDatabase.TABLE_USERS}
-    `;
+public async findUsers(q: string | undefined, onlyActive: boolean): Promise<UserDB[]> {
+  let query = `
+      SELECT 
+          users.id,
+          users.personal_id,
+          users.entity_type,
+          users.name,
+          genders.name AS gender,  -- Nome do gênero retornado como 'gender'
+          users.email,
+          users.password,
+          users.role,
+          users.created_at,
+          users.birthdate,
+          users.address,
+          users.number,
+          users.neighborhood,
+          users.city,
+          users.country,
+          users.active,
+          users.last_login
+      FROM ${UserDatabase.TABLE_USERS} users
+      LEFT JOIN genders ON users.gender = genders.gender_id
+  `;
 
-    const params: any[] = [];
+  const params: any[] = [];
 
-    if (q) {
-        query += ` WHERE name LIKE ?`;
-        params.push(`%${q}%`);
-    }
+  if (q) {
+      query += ` WHERE users.name ILIKE ?`;
+      params.push(`%${q}%`);
+  }
+  
+  query += (q ? ` AND` : ` WHERE`) + ` users.active = ${onlyActive}`;
 
-    if (onlyActive) {
-        query += (q ? ` AND` : ` WHERE`) + ` active = true`;
-    }
+  const result = await BaseDatabase.connection.raw(query, params);
 
-    const result = await BaseDatabase.connection.raw(query, params);
-
-    return result;
+  return result.rows;
 }
 
   // --------------------------------------------------------------------
@@ -43,7 +60,7 @@ export class UserDatabase extends BaseDatabase {
       [id]
     );
 
-    return result[0];
+    return result.rows[0];
   }
 
   // --------------------------------------------------------------------
@@ -58,7 +75,7 @@ export class UserDatabase extends BaseDatabase {
       [email]
     );
 
-    return result[0];
+    return result.rows[0];
   }
 
   // --------------------------------------------------------------------
@@ -75,7 +92,7 @@ export class UserDatabase extends BaseDatabase {
       [personal_id]
     );
 
-    return result[0];
+    return result.rows[0];
   }
 
   // --------------------------------------------------------------------
@@ -169,7 +186,7 @@ export class UserDatabase extends BaseDatabase {
       [user_id]
     );
 
-    return result;
+    return result.rows;
   }
 
   // --------------------------------------------------------------------
@@ -184,7 +201,7 @@ export class UserDatabase extends BaseDatabase {
       [phone_id]
     );
 
-    return result[0] as PhoneDB | undefined;
+    return result.rows[0] as PhoneDB | undefined;
   }
 
   // --------------------------------------------------------------------

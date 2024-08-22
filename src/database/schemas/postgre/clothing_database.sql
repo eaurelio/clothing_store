@@ -23,6 +23,17 @@ CREATE TABLE users (
     last_login TIMESTAMP
 );
 
+ALTER TABLE users
+ALTER COLUMN gender TYPE INTEGER USING gender::INTEGER;
+
+
+ALTER TABLE users
+ADD CONSTRAINT fk_gender
+FOREIGN KEY (gender) REFERENCES genders(gender_id);
+
+SELECT * FROM users;
+
+
 CREATE TABLE phones (
     phone_id TEXT PRIMARY KEY UNIQUE NOT NULL,
     user_id TEXT NOT NULL,
@@ -55,7 +66,7 @@ CREATE TABLE orders (
 );
 
 CREATE TABLE order_items (
-    item_id TEXT PRIMARY KEY UNIQUE NOT NULL,
+    item_id SERIAL PRIMARY KEY,
     order_id TEXT NOT NULL,
     product_id TEXT NOT NULL,
     quantity INTEGER NOT NULL,
@@ -63,6 +74,10 @@ CREATE TABLE order_items (
     FOREIGN KEY (order_id) REFERENCES orders(order_id),
     FOREIGN KEY (product_id) REFERENCES products(id)
 );
+
+
+select * from orders;
+select * from order_items;
 
 -------------------------------------------------------------------------------
 CREATE TABLE categories (
@@ -167,6 +182,9 @@ CREATE TABLE products (
     FOREIGN KEY (gender_id) REFERENCES genders(gender_id)
 );
 
+SELECT id, price
+FROM products;
+
 -------------------------------------------------------------------------------
 CREATE TABLE wishlists (
     wishlist_id TEXT PRIMARY KEY,
@@ -175,11 +193,12 @@ CREATE TABLE wishlists (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
+drop table wishlist_items;
 
 CREATE TABLE wishlist_items (
-    wishlist_id TEXT NOT NULL,
+    wishlist_id SERIAL PRIMARY KEY,
     product_id TEXT NOT NULL,
     FOREIGN KEY (wishlist_id) REFERENCES wishlists(wishlist_id),
-    FOREIGN KEY (product_id) REFERENCES products(id),
-    PRIMARY KEY (wishlist_id, product_id)
+    FOREIGN KEY (product_id) REFERENCES products(id)
+    -- PRIMARY KEY (wishlist_id, product_id)
 );
