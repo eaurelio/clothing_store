@@ -26,7 +26,7 @@ const orderController = new OrderController(
   )
 )
 
-orderRouter.get("/getUserOrders/:id", authMiddleware([USER_ROLES.CLIENT]), orderController.getUserOrders)
+orderRouter.get("/getUserOrders/:id", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), orderController.getUserOrders)
 orderRouter.get("/getAllOrders", ensureAdmin(USER_ROLES.ADMIN), orderController.getAllOrders)
 orderRouter.get("/getAllStatus", orderController.getAllStatus)
 orderRouter.post("/createOrder", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), orderController.createOrder)

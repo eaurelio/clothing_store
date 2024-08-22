@@ -31,8 +31,10 @@ export const authMiddleware = (requiredRoles?: USER_ROLES[]) => {
       const userDatabase = new UserDatabase();
       const userFromDb = await userDatabase.findUserById(payload.userId);
 
-      if (!userFromDb || !userFromDb.active) {
-        throw new ForbiddenError('Account deactivated');
+      const isActivationRoute = req.path === '/toggleUserActiveStatus';
+
+      if (!userFromDb || (!userFromDb.active && !isActivationRoute)) {
+        throw new ForbiddenError('Account/Token deactivated');
       }
 
       const user: Partial<UserDB> = {
@@ -43,7 +45,7 @@ export const authMiddleware = (requiredRoles?: USER_ROLES[]) => {
       req.user = user as UserDB;
 
       if (requiredRoles && !requiredRoles.includes(userRole)) {
-        throw new ForbiddenError('You have not permission to access this route');
+        throw new ForbiddenError('You do not have permission to access this route');
       }
 
       next();
@@ -52,4 +54,3 @@ export const authMiddleware = (requiredRoles?: USER_ROLES[]) => {
     }
   };
 };
-

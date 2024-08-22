@@ -21,7 +21,7 @@ export class WishlistDatabase extends BaseDatabase {
       [wishlist_id]
     );
   
-    return result[0];
+    return result.rows[0];
   }
 
   // --------------------------------------------------------------------
@@ -39,7 +39,7 @@ export class WishlistDatabase extends BaseDatabase {
       [user_id]
     );
   
-    return result[0];
+    return result.rows[0];
   }
 
   // --------------------------------------------------------------------
@@ -90,7 +90,7 @@ export class WishlistDatabase extends BaseDatabase {
       [wishlist_id]
     );
 
-    return result;
+    return result.rows;
   }
 
   // --------------------------------------------------------------------

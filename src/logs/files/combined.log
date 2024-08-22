@@ -132,3 +132,23 @@
 {"level":"error","name":"UnauthorizedError","statusCode":401,"timestamp":"2024-08-20T20:54:25.887Z"}
 {"issues":[{"code":"invalid_type","expected":"string","message":"Required","path":["email"],"received":"undefined"},{"code":"too_big","exact":false,"inclusive":true,"maximum":16,"message":"String must contain at most 16 character(s)","path":["newPassword"],"type":"string"}],"level":"error","name":"ZodError","timestamp":"2024-08-21T15:43:36.575Z"}
 {"level":"error","statusCode":400,"timestamp":"2024-08-21T15:51:23.185Z"}
+{"code":"23503","constraint":"products_color_id_fkey","detail":"Key (color_id)=(30) is not present in table \"colors\".","file":"ri_triggers.c","length":259,"level":"error","line":"2608","name":"error","routine":"ri_ReportViolation","schema":"public","severity":"ERROR","table":"products","timestamp":"2024-08-21T20:19:43.164Z"}
+{"issues":[{"code":"invalid_type","expected":"string","message":"Required","path":["hex_code"],"received":"undefined"}],"level":"error","name":"ZodError","timestamp":"2024-08-21T20:31:16.694Z"}
+{"issues":[{"code":"invalid_type","expected":"string","message":"Required","path":["name"],"received":"undefined"}],"level":"error","name":"ZodError","timestamp":"2024-08-21T20:31:29.526Z"}
+{"level":"error","timestamp":"2024-08-21T20:38:54.069Z"}
+{"level":"error","timestamp":"2024-08-21T20:58:23.386Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-21T21:00:44.650Z"}
+{"code":"42703","file":"parse_relation.c","length":111,"level":"error","line":"3722","name":"error","position":"20","routine":"errorMissingColumn","severity":"ERROR","timestamp":"2024-08-21T21:22:08.290Z"}
+{"code":"42P01","file":"parse_relation.c","length":117,"level":"error","line":"3657","name":"error","position":"24","routine":"errorMissingRTE","severity":"ERROR","timestamp":"2024-08-21T21:25:34.119Z"}
+{"level":"error","timestamp":"2024-08-21T21:31:23.044Z"}
+{"level":"error","timestamp":"2024-08-21T21:33:23.260Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-21T21:34:04.957Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-21T21:34:37.302Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-21T21:35:17.287Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-22T00:08:11.301Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-22T00:11:22.452Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-22T00:19:14.437Z"}
+{"level":"error","statusCode":403,"timestamp":"2024-08-22T00:19:36.469Z"}
+{"level":"error","timestamp":"2024-08-22T00:51:48.219Z"}
+{"level":"error","name":"UnauthorizedError","statusCode":401,"timestamp":"2024-08-22T02:23:08.648Z"}
+{"code":"22P02","file":"numutils.c","length":179,"level":"error","line":"617","name":"error","routine":"pg_strtoint32_safe","severity":"ERROR","timestamp":"2024-08-22T02:38:51.714Z","where":"unnamed portal parameter $1 = '...'"}
