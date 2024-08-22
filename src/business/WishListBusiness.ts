@@ -1,35 +1,3 @@
-// import {
-//   CreateWishListInputDTO,
-//   CreateWishListOutputDTO,
-// } from "./../dtos/wishlist/createWishList.dto";
-
-// import {
-//   GetWishListInputDTO,
-//   GetWishListOutputDTO,
-// } from "./../dtos/wishlist/getWishList.dto";
-// import {
-//   UpdateWishListInputDTO,
-//   UpdateWishListOutputDTO,
-// } from "./../dtos/wishlist/updateWishList.dto";
-// import {
-//   DeleteWishListInputDTO,
-//   DeleteWishListOutputDTO,
-// } from "./../dtos/wishlist/deleteWishList.dto";
-
-// import {
-//   WishlistDBInput,
-//   WishlistDBOutput,
-// } from "../models/WishList";
-// import { WishlistDatabase } from "../database/WishListDatabase";
-// import TokenService from "../services/TokenService";
-// import { IdGenerator } from "../services/idGenerator";
-// import { NotFoundError } from "../errors/Errors";
-// import { ErrorHandler } from "../errors/ErrorHandler";
-// import { WishlistItemDB } from "../models/WishList";
-// import { HashManager } from "../services/HashManager";
-// import { UserDatabase } from "../database/UserDatabase";
-// import { ProductDatabase } from "../database/ProductDatabase";
-
 // DTOs
 import {
   CreateWishListInputDTO,

@@ -5,6 +5,7 @@ import { userRouter } from './router/userRouter'
 import { productRouter } from './router/productRouter'
 import { orderRouter } from './router/orderRouter'
 import { wishListRouter } from './router/wishListRouter'
+import { ticketRouter } from './router/TicketRouter'
 
 dotenv.config()
 
@@ -21,3 +22,4 @@ app.use("/users", userRouter)
 app.use("/products", productRouter)
 app.use("/orders", orderRouter)
 app.use("/wishList", wishListRouter)
+app.use("/tickets", ticketRouter)

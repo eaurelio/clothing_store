@@ -1,39 +1,3 @@
-// import { HashManager } from "../services/HashManager";
-// import { UserDatabase } from "../database/UserDatabase";
-// import {
-//   CreateUserInputDTO,
-//   CreateUserOutputDTO,
-// } from "../dtos/users/createUser.dto";
-// import { LoginInputDTO, LoginOutputDTO } from "../dtos/users/login";
-// import {
-//   User,
-//   UserDB,
-//   USER_ROLES,
-//   EntityType,
-//   UserDBOutput,
-// } from "../models/User";
-// import { IdGenerator } from "../services/idGenerator";
-// import {
-//   ToggleUserActiveStatusInputDTO,
-//   ToggleUserActiveStatusOutputDTO,
-//   UpdatePasswordInputDTO,
-//   UpdatePasswordOutputDTO,
-//   UpdateUserInputDTO,
-//   UpdateUserOutputDTO,
-// } from "../dtos/users/updateUser.dto";
-// import {
-//   PhoneDeleteDTO,
-//   PhoneInputDTO,
-//   PhoneOutputDTO,
-//   PhoneUpdateInputDTO,
-//   PhoneUpdateOutputDTO,
-// } from "../dtos/users/phone";
-// import TokenService from "../services/TokenService";
-// import { PhoneDB } from "../models/Phones";
-// import { ConflictError, ForbiddenError, BadRequestError, NotFoundError } from "../errors/Errors";
-// import { ErrorHandler } from "../errors/ErrorHandler";
-// import { GetAllUserInputDTO } from "../dtos/users/getUser.dto";
-
 // User DTOs
 import {
   CreateUserInputDTO,

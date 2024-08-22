@@ -31,6 +31,11 @@ export enum TicketStatus {
   CANCELLED = "Cancelled"
 }
 
+export interface TicketStatusDB {
+  id: number;
+  status: string;
+}
+
 export enum TicketType {
   RESET_PASSWORD = 'reset_password',
   ORDER_ISSUE = 'order_issue',
@@ -38,6 +43,11 @@ export enum TicketType {
   ACCOUNT_ISSUE = 'account_issue',
   REFUND_REQUEST = 'refund_request',
   GENERAL_INQUIRY = 'general_inquiry'
+}
+
+export interface TicketTypeDB {
+  id: number;
+  type_name: string;
 }
 
 export class Ticket {

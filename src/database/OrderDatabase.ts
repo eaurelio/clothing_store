@@ -148,19 +148,6 @@ public async findOrdersByUserId(userId?: string, orderId?: string) {
 
   // --------------------------------------------------------------------
 
-  // public async insertOrderItem(newOrderItemDB: OrderItemDB): Promise<void> {
-  //   const columns = Object.keys(newOrderItemDB);
-  //   const placeholders = columns.map(() => "?").join(", ");
-  //   const values = Object.values(newOrderItemDB);
-
-  //   const query = `
-  //     INSERT INTO ${OrderDatabase.TABLE_ORDER_ITEMS} (${columns.join(", ")})
-  //     VALUES (${placeholders})
-  //   `;
-
-  //   await BaseDatabase.connection.raw(query, values);
-  // }
-
   public async deleteOrderItemsByOrderId(order_id: string): Promise<void> {
     await BaseDatabase.connection.raw(
       `
