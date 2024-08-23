@@ -27,7 +27,7 @@ const orderController = new OrderController(
 )
 
 orderRouter.get("/getUserOrders/:id", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), orderController.getUserOrders)
-orderRouter.get("/getAllOrders", ensureAdmin(USER_ROLES.ADMIN), orderController.getAllOrders)
+orderRouter.get("/getAllOrders", authMiddleware([USER_ROLES.ADMIN]), ensureAdmin(USER_ROLES.ADMIN), orderController.getAllOrders)
 orderRouter.get("/getAllStatus", orderController.getAllStatus)
 orderRouter.post("/createOrder", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), orderController.createOrder)
 orderRouter.patch("/updateOrder/:id", ensureAdmin(USER_ROLES.ADMIN), orderController.updateOrder)

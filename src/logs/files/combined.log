@@ -159,3 +159,37 @@
 {"code":"23502","column":"wishlist_id","detail":"Failing row contains (null, dcc69f2e-8107-48c8-9e51-e17c8a351719).","file":"execMain.c","length":260,"level":"error","line":"2003","name":"error","routine":"ExecConstraints","schema":"public","severity":"ERROR","table":"wishlist_items","timestamp":"2024-08-22T17:17:43.894Z"}
 {"code":"23502","column":"wishlist_id","detail":"Failing row contains (null, dcc69f2e-8107-48c8-9e51-e17c8a351719).","file":"execMain.c","length":260,"level":"error","line":"2003","name":"error","routine":"ExecConstraints","schema":"public","severity":"ERROR","table":"wishlist_items","timestamp":"2024-08-22T17:18:17.089Z"}
 {"code":"23502","column":"wishlist_id","detail":"Failing row contains (null, dcc69f2e-8107-48c8-9e51-e17c8a351719).","file":"execMain.c","length":260,"level":"error","line":"2003","name":"error","routine":"ExecConstraints","schema":"public","severity":"ERROR","table":"wishlist_items","timestamp":"2024-08-22T17:20:24.510Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-22T21:55:51.717Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-22T21:58:45.402Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-22T21:59:34.321Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-22T22:00:11.716Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-22T22:01:20.458Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-22T22:02:36.103Z"}
+{"issues":[{"code":"invalid_type","expected":"string","message":"Expected string, received number","path":["typeId"],"received":"number"}],"level":"error","name":"ZodError","timestamp":"2024-08-22T22:05:59.710Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-22T22:24:16.911Z"}
+{"code":"42703","file":"analyze.c","length":131,"level":"error","line":"2527","name":"error","position":"70","routine":"transformUpdateTargetList","severity":"ERROR","timestamp":"2024-08-22T22:27:11.793Z"}
+{"code":"42703","file":"analyze.c","length":131,"level":"error","line":"2527","name":"error","position":"70","routine":"transformUpdateTargetList","severity":"ERROR","timestamp":"2024-08-22T22:29:13.551Z"}
+{"code":"42601","file":"rewriteHandler.c","length":121,"level":"error","line":"1115","name":"error","routine":"process_matched_tle","severity":"ERROR","timestamp":"2024-08-22T22:31:49.614Z"}
+{"code":"42703","file":"parse_relation.c","length":115,"level":"error","line":"3722","name":"error","position":"94","routine":"errorMissingColumn","severity":"ERROR","timestamp":"2024-08-22T22:56:21.645Z"}
+{"code":"42703","file":"parse_relation.c","length":115,"level":"error","line":"3722","name":"error","position":"69","routine":"errorMissingColumn","severity":"ERROR","timestamp":"2024-08-23T14:10:25.221Z"}
+{"code":"42703","file":"parse_relation.c","length":115,"level":"error","line":"3722","name":"error","position":"69","routine":"errorMissingColumn","severity":"ERROR","timestamp":"2024-08-23T14:10:39.704Z"}
+{"issues":[{"code":"invalid_type","expected":"string","message":"Required","path":["userId"],"received":"undefined"},{"code":"invalid_type","expected":"number","message":"Required","path":["typeId"],"received":"undefined"},{"code":"invalid_type","expected":"number","message":"Required","path":["statusId"],"received":"undefined"},{"code":"invalid_type","expected":"string","message":"Required","path":["userName"],"received":"undefined"},{"code":"invalid_type","expected":"string","message":"Required","path":["userEmail"],"received":"undefined"},{"code":"invalid_type","expected":"string","message":"Required","path":["userPhoneNumber"],"received":"undefined"}],"level":"error","name":"ZodError","timestamp":"2024-08-23T14:29:36.717Z"}
+{"code":"42703","file":"parse_target.c","length":124,"level":"error","line":"1066","name":"error","position":"75","routine":"checkInsertTargets","severity":"ERROR","timestamp":"2024-08-23T14:30:22.332Z"}
+{"code":"42703","file":"parse_target.c","length":129,"level":"error","line":"1066","name":"error","position":"75","routine":"checkInsertTargets","severity":"ERROR","timestamp":"2024-08-23T14:32:53.638Z"}
+{"code":"23502","column":"solution","detail":"Failing row contains (b45aaa58-faaa-4e09-964a-5f05ee1b0d93, d1c5b5e7-ab95-4f48-b8de-c89de4eea640, 1, Clhoe Smiwh, chloe.smith@example.ca, +1-416-123-4567, I can't access my account, null, null, null, 1, 2024-08-23 14:34:11.742185, 2024-08-23 14:34:11.742185).","file":"execMain.c","length":433,"level":"error","line":"2003","name":"error","routine":"ExecConstraints","schema":"public","severity":"ERROR","table":"tickets","timestamp":"2024-08-23T14:34:11.790Z"}
+{"code":"42703","file":"parse_relation.c","length":111,"level":"error","line":"3722","name":"error","position":"227","routine":"errorMissingColumn","severity":"ERROR","timestamp":"2024-08-23T15:05:09.636Z"}
+{"code":"42703","file":"parse_relation.c","length":111,"level":"error","line":"3722","name":"error","position":"240","routine":"errorMissingColumn","severity":"ERROR","timestamp":"2024-08-23T15:07:36.974Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-23T16:03:12.415Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-23T16:04:34.129Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-23T16:06:20.964Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-23T16:07:37.401Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-23T16:07:44.087Z"}
+{"issues":[{"code":"invalid_type","expected":"string","message":"Required","path":["userId"],"received":"undefined"}],"level":"error","name":"ZodError","timestamp":"2024-08-23T16:08:56.722Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-23T16:11:32.414Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-23T16:14:41.046Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-23T16:15:25.513Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-23T16:15:56.022Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-23T16:16:28.767Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-23T16:17:46.593Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-23T16:21:56.265Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-23T16:22:26.593Z"}

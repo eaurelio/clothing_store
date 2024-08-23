@@ -1,20 +1,3 @@
-// import { Request, Response } from "express";
-// import { WishlistBusiness } from "../business/WishListBusiness";
-// import {
-//   CreateWishListSchema,
-// } from "../dtos/wishlist/createWishList.dto";
-// import {
-//   GetWishListSchema,
-// } from "../dtos/wishlist/getWishList.dto";
-// import {
-//   UpdateWishListSchema,
-// } from "../dtos/wishlist/updateWishList.dto";
-// import {
-//   DeleteWishListSchema,
-// } from "../dtos/wishlist/deleteWishList.dto";
-// import { ErrorHandler } from "../errors/ErrorHandler";
-// import logger from "../logs/logger";
-
 // Express
 import { Request, Response } from "express";
 
