@@ -6,16 +6,20 @@ export interface GetTicketInputDTO {
 
 export const GetTicketSchema = z.object({
   ticketId: z.string()
-}).transform(data => data as GetTicketInputDTO);
+}).transform(data => data as GetTicketInputDTO)
+
 
 export interface GetTicketOutputDTO {
   ticketId: string;
   userId: string;
   typeId: number;
   statusId: number;
+  solution?: string;
+  analist_name?: string;
+  analist_email?: string;
   createdAt: string;
   updatedAt: string;
-  description: string; // Exemplo de campo adicional
+  description: string;
 }
 
 // ---------
@@ -35,14 +39,18 @@ export interface GetAllTicketsOutputDTO {
     statusId: number;
     createdAt: string;
     updatedAt: string;
-    description: string; // Exemplo de campo adicional
+    description: string;
+    solution?: string; 
+    analistName?: string;
+    analistEmail?: string;
   }>;
-  total: number; // Total de tickets retornados
+  total: number;
 }
+
 
 export const GetAllTicketsSchema = z.object({
   id: z.string().optional(),
   userId: z.string().optional(),
-  typeId: z.string().optional(),
-  statusId: z.string().optional(),
+  typeId: z.number().optional(),
+  statusId: z.number().optional(),
 }).transform(data => data as GetAllTicketsInputDTO);

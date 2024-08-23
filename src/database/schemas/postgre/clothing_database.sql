@@ -209,15 +209,20 @@ select * from wishlist_items;
 
 ----------------------------------------------------------------
 
+DROP TABLE TICKETS;
+
 CREATE TABLE tickets (
     id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL,
     type_id INT,
+    user_name TEXT NOT NULL,
+    user_email TEXT NOT NULL,
+    user_phone_number TEXT NOT NULL,
     description TEXT NOT NULL,
+    solution TEXT,
+    analist_name TEXT,
+    analist_email TEXT,
     status_id INT,
-    name TEXT NOT NULL,
-    email TEXT NOT NULL,
-    phone_number TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_type
@@ -230,16 +235,12 @@ CREATE TABLE tickets (
         ON DELETE SET NULL
 );
 
+----------------------------------------------------------------
 
 CREATE TABLE ticket_status (
     id SERIAL PRIMARY KEY,
     status VARCHAR(50) UNIQUE NOT NULL
 );
-
-INSERT INTO ticket_status (status) VALUES ('Pending');
-INSERT INTO ticket_status (status) VALUES ('In Progress');
-INSERT INTO ticket_status (status) VALUES ('Resolved');
-INSERT INTO ticket_status (status) VALUES ('Cancelled');
 
 
 CREATE TABLE ticket_types (
@@ -253,3 +254,9 @@ INSERT INTO ticket_types (type_name) VALUES ('product_problem');
 INSERT INTO ticket_types (type_name) VALUES ('account_issue');
 INSERT INTO ticket_types (type_name) VALUES ('refund_request');
 INSERT INTO ticket_types (type_name) VALUES ('general_inquiry');
+
+
+INSERT INTO ticket_status (status) VALUES ('Pending');
+INSERT INTO ticket_status (status) VALUES ('In Progress');
+INSERT INTO ticket_status (status) VALUES ('Resolved');
+INSERT INTO ticket_status (status) VALUES ('Cancelled');

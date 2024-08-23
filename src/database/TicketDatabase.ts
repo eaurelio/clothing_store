@@ -1,5 +1,5 @@
 import { BaseDatabase } from "./connection/BaseDatabase";
-import { TicketDB } from "../models/Ticket";
+import { TicketDB, TicketDBOutput } from "../models/Ticket";
 import { TicketStatusDB, TicketTypeDB } from "../models/Ticket";
 
 export class TicketDatabase extends BaseDatabase {
@@ -14,7 +14,7 @@ export class TicketDatabase extends BaseDatabase {
     userId?: string,
     typeId?: number,
     statusId?: number
-  ): Promise<TicketDB[]> {
+  ): Promise<TicketDBOutput[]> {
     let conditions: string[] = [];
     let params: any[] = [];
 
@@ -47,24 +47,29 @@ export class TicketDatabase extends BaseDatabase {
         tickets.id,
         tickets.user_id,
         tickets.type_id,
-        ticket_types.type_name AS type_name,
+        ticket_types.type_name,
         tickets.description,
         tickets.status_id,
         ticket_status.status AS status_name,
-        tickets.name,
-        tickets.email,
-        tickets.phone_number,
+        tickets.user_name,
+        tickets.user_email,
+        tickets.user_phone_number,
         tickets.created_at,
-        tickets.updated_at
+        tickets.updated_at,
+        tickets.solution,
+        tickets.analist_name,
+        tickets.analist_email
       FROM ${TicketDatabase.TABLE_TICKETS} tickets
-      LEFT JOIN ${TicketDatabase.TABLE_TICKET_TYPES} ticket_types
+      LEFT JOIN ticket_types
         ON tickets.type_id = ticket_types.id
-      LEFT JOIN ${TicketDatabase.TABLE_TICKET_STATUS} ticket_status
+      LEFT JOIN ticket_status
         ON tickets.status_id = ticket_status.id
       ${whereClause}
     `,
       params
     );
+
+    console.log(result.rows);
 
     return result.rows;
   }
@@ -78,19 +83,22 @@ export class TicketDatabase extends BaseDatabase {
         tickets.id,
         tickets.user_id,
         tickets.type_id,
-        ticket_types.type_name AS type_name,
+        ticket_types.type_name,
         tickets.description,
         tickets.status_id,
         ticket_status.status AS status_name,
-        tickets.name,
-        tickets.email,
-        tickets.phone_number,
+        tickets.user_name,
+        tickets.user_email,
+        tickets.user_phone_number,
         tickets.created_at,
-        tickets.updated_at
+        tickets.updated_at,
+        tickets.solution,
+        tickets.analist_name,
+        tickets.analist_email
       FROM ${TicketDatabase.TABLE_TICKETS} tickets
-      LEFT JOIN ${TicketDatabase.TABLE_TICKET_TYPES} ticket_types
+      LEFT JOIN ticket_types
         ON tickets.type_id = ticket_types.id
-      LEFT JOIN ${TicketDatabase.TABLE_TICKET_STATUS} ticket_status
+      LEFT JOIN ticket_status
         ON tickets.status_id = ticket_status.id
       WHERE tickets.id = ?
     `,
@@ -102,11 +110,9 @@ export class TicketDatabase extends BaseDatabase {
 
   // --------------------------------------------------------------------
 
-  // --------------------------------------------------------------------
-
   public async insertTicket(newTicketDB: TicketDB): Promise<void> {
     const columns = Object.keys(newTicketDB).filter(
-      (key) => key !== 'created_at' && key !== 'updated_at'
+      (key) => key !== "created_at" && key !== "updated_at"
     );
     const placeholders = columns.map(() => "?").join(", ");
     const values = columns.map((key) => newTicketDB[key as keyof TicketDB]);
@@ -121,55 +127,31 @@ export class TicketDatabase extends BaseDatabase {
 
   // --------------------------------------------------------------------
 
-  public async updateTicket(
-    idToEdit: string,
-    updatedTicketDB: Partial<TicketDB>
-  ): Promise<void> {
-    const columns = Object.keys(updatedTicketDB).filter(
-      (key) => key !== 'created_at'
-    );
-    const values = columns.map((key) => updatedTicketDB[key as keyof TicketDB]);
+  public async updateTicket(input: any) {
+    const { id, type_id, solution, status_id, analist_name, analist_email } =
+      input;
 
-    const setClause = columns.map((col) => `${col} = ?`).join(", ");
-
-    const query = `
-      UPDATE ${TicketDatabase.TABLE_TICKETS}
-      SET ${setClause}, updated_at = CURRENT_TIMESTAMP
-      WHERE id = ?
-    `;
-
-    await BaseDatabase.connection.raw(query, [...values, idToEdit]);
-  }
-
-  // --------------------------------------------------------------------
-
-  public async updateTicketStatus(
-    id: string,
-    statusId: number
-  ): Promise<void> {
+    // Executa a query raw para atualizar o ticket
     await BaseDatabase.connection.raw(
       `
-      UPDATE ${TicketDatabase.TABLE_TICKETS}
-      SET status_id = ?, updated_at = CURRENT_TIMESTAMP
+      UPDATE tickets
+      SET 
+          type_id = COALESCE(?, type_id),
+          solution = COALESCE(?, solution),
+          status_id = COALESCE(?, status_id),
+          analist_name = COALESCE(?, analist_name),
+          analist_email = COALESCE(?, analist_email),
+          updated_at = CURRENT_TIMESTAMP
       WHERE id = ?
-    `,
-      [statusId, id]
-    );
-  }
-
-  // --------------------------------------------------------------------
-
-  public async updateTicketType(
-    id: string,
-    typeId: number
-  ): Promise<void> {
-    await BaseDatabase.connection.raw(
-      `
-      UPDATE ${TicketDatabase.TABLE_TICKETS}
-      SET type_id = ?, updated_at = CURRENT_TIMESTAMP
-      WHERE id = ?
-    `,
-      [typeId, id]
+      `,
+      [
+        type_id ?? null,
+        solution ?? null,
+        status_id ?? null,
+        analist_name ?? null,
+        analist_email ?? null,
+        id,
+      ]
     );
   }
 
@@ -177,55 +159,13 @@ export class TicketDatabase extends BaseDatabase {
   // STATUS DATA
   // --------------------------------------------------------------------
 
-  public async getAllStatuses(): Promise<TicketStatusDB[]> {
+  public async getAllStatus(): Promise<TicketStatusDB[]> {
     const result = await BaseDatabase.connection.raw(`
       SELECT *
       FROM ${TicketDatabase.TABLE_TICKET_STATUS}
     `);
 
     return result.rows;
-  }
-
-  // --------------------------------------------------------------------
-
-  public async findStatusById(id: number): Promise<TicketStatusDB | undefined> {
-    const result = await BaseDatabase.connection.raw(
-      `
-      SELECT *
-      FROM ${TicketDatabase.TABLE_TICKET_STATUS}
-      WHERE id = ?
-    `,
-      [id]
-    );
-
-    return result.rows[0];
-  }
-
-  // --------------------------------------------------------------------
-
-  public async findStatusByName(name: string): Promise<TicketStatusDB | undefined> {
-    const result = await BaseDatabase.connection.raw(
-      `
-      SELECT *
-      FROM ${TicketDatabase.TABLE_TICKET_STATUS}
-      WHERE status = ?
-    `,
-      [name]
-    );
-
-    return result.rows[0];
-  }
-
-  // --------------------------------------------------------------------
-
-  public async insertStatus(newStatus: TicketStatusDB): Promise<void> {
-    await BaseDatabase.connection.raw(
-      `
-      INSERT INTO ${TicketDatabase.TABLE_TICKET_STATUS} (status)
-      VALUES (?)
-    `,
-      [newStatus.status]
-    );
   }
 
   // --------------------------------------------------------------------
@@ -240,47 +180,4 @@ export class TicketDatabase extends BaseDatabase {
 
     return result.rows;
   }
-
-  // --------------------------------------------------------------------
-
-  public async findTypeById(id: number): Promise<TicketTypeDB | undefined> {
-    const result = await BaseDatabase.connection.raw(
-      `
-      SELECT *
-      FROM ${TicketDatabase.TABLE_TICKET_TYPES}
-      WHERE id = ?
-    `,
-      [id]
-    );
-
-    return result.rows[0];
-  }
-
-  // --------------------------------------------------------------------
-
-  public async findTypeByName(name: string): Promise<TicketTypeDB | undefined> {
-    const result = await BaseDatabase.connection.raw(
-      `
-      SELECT *
-      FROM ${TicketDatabase.TABLE_TICKET_TYPES}
-      WHERE type_name = ?
-    `,
-      [name]
-    );
-
-    return result.rows[0];
-  }
-
-  // --------------------------------------------------------------------
-
-  public async insertType(newType: TicketTypeDB): Promise<void> {
-    await BaseDatabase.connection.raw(
-      `
-      INSERT INTO ${TicketDatabase.TABLE_TICKET_TYPES} (type_name)
-      VALUES (?)
-    `,
-      [newType.type_name]
-    );
-  }
 }
-

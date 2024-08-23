@@ -1,28 +1,36 @@
 export interface TicketDB {
-  id: string;
-  user_id: string;
-  type_id: number;
-  description: string;
-  status_id: number;
-  name: string;
-  email: string;
-  phone_number: string;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface TicketDBOutput {
-  id: string;
-  user_id: string;
-  type_id: number;
-  description: string;
-  status_id: number;
-  name: string;
-  email: string;
-  phone_number: string;
-  created_at: string;
-  updated_at: string;
-}
+    id: string;
+    user_id: string;
+    type_id: number;
+    description: string;
+    status_id: number;
+    solution?: string;
+    analist_name?: string;
+    analist_email?: string;
+    user_name: string;
+    user_email: string;
+    user_phone_number: string;
+    created_at: string;
+    updated_at: string;
+  }
+  
+  export interface TicketDBOutput {
+    id: string;
+    user_id: string;
+    type_id: number;
+    type_name: string;
+    description: string;
+    status_id: number;
+    status_name: string;
+    solution?: string;
+    analist_name?: string;
+    analist_email?: string;
+    name: string;
+    email: string;
+    phone_number: string;
+    created_at: string;
+    updated_at: string;
+  }
 
 export enum TicketStatus {
   PENDING = "Pending",

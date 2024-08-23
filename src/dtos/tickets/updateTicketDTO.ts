@@ -3,36 +3,36 @@ import z from 'zod';
 export interface UpdateTicketInputDTO {
     ticketId: string;
     type_id?: number;
-    description?: string;
+    solution?: string;
     status_id?: number;
-    name?: string;
-    email?: string;
-    phone_number?: string;
+    analist_name?: string;
+    analist_email?: string;
 }
 
 export interface UpdateTicketOutputDTO {
-  message: string;
-  ticket: {
-      id: string;
-      user_id: string;
-      type_id: number;
-      description: string;
-      status_id: number;
-      name: string;
-      email: string;
-      phone_number: string;
-      created_at: string;
-      updated_at: string;
-  };
+    message: string;
+    ticket: {
+        id: string;
+        user_id: string;
+        type_id: number;
+        description: string;
+        solution?: string;
+        status_id: number;
+        user_name: string;
+        user_email: string;
+        user_phone_number: string;
+        analist_name?: string;
+        analist_email?: string;
+        created_at: string;
+        updated_at: string;
+    };
 }
 
-
 export const UpdateTicketSchema = z.object({
-    ticketId: z.string().uuid(),
+    ticketId: z.string(),
     type_id: z.number().int().positive().optional(),
-    description: z.string().optional(),
+    solution: z.string().optional(),
     status_id: z.number().int().positive().optional(),
-    name: z.string().optional(),
-    email: z.string().email().optional(),
-    phone_number: z.string().optional()
+    analist_name: z.string().optional(),
+    analist_email: z.string().email().optional()
 }).transform(data => data as UpdateTicketInputDTO);

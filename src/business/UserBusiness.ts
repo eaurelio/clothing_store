@@ -4,10 +4,7 @@ import {
   CreateUserOutputDTO,
 } from "../dtos/users/createUser.dto";
 
-import {
-  LoginInputDTO,
-  LoginOutputDTO
-} from "../dtos/users/login";
+import { LoginInputDTO, LoginOutputDTO } from "../dtos/users/login";
 
 import {
   ToggleUserActiveStatusInputDTO,
@@ -48,9 +45,13 @@ import { IdGenerator } from "../services/idGenerator";
 import { HashManager } from "../services/HashManager";
 
 // Errors
-import { ConflictError, ForbiddenError, BadRequestError, NotFoundError } from "../errors/Errors";
+import {
+  ConflictError,
+  ForbiddenError,
+  BadRequestError,
+  NotFoundError,
+} from "../errors/Errors";
 import { ErrorHandler } from "../errors/ErrorHandler";
-
 
 export class UserBusiness {
   constructor(
@@ -99,7 +100,7 @@ export class UserBusiness {
     if (userDBPersonalIdExists) {
       throw new ConflictError("'personal Id' already exists");
     }
-    
+
     let userRole = USER_ROLES.CLIENT;
 
     if (token) {
@@ -133,7 +134,7 @@ export class UserBusiness {
       neighborhood,
       city,
       country,
-      gender,
+      gender
     );
 
     const newUserDB: UserDB = {
@@ -237,27 +238,32 @@ export class UserBusiness {
     input: UpdateUserInputDTO
   ): Promise<UpdateUserOutputDTO> => {
     const { userId, personal_id, password, ...rest } = input;
-  
+
     const userDB = await this.userDatabase.findUserById(userId);
-  
+
     if (!userDB) {
       throw new NotFoundError("'UserId' not found");
     }
-  
+
     if (!userDB.active) {
       throw new ForbiddenError("User account is deactivated");
     }
-  
+
     if (personal_id) {
-      const userDBPersonalIdExists = await this.userDatabase.findUserByPersonalId(personal_id);
-  
+      const userDBPersonalIdExists =
+        await this.userDatabase.findUserByPersonalId(personal_id);
+
       if (userDBPersonalIdExists && userDBPersonalIdExists.id !== userId) {
-        throw new ConflictError("This personal ID is already in use by another user");
+        throw new ConflictError(
+          "This personal ID is already in use by another user"
+        );
       }
     }
-  
-    const hashedPassword = password ? await this.hashManager.hash(password) : userDB.password;
-  
+
+    const hashedPassword = password
+      ? await this.hashManager.hash(password)
+      : userDB.password;
+
     const updatedUser: UserDB = {
       ...userDB,
       personal_id: personal_id ?? userDB.personal_id,
@@ -275,15 +281,17 @@ export class UserBusiness {
       role: userDB.role,
       created_at: userDB.created_at,
     };
-  
+
     await this.userDatabase.updateUser(userId, updatedUser);
-  
+
     const updatedUserData = await this.userDatabase.findUserById(userId);
-  
+
     if (!updatedUserData) {
-      throw new NotFoundError("It was not possible to find the updated user data after editing.");
+      throw new NotFoundError(
+        "It was not possible to find the updated user data after editing."
+      );
     }
-  
+
     const output: UpdateUserOutputDTO = {
       message: "Editing completed successfully",
       user: {
@@ -293,31 +301,31 @@ export class UserBusiness {
         createdAt: updatedUserData.created_at,
       },
     };
-  
+
     return output;
   };
-  
+
   // --------------------------------------------------------------------
 
   public changePassword = async (
     input: UpdatePasswordInputDTO
   ): Promise<UpdatePasswordOutputDTO> => {
     const { userId, email, oldPassword, newPassword } = input;
-  
+
     const user = await this.userDatabase.findUserById(userId);
-    
+
     if (!user) {
       throw new NotFoundError("User not found");
     }
-  
+
     if (!user.active) {
       throw new ForbiddenError("User account is deactivated");
     }
-  
+
     if (user.email !== email) {
       throw new BadRequestError("Email does not match our records");
     }
-  
+
     const isOldPasswordCorrect = await this.hashManager.compare(
       oldPassword,
       user.password
@@ -325,47 +333,48 @@ export class UserBusiness {
     if (!isOldPasswordCorrect) {
       throw new BadRequestError("Old password is incorrect");
     }
-  
+
     const isNewPasswordSameAsOld = await this.hashManager.compare(
       newPassword,
       user.password
     );
     if (isNewPasswordSameAsOld) {
-      throw new BadRequestError("New password cannot be the same as the old password");
+      throw new BadRequestError(
+        "New password cannot be the same as the old password"
+      );
     }
-  
+
     const hashedNewPassword = await this.hashManager.hash(newPassword);
-  
+
     await this.userDatabase.updatePassword(userId, hashedNewPassword);
-  
+
     return {
       message: "Password updated successfully",
     };
   };
-  
-  
+
   // --------------------------------------------------------------------
 
-public getUserById = async (input: any): Promise<UserDBOutput> => {
-  const { userId } = input;
+  public getUserById = async (input: any): Promise<UserDBOutput> => {
+    const { userId } = input;
 
-  const userFromDatabase = await this.userDatabase.findUserById(userId);
-  
-  if (!userFromDatabase) {
+    const userFromDatabase = await this.userDatabase.findUserById(userId);
+
+    if (!userFromDatabase) {
       throw new NotFoundError("User not found");
-  }
+    }
 
-  if (!userFromDatabase.active) {
+    if (!userFromDatabase.active) {
       throw new ForbiddenError("User account is deactivated");
-  }
+    }
 
-  const phonesFromDatabase = await this.userDatabase.getPhones(userId);
-  const { password, ...userOutput } = userFromDatabase as UserDB;
+    const phonesFromDatabase = await this.userDatabase.getPhones(userId);
+    const { password, ...userOutput } = userFromDatabase as UserDB;
 
-  userOutput.phones = phonesFromDatabase;
+    userOutput.phones = phonesFromDatabase;
 
-  return userOutput;
-};
+    return userOutput;
+  };
 
   // --------------------------------------------------------------------
 
@@ -375,7 +384,7 @@ public getUserById = async (input: any): Promise<UserDBOutput> => {
     const usersDB = await this.userDatabase.findUsers(q, onlyActive);
 
     if (usersDB.length === 0) {
-        throw new NotFoundError("No users found");
+      throw new NotFoundError("No users found");
     }
 
     const usersOutput = await Promise.all(
@@ -388,7 +397,7 @@ public getUserById = async (input: any): Promise<UserDBOutput> => {
     );
 
     return usersOutput;
-};
+  };
 
   // --------------------------------------------------------------------
 
@@ -396,12 +405,12 @@ public getUserById = async (input: any): Promise<UserDBOutput> => {
     input: ToggleUserActiveStatusInputDTO
   ): Promise<ToggleUserActiveStatusOutputDTO> {
     const { email, password } = input;
-  
+
     const userDB = await this.userDatabase.findUserByEmail(email);
     if (!userDB) {
       throw new NotFoundError("User not found");
     }
-  
+
     const isPasswordCorrect = await this.hashManager.compare(
       password,
       userDB.password
@@ -409,15 +418,16 @@ public getUserById = async (input: any): Promise<UserDBOutput> => {
     if (!isPasswordCorrect) {
       throw new BadRequestError("Incorrect password");
     }
-  
+
     const newActiveStatus = !userDB.active;
     await this.userDatabase.updateUserActiveStatus(userDB.id, newActiveStatus);
-  
+
     return {
-      message: `User ${newActiveStatus ? "activated" : "deactivated"} successfully`,
+      message: `User ${
+        newActiveStatus ? "activated" : "deactivated"
+      } successfully`,
     };
   }
-  
 
   // --------------------------------------------------------------------
   // PHONES
@@ -425,43 +435,41 @@ public getUserById = async (input: any): Promise<UserDBOutput> => {
 
   public addPhone = async (input: PhoneInputDTO): Promise<PhoneOutputDTO> => {
     const { userId, number, type } = input;
-  
-    
+
     const userDB = await this.userDatabase.findUserById(userId);
-  
+
     if (!userDB) {
       throw new NotFoundError("User not found");
     }
-  
+
     if (!userDB.active) {
       throw new ForbiddenError("User account is deactivated");
     }
-  
+
     const phoneId = await this.idGenerator.generate();
-  
+
     const phoneData: PhoneDB = {
       phone_id: phoneId,
       user_id: userId,
       number,
       type,
     };
-  
+
     await this.userDatabase.insertPhone(phoneData);
-  
+
     const updatedPhone = await this.userDatabase.findPhoneById(phoneId);
-  
+
     if (!updatedPhone) {
       throw new NotFoundError("Failed to retrieve updated phone data");
     }
-  
+
     const output: PhoneOutputDTO = {
       message: "Phone added successfully",
       phones: [updatedPhone],
     };
-  
+
     return output;
   };
-  
 
   // --------------------------------------------------------------------
 
@@ -469,68 +477,68 @@ public getUserById = async (input: any): Promise<UserDBOutput> => {
     input: PhoneUpdateInputDTO
   ): Promise<PhoneUpdateOutputDTO> => {
     const { userId, phoneId, number, type } = input;
-  
+
     const userDB = await this.userDatabase.findUserById(userId);
-  
+
     if (!userDB) {
       throw new NotFoundError("User not found");
     }
-  
+
     if (!userDB.active) {
       throw new ForbiddenError("User account is deactivated");
     }
-  
+
     const phoneDB = await this.userDatabase.findPhoneById(phoneId);
     if (!phoneDB || phoneDB.user_id !== userId) {
       throw new NotFoundError("Phone not found or does not belong to the user");
     }
-  
+
     await this.userDatabase.updatePhone(phoneId, { number, type });
-  
+
     const updatedPhone = await this.userDatabase.findPhoneById(phoneId);
     if (!updatedPhone) {
       throw new NotFoundError("Failed to retrieve updated phone data");
     }
-  
+
     const output: PhoneOutputDTO = {
       message: "Phone updated successfully",
       phones: [updatedPhone],
     };
-  
+
     return output;
   };
-  
+
   // --------------------------------------------------------------------
 
   public deletePhone = async (
     input: PhoneDeleteDTO
   ): Promise<PhoneOutputDTO> => {
     const { userId, phoneId } = input;
-  
+
     const userDB = await this.userDatabase.findUserById(userId);
-  
+
     if (!userDB) {
       throw new NotFoundError("User not found");
     }
-  
+
     if (!userDB.active) {
       throw new ForbiddenError("User account is deactivated");
     }
-  
+
     const phoneDB = await this.userDatabase.findPhoneById(phoneId);
     if (!phoneDB || phoneDB.user_id !== userId) {
       throw new NotFoundError("Phone not found or does not belong to the user");
     }
-  
+
     await this.userDatabase.deletePhoneById(phoneId);
-  
+
     const updatedPhones = await this.userDatabase.getPhones(userId);
-  
+
     const output: PhoneOutputDTO = {
       message: "Phone deleted successfully",
       phones: updatedPhones,
     };
-  
+
     return output;
   };
 }

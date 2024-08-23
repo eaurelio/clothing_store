@@ -32,13 +32,13 @@ export class TicketController {
   public createTicket = async (req: Request, res: Response) => {
     try {
       const input = CreateTicketSchema.parse({
-        user_id: req.body.user_id,
-        type_id: req.body.type_id,
+        userId: req.body.userId,
+        typeId: req.body.typeId,
         description: req.body.description,
-        status_id: req.body.status_id,
-        name: req.body.name,
-        email: req.body.email,
-        phone_number: req.body.phone_number,
+        statusId: req.body.statusId,
+        userName: req.body.userName,
+        userEmail: req.body.userEmail,
+        userPhoneNumber: req.body.userPhoneNumber
       });
 
       const output = await this.ticketBusiness.createTicket(
@@ -103,11 +103,10 @@ export class TicketController {
       const input = UpdateTicketSchema.parse({
         ticketId: req.params.id,
         type_id: req.body.type_id,
-        description: req.body.description,
+        solution: req.body.solution,
         status_id: req.body.status_id,
-        name: req.body.name,
-        email: req.body.email,
-        phone_number: req.body.phone_number,
+        analist_name: req.body.analist_name,
+        analist_email: req.body.analist_email
       });
 
       const output = await this.ticketBusiness.updateTicket(

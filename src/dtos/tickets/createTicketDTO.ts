@@ -2,13 +2,13 @@ import { TicketStatus, TicketType } from '../../models/Ticket';
 import z from 'zod';
 
 export interface CreateTicketInputDTO {
-    user_id: string;
-    type_id: number;
+    userId: string;
+    typeId: number;
     description: string;
-    status_id: number;
-    name: string;
-    email: string;
-    phone_number: string;
+    statusId: number;
+    userName: string;
+    userEmail: string;
+    userPhoneNumber: string;
 }
 
 export interface CreateTicketOutputDTO {
@@ -19,20 +19,20 @@ export interface CreateTicketOutputDTO {
         type_id: number;
         description: string;
         status_id: number;
-        name: string;
-        email: string;
-        phone_number: string;
+        user_name: string;
+        user_email: string;
+        user_phone_number: string;
         created_at: string;
         updated_at: string;
     };
 }
 
 export const CreateTicketSchema = z.object({
-    user_id: z.string().min(1),
-    type_id: z.number().int().positive(),
-    description: z.string().min(1),
-    status_id: z.number().int().positive(),
-    name: z.string().min(1),
-    email: z.string().email(),
-    phone_number: z.string().min(1)
+    userId: z.string().min(1),
+    typeId: z.number().int(),
+    description: z.string().min(5),
+    statusId: z.number().int(),
+    userName: z.string().min(1),
+    userEmail: z.string().email(),
+    userPhoneNumber: z.string().min(1)
 }).transform(data => data as CreateTicketInputDTO);

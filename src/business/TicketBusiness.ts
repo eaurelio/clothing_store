@@ -25,7 +25,11 @@ import {
 } from "../dtos/tickets/getTicketDTO";
 
 // Errors
-import { UnauthorizedError, NotFoundError, ConflictError } from "../errors/Errors";
+import {
+  UnauthorizedError,
+  NotFoundError,
+  ConflictError,
+} from "../errors/Errors";
 import { UserDatabase } from "../database/UserDatabase";
 import TokenService from "../services/TokenService";
 import { HashManager } from "../services/HashManager";
@@ -39,7 +43,6 @@ export class TicketBusiness {
     private tokenService: TokenService,
     private hashManager: HashManager,
     private errorHandler: ErrorHandler
-
   ) {}
 
   // --------------------------------------------------------------------
@@ -49,7 +52,15 @@ export class TicketBusiness {
   public createTicket = async (
     input: CreateTicketInputDTO
   ): Promise<CreateTicketOutputDTO> => {
-    const { user_id, type_id, description, status_id, name, email, phone_number } = input;
+    const {
+      userId,
+      typeId,
+      description,
+      statusId,
+      userName,
+      userEmail,
+      userPhoneNumber
+    } = input;
 
     const id = this.idGenerator.generate();
     const created_at = new Date().toISOString();
@@ -57,13 +68,13 @@ export class TicketBusiness {
 
     const newTicket = new Ticket(
       id,
-      user_id,
-      type_id,
+      userId,
+      typeId,
       description,
-      status_id,
-      name,
-      email,
-      phone_number,
+      statusId,
+      userName,
+      userEmail,
+      userPhoneNumber,
       created_at,
       updated_at
     );
@@ -74,9 +85,9 @@ export class TicketBusiness {
       type_id: newTicket.getTypeId(),
       description: newTicket.getDescription(),
       status_id: newTicket.getStatusId(),
-      name: newTicket.getName(),
-      email: newTicket.getEmail(),
-      phone_number: newTicket.getPhoneNumber(),
+      user_name: newTicket.getName(),
+      user_email: newTicket.getEmail(),
+      user_phone_number: newTicket.getPhoneNumber(),
       created_at: newTicket.getCreatedAt(),
       updated_at: newTicket.getUpdatedAt(),
     };
@@ -108,9 +119,12 @@ export class TicketBusiness {
       userId: ticketDB.user_id,
       typeId: ticketDB.type_id,
       statusId: ticketDB.status_id,
+      description: ticketDB.description,
+      solution: ticketDB.solution,
+      analist_name: ticketDB.analist_name,
+      analist_email: ticketDB.analist_email,
       createdAt: ticketDB.created_at,
       updatedAt: ticketDB.updated_at,
-      description: ticketDB.description
     };
 
     return output;
@@ -120,69 +134,86 @@ export class TicketBusiness {
 
   public getAllTickets = async (
     input: GetAllTicketsInputDTO
-): Promise<GetAllTicketsOutputDTO> => {
+  ): Promise<GetAllTicketsOutputDTO> => {
     const { id, userId, typeId, statusId } = input;
 
-    const ticketsDB = await this.ticketDatabase.findTickets(id, userId, typeId, statusId);
+    const ticketsDB = await this.ticketDatabase.findTickets(
+      id,
+      userId,
+      typeId,
+      statusId
+    );
 
-    const tickets = ticketsDB.map(ticket => ({
-        ticketId: ticket.id,
-        userId: ticket.user_id,
-        typeId: ticket.type_id,
-        statusId: ticket.status_id,
-        createdAt: ticket.created_at,
-        updatedAt: ticket.updated_at,
-        description: ticket.description,
+    const tickets = ticketsDB.map((ticket) => ({
+      ticketId: ticket.id,
+      userId: ticket.user_id,
+      typeId: ticket.type_id,
+      typeName: ticket.type_name,
+      statusId: ticket.status_id,
+      statusName: ticket.status_name,
+      description: ticket.description,
+      name: ticket.name,
+      email: ticket.email,
+      solution: ticket.solution,
+      analist_name: ticket.analist_name,
+      analist_email: ticket.analist_email,
+      createdAt: ticket.created_at,
+      updatedAt: ticket.updated_at,
     }));
 
     const output: GetAllTicketsOutputDTO = {
-        tickets,
-        total: ticketsDB.length,
-    };
-
-    return output;
-};
-
-
-  // --------------------------------------------------------------------
-
-  public updateTicket = async (
-    input: UpdateTicketInputDTO
-  ): Promise<UpdateTicketOutputDTO> => {
-    const { ticketId, type_id, description, status_id, name, email, phone_number } = input;
-
-    const ticketDB = await this.ticketDatabase.findTicketById(ticketId);
-    if (!ticketDB) {
-      throw new NotFoundError("Ticket not found");
-    }
-
-    const updatedTicketDB: TicketDB = {
-      ...ticketDB,
-      type_id: type_id ?? ticketDB.type_id,
-      description: description ?? ticketDB.description,
-      status_id: status_id ?? ticketDB.status_id,
-      name: name ?? ticketDB.name,
-      email: email ?? ticketDB.email,
-      phone_number: phone_number ?? ticketDB.phone_number,
-      updated_at: new Date().toISOString(),
-    };
-
-    await this.ticketDatabase.updateTicket(ticketId, updatedTicketDB);
-
-    const output: UpdateTicketOutputDTO = {
-      message: "Ticket updated successfully",
-      ticket: updatedTicketDB,
+      tickets,
+      total: ticketsDB.length,
     };
 
     return output;
   };
 
   // --------------------------------------------------------------------
+
+  public async updateTicket(
+    input: UpdateTicketInputDTO
+  ): Promise<UpdateTicketOutputDTO> {
+    const {
+      ticketId,
+      type_id,
+      solution,
+      status_id,
+      analist_name,
+      analist_email,
+    } = input;
+
+    const ticketDB = await this.ticketDatabase.findTicketById(ticketId);
+    if (!ticketDB) {
+      throw new NotFoundError("Ticket not found");
+    }
+
+    const updatedTicketDB: Partial<TicketDB> = {
+      id: ticketId,
+      type_id: type_id ?? ticketDB.type_id,
+      solution: solution ?? ticketDB.solution,
+      status_id: status_id ?? ticketDB.status_id,
+      analist_name: analist_name ?? ticketDB.analist_name,
+      analist_email: analist_email ?? ticketDB.analist_email,
+      updated_at: new Date().toISOString(),
+    };
+
+    await this.ticketDatabase.updateTicket(updatedTicketDB);
+
+    const output: UpdateTicketOutputDTO = {
+      message: "Ticket updated successfully",
+      ticket: { ...ticketDB, ...updatedTicketDB },
+    };
+
+    return output;
+  }
+
+  // --------------------------------------------------------------------
   // AUX FIELDS - TICKETS
   // --------------------------------------------------------------------
 
   public getAllStatus = async (): Promise<TicketStatusDB[]> => {
-    const statuses = await this.ticketDatabase.getAllStatuses();
+    const statuses = await this.ticketDatabase.getAllStatus();
     return statuses;
   };
 
