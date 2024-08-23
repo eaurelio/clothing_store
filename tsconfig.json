@@ -1,20 +1,77 @@
+// {
+//   "compilerOptions": {
+//     "target": "ES6",
+//     "module": "commonjs",
+//     "sourceMap": true,
+//     "outDir": "./build",
+//     "rootDir": "./src",
+//     "removeComments": true,
+//     "noImplicitAny": true,
+//     "esModuleInterop": true,
+//     "noEmitOnError": true,
+//     "strict": true,
+//     "typeRoots": [
+//       "./src/@types",
+//       "./custom_typings",
+//       "./@types",
+//       "./node_modules/@types"
+//     ]
+//   }
+// }
+
+// {
+//   "compilerOptions": {
+//     "target": "ES6",
+//     "module": "commonjs",
+//     "sourceMap": true,
+//     "outDir": "./build",
+//     "rootDir": "./src",
+//     "removeComments": true,
+//     "noImplicitAny": true,
+//     "esModuleInterop": true,
+//     "noEmitOnError": true,
+//     "strict": true,
+//     "typeRoots": [
+//       "./@types",        // Pasta com os seus tipos personalizados
+//       "./node_modules/@types"
+//     ],
+//     "types": ["jest", "node"]  // Adiciona Jest e Node como tipos globais
+//   },
+//   "include": [
+//     "src/**/*",         // Inclui todos os arquivos dentro de src
+//     "@types/**/*"       // Inclui os tipos personalizados na pasta @types
+//   ],
+//   "exclude": [
+//     "node_modules"
+//   ]
+// }
+
+
 {
   "compilerOptions": {
     "target": "ES6",
     "module": "commonjs",
     "sourceMap": true,
     "outDir": "./build",
-    "rootDir": "./src",
     "removeComments": true,
     "noImplicitAny": true,
     "esModuleInterop": true,
     "noEmitOnError": true,
     "strict": true,
     "typeRoots": [
-      "./src/@types",
-      "./custom_typings",
-      "./@types",
+      "./@types",        
       "./node_modules/@types"
-    ]
-  }
+    ],
+    "types": ["jest", "node"],  
+    "rootDir": "."  // Define a raiz do projeto como rootDir
+  },
+  "include": [
+    "src/**/*",         
+    "tests/**/*.ts",     
+    "@types/**/*"       
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
+

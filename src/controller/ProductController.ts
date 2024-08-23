@@ -20,16 +20,13 @@ import {
   UpdateProductSchema,
   UpdateSizeSchema,
 } from "../dtos/products/updateProduct.dto";
-import {
-  GetAllProductsSchema,
-} from "../dtos/products/getProduct.dto";
+import { GetAllProductsSchema } from "../dtos/products/getProduct.dto";
 
 // Errors
 import { ErrorHandler } from "../errors/ErrorHandler";
 
 // Logging
 import logger from "../logs/logger";
-
 
 export class ProductController {
   constructor(private productBusiness: ProductBusiness) {}
@@ -85,22 +82,6 @@ export class ProductController {
     }
   };
 
-   // --------------------------------------------------------------------
-
-  //  public getProduct = async (req: Request, res: Response) => {
-  //   try {
-  //     const input = GetProductSchema.parse({
-  //       id: req.params.id,
-  //     });
-
-  //     const output = await this.productBusiness.getProduct(input);
-  //     res.status(200).send(output);
-  //   } catch (error) {
-  //     logger.error(error);
-  //     ErrorHandler.handleError(error, res);
-  //   }
-  // };
-
   // --------------------------------------------------------------------
 
   public getProducts = async (req: Request, res: Response) => {
@@ -112,7 +93,7 @@ export class ProductController {
         color_id: req.body.color_id,
         size_id: req.body.size_id,
         gender_id: req.body.gender_id,
-        active: req.body.active
+        active: req.body.active,
       });
 
       const output = await this.productBusiness.getProducts(input);
@@ -128,10 +109,12 @@ export class ProductController {
   public toggleProductActiveStatus = async (req: Request, res: Response) => {
     try {
       const input = ToggleProductActiveStatusSchema.parse({
-        productId: req.params.id
+        productId: req.params.id,
       });
 
-      const output = await this.productBusiness.toggleProductActiveStatus(input);
+      const output = await this.productBusiness.toggleProductActiveStatus(
+        input
+      );
       res.status(200).send(output);
     } catch (error) {
       logger.error(error);
@@ -145,14 +128,14 @@ export class ProductController {
 
   public getAllCategories = async (req: Request, res: Response) => {
     try {
-      const categories = await this.productBusiness.getAllCategories()
+      const categories = await this.productBusiness.getAllCategories();
 
       res.status(201).send(categories);
     } catch (error) {
-      logger.error(error)
+      logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  }
+  };
 
   public createCategory = async (req: Request, res: Response) => {
     try {
@@ -184,25 +167,25 @@ export class ProductController {
       ErrorHandler.handleError(error, res);
     }
   };
-  
+
   // --------------------------------------------------------------------
 
   public getAllColors = async (req: Request, res: Response) => {
-    try{
-      const colors = await this.productBusiness.getAllColors()
+    try {
+      const colors = await this.productBusiness.getAllColors();
 
       res.status(200).send(colors);
     } catch (error) {
-      logger.error(error)
+      logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  }
+  };
 
   public createColor = async (req: Request, res: Response) => {
     try {
       const input = CreateColorSchema.parse({
         name: req.body.name,
-        hex_code: req.body.hex_code
+        hex_code: req.body.hex_code,
       });
 
       const output = await this.productBusiness.createColor(input);

@@ -58,9 +58,12 @@ import {
 } from "../dtos/products/getProduct.dto";
 
 // Errors
-import { BadRequestError, NotFoundError, ConflictError } from "../errors/Errors";
+import {
+  BadRequestError,
+  NotFoundError,
+  ConflictError,
+} from "../errors/Errors";
 import { ErrorHandler } from "../errors/ErrorHandler";
-
 
 export class ProductBusiness {
   constructor(
@@ -150,18 +153,26 @@ export class ProductBusiness {
   public getProducts = async (
     input: GetAllProductsInputDTO
   ): Promise<GetAllProductsOutputDTO> => {
-    const { id, name, category_id, color_id, size_id, gender_id, active = true } = input;
-  
-    const products: ProductDBOutput[] = await this.productDatabase.findProducts(
-      id, 
+    const {
+      id,
       name,
       category_id,
       color_id,
       size_id,
       gender_id,
-      active 
+      active = true,
+    } = input;
+
+    const products: ProductDBOutput[] = await this.productDatabase.findProducts(
+      id,
+      name,
+      category_id,
+      color_id,
+      size_id,
+      gender_id,
+      active
     );
-  
+
     const output: GetAllProductsOutputDTO = {
       products: products.map((product) => ({
         id: product.id,
@@ -177,10 +188,10 @@ export class ProductBusiness {
         gender: product.gender,
       })),
     };
-  
+
     return output;
   };
-  
+
   // --------------------------------------------------------------------
 
   public editProduct = async (
@@ -243,30 +254,30 @@ export class ProductBusiness {
     input: ToggleProductActiveStatusInputDTO
   ): Promise<ToggleProductActiveStatusOutputDTO> => {
     const { productId } = input;
-  
+
     const product = await this.productDatabase.findPureProductById(productId);
     if (!product) {
       throw new NotFoundError("Product not found");
     }
-  
+
     const activate = !product.active;
 
     await this.productDatabase.updateProductActiveStatus(productId, activate);
-  
+
     return {
       message: `Product ${activate ? "activated" : "deactivated"} successfully`,
     };
   };
-  
+
   // --------------------------------------------------------------------
   // AUX FIELDS - PRODUCTS
   // --------------------------------------------------------------------
 
   public getAllCategories = async (): Promise<CategoryDBOutput[]> => {
-    const categories = await this.productDatabase.getAllCategories()
+    const categories = await this.productDatabase.getAllCategories();
 
-    return categories
-  }
+    return categories;
+  };
 
   public createCategory = async (
     input: CreateCategoryInputDTO
@@ -319,8 +330,7 @@ export class ProductBusiness {
     const updatedCategory = {
       ...categoryDB,
       name: name ?? categoryDB.name,
-      description:
-        description ?? categoryDB.description,
+      description: description ?? categoryDB.description,
     };
 
     await this.productDatabase.updateCategory(id, updatedCategory);
@@ -333,12 +343,12 @@ export class ProductBusiness {
     return output;
   };
 
-    // --------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
   public getAllColors = async (): Promise<ColorDBOutput[]> => {
-    const colors = await this.productDatabase.getAllColors()
-    return colors
-  }
+    const colors = await this.productDatabase.getAllColors();
+    return colors;
+  };
 
   public createColor = async (
     input: CreateColorInputDTO
@@ -352,7 +362,7 @@ export class ProductBusiness {
 
     const newColorDB: ColorDB = {
       name,
-      hex_code
+      hex_code,
     };
 
     await this.productDatabase.insertColor(newColorDB);
@@ -387,7 +397,7 @@ export class ProductBusiness {
     const updatedColor = {
       ...colorDB,
       name: name ?? colorDB.name,
-      hex_code: hex_code ?? colorDB.hex_code
+      hex_code: hex_code ?? colorDB.hex_code,
     };
 
     await this.productDatabase.updateColor(id, updatedColor);
@@ -403,9 +413,9 @@ export class ProductBusiness {
   // --------------------------------------------------------------------
 
   public getAllSizes = async (): Promise<SizeDBOutput[]> => {
-    const sizes = await this.productDatabase.getAllSizes()
-    return sizes
-  }
+    const sizes = await this.productDatabase.getAllSizes();
+    return sizes;
+  };
 
   public createSize = async (
     input: CreateSizeInputDTO
@@ -468,9 +478,9 @@ export class ProductBusiness {
   // --------------------------------------------------------------------
 
   public getAllGenders = async (): Promise<GenderDBOutPut[]> => {
-    const genders = await this.productDatabase.getAllGenders()
-    return genders
-  }
+    const genders = await this.productDatabase.getAllGenders();
+    return genders;
+  };
 
   public createGender = async (
     input: CreateGenderInputDTO
@@ -507,7 +517,7 @@ export class ProductBusiness {
   public updateGender = async (
     input: UpdateGenderInputDTO
   ): Promise<UpdateGenderOutputDTO> => {
-    const {id, name } = input;
+    const { id, name } = input;
 
     const genderDB = await this.productDatabase.findGenderById(id);
 
