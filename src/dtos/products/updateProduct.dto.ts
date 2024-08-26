@@ -1,4 +1,5 @@
 import z from "zod";
+import { ProductImageDBOutput } from "../../models/ProductImage";
 
 export interface UpdateProductInputDTO {
   id: string;
@@ -25,22 +26,45 @@ export interface UpdateProductOutputDTO {
     size_id: number;
     gender_id: number;
     created_at: string;
+    images: ProductImageDBOutput[]
   };
 }
 
-export const UpdateProductSchema = z
-  .object({
-    id: z.string(),
-    name: z.string().optional(),
-    description: z.string().optional(),
-    price: z.number().optional(),
-    stock: z.number().optional(),
-    category_id: z.number().optional(),
-    color_id: z.number().optional(),
-    size_id: z.number().optional(),
-    gender_id: z.number().optional(),
-  })
-  .transform((data) => data as UpdateProductInputDTO);
+export const UpdateProductSchema = z.object({
+  id: z.string(),
+  name: z.string().optional(),
+  description: z.string().optional(),
+  price: z.number().optional(),
+  stock: z.number().optional(),
+  category_id: z.number().optional(),
+  color_id: z.number().optional(),
+  size_id: z.number().optional(),
+  gender_id: z.number().optional()
+}).transform((data) => data as UpdateProductInputDTO);
+
+// --------------------------------------------------------------------
+
+export interface ProductImageInsert {
+  product_id: string;
+  url: string;
+  alt?: string;
+}
+
+export const InsertProductImageSchema = z.object({
+  product_id: z.string(),
+  url: z.string().url(),
+  alt: z.string().optional()
+})
+
+export interface ProductImageDelete {
+  id: string,
+  product_id: string;
+}
+
+export const DeleteProductImageSchema = z.object({
+  id: z.string(),
+  product_id: z.string()
+})
 
 // --------------------------------------------------------------------
 

@@ -318,7 +318,7 @@ export class OrderBusiness {
         orderDate: updatedOrderDB.order_date,
         status: updatedOrderDB.status_id,
         total: updatedOrderDB.total,
-        trackingCode: updatedOrderDB.tracking_code, // Inclui o código de rastreamento na resposta
+        trackingCode: updatedOrderDB.tracking_code,
         items: updatedItems,
       },
     };
@@ -347,7 +347,7 @@ export class OrderBusiness {
     await this.orderDatabase.cancelOrderById(orderId);
 
     return {
-      message: "Order Cancelled sussesfully",
+      message: "Order Cancelled successfully",
     };
   };
 

@@ -166,6 +166,64 @@ export class WishlistBusiness {
   
   // --------------------------------------------------------------------
 
+  // public updateWishlist = async (
+  //   input: UpdateWishListInputDTO
+  // ): Promise<UpdateWishListOutputDTO> => {
+  //   const { userId, items } = input;
+  
+  //   const wishlistDB = await this.wishlistDatabase.findWishlistByUserId(userId);
+  //   if (!wishlistDB) {
+  //     throw new NotFoundError("Wishlist not found");
+  //   }
+  
+  //   await this.wishlistDatabase.deleteWishlistItemsByWishlistId(
+  //     wishlistDB.wishlist_id
+  //   );
+  
+  //   if (items) {
+  //     for (const item of items) {
+  //       const productDB = await this.productDatabase.findPureProductById(
+  //         item.productId
+  //       );
+  //       if (!productDB) {
+  //         console.log(`Product with ID ${item.productId} not found`);
+  //         continue;
+  //       }
+  
+  //       if (!productDB.active) {
+  //         console.log(`Product with ID ${item.productId} is deactivated`);
+  //         continue;
+  //       }
+  
+  //       const newWishlistItemDB: WishlistItemDB = {
+  //         wishlist_id: wishlistDB.wishlist_id,
+  //         product_id: item.productId,
+  //       };
+  //       await this.wishlistDatabase.insertWishlistItem(newWishlistItemDB);
+  //     }
+  //   }
+  
+  //   const updatedItemsDB =
+  //     await this.wishlistDatabase.findWishlistItemsByWishlistId(
+  //       wishlistDB.wishlist_id
+  //     );
+  //   const updatedItems = updatedItemsDB.map((item: WishlistItemDB) => ({
+  //     productId: item.product_id,
+  //   }));
+  
+  //   const output: UpdateWishListOutputDTO = {
+  //     message: "Wishlist updated successfully",
+  //     wishlist: {
+  //       wishlist_id: wishlistDB.wishlist_id,
+  //       userId: wishlistDB.user_id,
+  //       created_at: wishlistDB.created_at,
+  //       items: updatedItems,
+  //     },
+  //   };
+  
+  //   return output;
+  // };
+  
   public updateWishlist = async (
     input: UpdateWishListInputDTO
   ): Promise<UpdateWishListOutputDTO> => {
@@ -179,6 +237,8 @@ export class WishlistBusiness {
     await this.wishlistDatabase.deleteWishlistItemsByWishlistId(
       wishlistDB.wishlist_id
     );
+  
+    const validItems = [];
   
     if (items) {
       for (const item of items) {
@@ -200,6 +260,7 @@ export class WishlistBusiness {
           product_id: item.productId,
         };
         await this.wishlistDatabase.insertWishlistItem(newWishlistItemDB);
+        validItems.push({ productId: item.productId });
       }
     }
   
@@ -208,7 +269,6 @@ export class WishlistBusiness {
         wishlistDB.wishlist_id
       );
     const updatedItems = updatedItemsDB.map((item: WishlistItemDB) => ({
-      // wishlistId: item.wishlist_id,
       productId: item.product_id,
     }));
   
@@ -218,7 +278,7 @@ export class WishlistBusiness {
         wishlist_id: wishlistDB.wishlist_id,
         userId: wishlistDB.user_id,
         created_at: wishlistDB.created_at,
-        items: updatedItems,
+        items: validItems,
       },
     };
   

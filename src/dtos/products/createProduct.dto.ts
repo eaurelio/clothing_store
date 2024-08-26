@@ -1,4 +1,5 @@
 import z from 'zod';
+import { ProductImageDB } from '../../models/ProductImage';
 
 export interface CreateProductInputDTO {
   token: string;
@@ -10,6 +11,7 @@ export interface CreateProductInputDTO {
   color_id: number;
   size_id: number;
   gender_id: number;
+  images?: ProductImageDB[];
 }
 
 export interface CreateProductOutputDTO {
@@ -25,8 +27,14 @@ export interface CreateProductOutputDTO {
     color_id?: number;
     size_id?: number;
     gender_id?: number;
+    images?: ProductImageDB[];
   };
 }
+
+const ProductImageSchema = z.object({
+  url: z.string().url(),
+  alt: z.string().optional(),
+});
 
 export const CreateProductSchema = z.object({
   token: z.string(),
@@ -38,6 +46,7 @@ export const CreateProductSchema = z.object({
   color_id: z.number().optional(),
   size_id: z.number().optional(),
   gender_id: z.number().optional(),
+  images: z.array(ProductImageSchema).optional(),
 }).transform(data => data as CreateProductInputDTO);
 
 // --------------------------------------------------------------------

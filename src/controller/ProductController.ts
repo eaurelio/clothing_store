@@ -13,6 +13,8 @@ import {
   CreateSizeSchema,
 } from "../dtos/products/createProduct.dto";
 import {
+  DeleteProductImageSchema,
+  InsertProductImageSchema,
   ToggleProductActiveStatusSchema,
   UpdateCategorySchema,
   UpdateColorSchema,
@@ -47,6 +49,7 @@ export class ProductController {
         color_id: req.body.color_id,
         size_id: req.body.size_id,
         gender_id: req.body.gender_id,
+        images: req.body.images
       });
 
       const output = await this.productBusiness.createProduct(input);
@@ -70,10 +73,47 @@ export class ProductController {
         category_id: req.body.category_id,
         color_id: req.body.color_id,
         size_id: req.body.size_id,
-        gender_id: req.body.gender_id,
+        gender_id: req.body.gender_id
       });
 
       const output = await this.productBusiness.editProduct(input);
+
+      res.status(200).send(output);
+    } catch (error) {
+      logger.error(error);
+      ErrorHandler.handleError(error, res);
+    }
+  };
+
+  // --------------------------------------------------------------------
+
+  public insertProductImage = async (req: Request, res: Response) => {
+    try {
+      const input = InsertProductImageSchema.parse({
+        product_id: req.body.product_id,
+        url: req.body.url,
+        alt: req.body.alt
+      });
+
+      const output = await this.productBusiness.insertProductImage(input);
+
+      res.status(200).send(output);
+    } catch (error) {
+      logger.error(error);
+      ErrorHandler.handleError(error, res);
+    }
+  };
+
+  // --------------------------------------------------------------------
+
+  public deleteProductImage = async (req: Request, res: Response) => {
+    try {
+      const input = DeleteProductImageSchema.parse({
+        id: req.body.id,
+        product_id: req.body.product_id
+      });
+
+      const output = await this.productBusiness.deleteProductImage(input);
 
       res.status(200).send(output);
     } catch (error) {

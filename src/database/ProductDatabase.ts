@@ -10,6 +10,7 @@ import {
   ColorDBOutput,
   CategoryDBOutput,
 } from "../models/Products";
+import { ProductImageDB } from "../models/ProductImage";
 
 export class ProductDatabase extends BaseDatabase {
   public static TABLE_PRODUCTS = "products";
@@ -17,6 +18,7 @@ export class ProductDatabase extends BaseDatabase {
   public static TABLE_COLORS = "colors";
   public static TABLE_SIZES = "sizes";
   public static TABLE_GENDERS = "genders";
+  public static TABLE_IMAGES = "product_images";
 
   // PRODUCT DATA
 
@@ -36,7 +38,7 @@ export class ProductDatabase extends BaseDatabase {
       conditions.push("products.id = ?");
       params.push(`${id}`);
     }
-  
+
     if (name) {
       conditions.push("products.name LIKE ?");
       params.push(`%${name}%`);
@@ -61,10 +63,9 @@ export class ProductDatabase extends BaseDatabase {
     conditions.push("products.active = ?");
     params.push(active);
 
-  
     const whereClause =
       conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
-  
+
     const result = await BaseDatabase.connection.raw(
       `
       SELECT 
@@ -88,10 +89,10 @@ export class ProductDatabase extends BaseDatabase {
     `,
       params
     );
-  
+
     return result.rows;
   }
-  
+
   // --------------------------------------------------------------------
 
   public async findProductById(id: string) {
@@ -166,18 +167,63 @@ export class ProductDatabase extends BaseDatabase {
     await BaseDatabase.connection.raw(query, values);
   }
 
-  // public async insertProduct(newProductDB: ProductDB): Promise<void> {
-  //   const columns = Object.keys(newProductDB);
-  //   const values = Object.values(newProductDB);
+  // --------------------------------------------------------------------
+
+  public async getImageById(imageId: string): Promise<ProductImageDB | undefined> {
+    const result = await BaseDatabase.connection.raw(
+      `
+      SELECT *
+      FROM ${ProductDatabase.TABLE_IMAGES}
+      WHERE id = ?
+    `,
+      [imageId]
+    );
   
-  //   const placeholders = columns.map((_, index) => `$${index + 1}`).join(", ");
-  //   const query = `
-  //     INSERT INTO ${ProductDatabase.TABLE_PRODUCTS} (${columns.join(", ")})
-  //     VALUES (${placeholders})
-  //   `;
+    return result.rows[0];
+  }
   
-  //   await BaseDatabase.connection.raw(query, values);
-  // }
+  // --------------------------------------------------------------------
+
+  public async getImagesByProductId(
+    productId: string
+  ): Promise<ProductImageDB[]> {
+    const result = await BaseDatabase.connection.raw(
+      `
+      SELECT *
+      FROM ${ProductDatabase.TABLE_IMAGES}
+      WHERE product_id = ?
+    `,
+      [productId]
+    );
+
+    return result.rows;
+  }
+
+  // --------------------------------------------------------------------
+
+  public async insertProductImage(
+    imageData: ProductImageDB
+  ): Promise<void> {
+    const columns = Object.keys(imageData);
+    const placeholders = columns.map(() => "?").join(", ");
+    const values = Object.values(imageData);
+
+    const query = `
+      INSERT INTO ${ProductDatabase.TABLE_IMAGES} (${columns.join(", ")})
+      VALUES (${placeholders})
+    `;
+
+    await BaseDatabase.connection.raw(query, values);
+  }
+
+  public async deleteProductImage(imageId: string): Promise<void> {
+    const query = `
+      DELETE FROM ${ProductDatabase.TABLE_IMAGES}
+      WHERE id = ?
+    `;
+
+    await BaseDatabase.connection.raw(query, [imageId]);
+  }
 
   // --------------------------------------------------------------------
 
@@ -201,7 +247,10 @@ export class ProductDatabase extends BaseDatabase {
 
   // --------------------------------------------------------------------
 
-  public async updateProductActiveStatus(productId: string, active: boolean): Promise<void> {
+  public async updateProductActiveStatus(
+    productId: string,
+    active: boolean
+  ): Promise<void> {
     await BaseDatabase.connection.raw(
       `
       UPDATE products
@@ -210,7 +259,7 @@ export class ProductDatabase extends BaseDatabase {
     `,
       [active, productId]
     );
-}
+  }
 
   // --------------------------------------------------------------------
   // CATEGORY DATA
@@ -320,7 +369,7 @@ export class ProductDatabase extends BaseDatabase {
     return result.rows[0];
   }
 
-// --------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
   public async findColorByName(name: string): Promise<ColorDB | undefined> {
     const result = await BaseDatabase.connection.raw(
@@ -335,21 +384,21 @@ export class ProductDatabase extends BaseDatabase {
     return result.rows[0];
   }
 
-// --------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
-public async insertColor(newColorDB: ColorDB) {
-  const fields = Object.keys(newColorDB);
-  const values = Object.values(newColorDB);
+  public async insertColor(newColorDB: ColorDB) {
+    const fields = Object.keys(newColorDB);
+    const values = Object.values(newColorDB);
 
-  const placeholders = fields.map(() => '?').join(', ');
+    const placeholders = fields.map(() => "?").join(", ");
 
-  const query = `
-    INSERT INTO ${ProductDatabase.TABLE_COLORS} (${fields.join(', ')})
+    const query = `
+    INSERT INTO ${ProductDatabase.TABLE_COLORS} (${fields.join(", ")})
     VALUES (${placeholders})
   `;
 
-  await BaseDatabase.connection.raw(query, values);
-}
+    await BaseDatabase.connection.raw(query, values);
+  }
 
   // --------------------------------------------------------------------
 
@@ -498,4 +547,3 @@ public async insertColor(newColorDB: ColorDB) {
     );
   }
 }
-
