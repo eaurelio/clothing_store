@@ -1,46 +1,6 @@
 import z from 'zod';
 import { ProductImageDB } from '../../models/ProductImage';
 
-// export interface CreateProductInputDTO {
-//   token: string;
-//   name: string;
-//   description?: string;
-//   price: number;
-//   stock: number;
-//   category_id: number;
-//   color_id: number;
-//   size_id: number;
-//   gender_id: number;
-// }
-
-// export interface CreateProductOutputDTO {
-//   message: string;
-//   product: {
-//     id: string;
-//     name: string;
-//     description?: string;
-//     price: number;
-//     stock: number;
-//     createdAt: string;
-//     category_id?: number;
-//     color_id?: number;
-//     size_id?: number;
-//     gender_id?: number;
-//   };
-// }
-
-// export const CreateProductSchema = z.object({
-//   token: z.string(),
-//   name: z.string().min(1),
-//   description: z.string().optional(),
-//   price: z.number().min(0),
-//   stock: z.number().int().min(0),
-//   category_id: z.number().optional(),
-//   color_id: z.number().optional(),
-//   size_id: z.number().optional(),
-//   gender_id: z.number().optional(),
-// }).transform(data => data as CreateProductInputDTO);
-
 export interface CreateProductInputDTO {
   token: string;
   name: string;
@@ -72,8 +32,6 @@ export interface CreateProductOutputDTO {
 }
 
 const ProductImageSchema = z.object({
-  id: z.string(),
-  product_id: z.string(),
   url: z.string().url(),
   alt: z.string().optional(),
 });

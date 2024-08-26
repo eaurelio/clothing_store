@@ -11,7 +11,6 @@ export interface UpdateProductInputDTO {
   color_id?: number;
   size_id?: number;
   gender_id?: number;
-  images?: ProductImageDBOutput[]
 }
 
 export interface UpdateProductOutputDTO {
@@ -31,13 +30,6 @@ export interface UpdateProductOutputDTO {
   };
 }
 
-const ProductImageOutputSchema = z.object({
-  id: z.string(),
-  product_id: z.string(),
-  url: z.string().url(),
-  alt: z.string().optional(),
-});
-
 export const UpdateProductSchema = z.object({
   id: z.string(),
   name: z.string().optional(),
@@ -47,9 +39,32 @@ export const UpdateProductSchema = z.object({
   category_id: z.number().optional(),
   color_id: z.number().optional(),
   size_id: z.number().optional(),
-  gender_id: z.number().optional(),
-  images: z.array(ProductImageOutputSchema).optional(),
+  gender_id: z.number().optional()
 }).transform((data) => data as UpdateProductInputDTO);
+
+// --------------------------------------------------------------------
+
+export interface ProductImageInsert {
+  product_id: string;
+  url: string;
+  alt?: string;
+}
+
+export const InsertProductImageSchema = z.object({
+  product_id: z.string(),
+  url: z.string().url(),
+  alt: z.string().optional()
+})
+
+export interface ProductImageDelete {
+  id: string,
+  product_id: string;
+}
+
+export const DeleteProductImageSchema = z.object({
+  id: z.string(),
+  product_id: z.string()
+})
 
 // --------------------------------------------------------------------
 

@@ -38,6 +38,7 @@ import {
   CreateSizeOutputDTO,
 } from "../dtos/products/createProduct.dto";
 import {
+  ProductImageDelete,
   ToggleProductActiveStatusInputDTO,
   ToggleProductActiveStatusOutputDTO,
   UpdateCategoryInputDTO,
@@ -62,8 +63,10 @@ import {
   BadRequestError,
   NotFoundError,
   ConflictError,
+  ForbiddenError,
 } from "../errors/Errors";
 import { ErrorHandler } from "../errors/ErrorHandler";
+import { ProductImageDB, ProductImageDBInput, ProductImageDBOutput, ProductImageOutput } from "../models/ProductImage";
 
 export class ProductBusiness {
   constructor(
@@ -79,6 +82,75 @@ export class ProductBusiness {
   // PRODUCTS
   // --------------------------------------------------------------------
 
+  // public createProduct = async (
+  //   input: CreateProductInputDTO
+  // ): Promise<CreateProductOutputDTO> => {
+  //   const {
+  //     name,
+  //     description,
+  //     price,
+  //     stock,
+  //     category_id,
+  //     color_id,
+  //     size_id,
+  //     gender_id,
+  //   } = input;
+
+  //   const existingProduct = await this.productDatabase.findProductByName(name);
+  //   if (existingProduct) {
+  //     throw new ConflictError("'name' already exists");
+  //   }
+
+  //   const id = this.idGenerator.generate();
+  //   const created_at = new Date().toISOString();
+
+  //   const newProduct = new Product(
+  //     id,
+  //     name,
+  //     description,
+  //     price,
+  //     stock,
+  //     created_at,
+  //     category_id,
+  //     color_id,
+  //     size_id,
+  //     gender_id
+  //   );
+
+  //   const newProductDB: ProductDB = {
+  //     id: newProduct.getId(),
+  //     name: newProduct.getName(),
+  //     description: newProduct.getDescription(),
+  //     price: newProduct.getPrice(),
+  //     stock: newProduct.getStock(),
+  //     created_at: newProduct.getCreatedAt(),
+  //     category_id: newProduct.getCategory() as number,
+  //     color_id: newProduct.getColor() as number,
+  //     size_id: newProduct.getSize() as number,
+  //     gender_id: newProduct.getGender() as number,
+  //   };
+
+  //   await this.productDatabase.insertProduct(newProductDB);
+
+  //   const output: CreateProductOutputDTO = {
+  //     message: "Product created successfully",
+  //     product: {
+  //       id: newProduct.getId(),
+  //       name: newProduct.getName(),
+  //       description: newProduct.getDescription(),
+  //       price: newProduct.getPrice(),
+  //       stock: newProduct.getStock(),
+  //       createdAt: newProduct.getCreatedAt(),
+  //       category_id: newProduct.getCategory() as number,
+  //       color_id: newProduct.getColor() as number,
+  //       size_id: newProduct.getSize() as number,
+  //       gender_id: newProduct.getGender() as number,
+  //     },
+  //   };
+
+  //   return output;
+  // };
+
   public createProduct = async (
     input: CreateProductInputDTO
   ): Promise<CreateProductOutputDTO> => {
@@ -91,16 +163,17 @@ export class ProductBusiness {
       color_id,
       size_id,
       gender_id,
+      images, // Adicionando o parâmetro de imagens
     } = input;
-
+  
     const existingProduct = await this.productDatabase.findProductByName(name);
     if (existingProduct) {
       throw new ConflictError("'name' already exists");
     }
-
+  
     const id = this.idGenerator.generate();
     const created_at = new Date().toISOString();
-
+  
     const newProduct = new Product(
       id,
       name,
@@ -113,7 +186,7 @@ export class ProductBusiness {
       size_id,
       gender_id
     );
-
+  
     const newProductDB: ProductDB = {
       id: newProduct.getId(),
       name: newProduct.getName(),
@@ -126,9 +199,25 @@ export class ProductBusiness {
       size_id: newProduct.getSize() as number,
       gender_id: newProduct.getGender() as number,
     };
-
+  
     await this.productDatabase.insertProduct(newProductDB);
+  
+    // Inserção de imagens associadas ao produto
+    if (images && images.length > 0) {
+      for (const image of images) {
+        const imageData: ProductImageDB = {
+          id: this.idGenerator.generate(),
+          product_id: newProduct.getId(),
+          url: image.url,
+          alt: image.alt
+        };
+  
+        await this.productDatabase.insertProductImage(imageData);
+      }
+    }
 
+    const productImages = await this.productDatabase.getImagesByProductId(newProduct.getId());
+  
     const output: CreateProductOutputDTO = {
       message: "Product created successfully",
       product: {
@@ -142,11 +231,13 @@ export class ProductBusiness {
         color_id: newProduct.getColor() as number,
         size_id: newProduct.getSize() as number,
         gender_id: newProduct.getGender() as number,
+        images: productImages
       },
     };
-
+  
     return output;
   };
+  
 
   // --------------------------------------------------------------------
 
@@ -173,8 +264,9 @@ export class ProductBusiness {
       active
     );
 
+
     const output: GetAllProductsOutputDTO = {
-      products: products.map((product) => ({
+      products: await Promise.all(products.map(async (product) => ({
         id: product.id,
         name: product.name,
         description: product.description,
@@ -186,8 +278,10 @@ export class ProductBusiness {
         color: product.color,
         size: product.size,
         gender: product.gender,
-      })),
+        images: await this.productDatabase.getImagesByProductId(product.id),
+      }))),
     };
+   
 
     return output;
   };
@@ -229,6 +323,8 @@ export class ProductBusiness {
       );
     }
 
+    const productImages = await this.productDatabase.getImagesByProductId(id);
+
     const output: UpdateProductOutputDTO = {
       message: "Editing completed successfully",
       product: {
@@ -242,11 +338,73 @@ export class ProductBusiness {
         color_id: updatedProductData.color_id,
         size_id: updatedProductData.size_id,
         gender_id: updatedProductData.gender_id,
+        images: productImages
       },
     };
 
     return output;
   };
+
+  // --------------------------------------------------------------------
+
+  public async insertProductImage(input: ProductImageDBInput): Promise<ProductImageOutput> {
+    const { product_id, url, alt } = input;
+
+    const existingImages = await this.productDatabase.getImagesByProductId(product_id);
+
+    const isDuplicate = existingImages.some(image => image.url === url);
+  
+    if (isDuplicate) {
+      throw new ConflictError("This URL is already associated with the specified product");
+    }
+
+    const imageId = this.idGenerator.generate();
+
+    const imageData: ProductImageDB = {
+      id: imageId,
+      product_id,
+      url,
+      alt
+    };
+
+    await this.productDatabase.insertProductImage(imageData);
+
+    const insertedImage = await this.productDatabase.getImagesByProductId(product_id);
+
+    const output: ProductImageOutput = {
+      message: "Image inserted successfully",
+      images: insertedImage,
+    };
+
+    return output;
+  }
+
+  // --------------------------------------------------------------------
+
+  public async deleteProductImage(input: ProductImageDelete): Promise<ProductImageOutput> {
+    const { id, product_id } = input;
+  
+    const image = await this.productDatabase.getImageById(id);
+  
+    if (!image) {
+      throw new NotFoundError("Image not found");
+    }
+  
+    if (image.product_id !== product_id) {
+      throw new ForbiddenError("Image does not belong to the specified product");
+    }
+  
+    await this.productDatabase.deleteProductImage(id);
+  
+    const remainingImages = await this.productDatabase.getImagesByProductId(product_id);
+  
+    const output: ProductImageOutput = {
+      message: "Image deleted successfully",
+      images: remainingImages,
+    };
+  
+    return output;
+  }
 
   // --------------------------------------------------------------------
 

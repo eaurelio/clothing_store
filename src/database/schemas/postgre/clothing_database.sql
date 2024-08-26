@@ -183,12 +183,14 @@ CREATE TABLE products (
 SELECT id, price
 FROM products;
 
-CREATE TABLE products_image (
-    id SERIAL PRIMARY KEY,
+CREATE TABLE product_images (
+    id TEXT PRIMARY KEY,
     product_id TEXT NOT NULL,
     url TEXT NOT NULL,
     alt TEXT
 );
+
+drop table product_images;
 
 -------------------------------------------------------------------------------
 -- Excluir tabelas se existirem

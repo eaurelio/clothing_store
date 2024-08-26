@@ -28,6 +28,9 @@ productRouter.post("/createProduct", ensureAdmin(USER_ROLES.ADMIN), productContr
 productRouter.patch("/editProduct/:id", ensureAdmin(USER_ROLES.ADMIN), productController.editProduct)
 productRouter.patch("/toggleProductActiveStatus/:id", ensureAdmin(USER_ROLES.ADMIN), productController.toggleProductActiveStatus)
 
+productRouter.post("/insertProductImage", ensureAdmin(USER_ROLES.ADMIN), productController.insertProductImage)
+productRouter.delete("/deleteProductImage", ensureAdmin(USER_ROLES.ADMIN), productController.deleteProductImage)
+
 productRouter.post("/createCategory", ensureAdmin(USER_ROLES.ADMIN), productController.createCategory)
 productRouter.post("/createColor", ensureAdmin(USER_ROLES.ADMIN), productController.createColor)
 productRouter.post("/createSize", ensureAdmin(USER_ROLES.ADMIN), productController.createSize)

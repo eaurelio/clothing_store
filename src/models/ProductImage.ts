@@ -5,6 +5,17 @@ export interface ProductImageDB {
   alt?: string;
 }
 
+export interface ProductImageDBInput {
+  product_id: string;
+  url: string;
+  alt?: string;
+}
+
+export interface ProductImageOutput {
+  message: string,
+  images: ProductImageDB[]
+}
+
 export interface ProductImageDBOutput {
   id: string;
   product_id: string;
