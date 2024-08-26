@@ -1,4 +1,5 @@
 import z from "zod";
+import { ProductImageDBOutput } from "../../models/ProductImage";
 
 export interface UpdateProductInputDTO {
   id: string;
@@ -10,6 +11,7 @@ export interface UpdateProductInputDTO {
   color_id?: number;
   size_id?: number;
   gender_id?: number;
+  images?: ProductImageDBOutput[]
 }
 
 export interface UpdateProductOutputDTO {
@@ -25,22 +27,29 @@ export interface UpdateProductOutputDTO {
     size_id: number;
     gender_id: number;
     created_at: string;
+    images: ProductImageDBOutput[]
   };
 }
 
-export const UpdateProductSchema = z
-  .object({
-    id: z.string(),
-    name: z.string().optional(),
-    description: z.string().optional(),
-    price: z.number().optional(),
-    stock: z.number().optional(),
-    category_id: z.number().optional(),
-    color_id: z.number().optional(),
-    size_id: z.number().optional(),
-    gender_id: z.number().optional(),
-  })
-  .transform((data) => data as UpdateProductInputDTO);
+const ProductImageOutputSchema = z.object({
+  id: z.string(),
+  product_id: z.string(),
+  url: z.string().url(),
+  alt: z.string().optional(),
+});
+
+export const UpdateProductSchema = z.object({
+  id: z.string(),
+  name: z.string().optional(),
+  description: z.string().optional(),
+  price: z.number().optional(),
+  stock: z.number().optional(),
+  category_id: z.number().optional(),
+  color_id: z.number().optional(),
+  size_id: z.number().optional(),
+  gender_id: z.number().optional(),
+  images: z.array(ProductImageOutputSchema).optional(),
+}).transform((data) => data as UpdateProductInputDTO);
 
 // --------------------------------------------------------------------
 

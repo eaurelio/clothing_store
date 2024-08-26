@@ -1,3 +1,44 @@
+// Interfaces
+
+import { ProductImageDBOutput } from "./ProductImage";
+
+export interface CategoryDB {
+    name: string;
+    description?: string;
+  }
+
+  export interface CategoryDBOutput {
+    category_id: number,
+    name: string;
+    description?: string;
+  }
+  
+  export interface ColorDB {
+    name: string;
+    hex_code?: string
+  }
+  export interface ColorDBOutput {
+    color_id: number,
+    name: string;
+  }
+  
+  export interface SizeDB {
+    name: string;
+  }
+  export interface SizeDBOutput {
+    size_id: number, 
+    name: string;
+  }
+  
+  export interface GenderDB {
+    name: string;
+  }
+
+  export interface GenderDBOutPut {
+    gender_id: number,
+    name: string;
+  }
+
 export interface ProductDB {
   id: string;
   name: string;
@@ -23,7 +64,10 @@ export interface ProductDBOutput {
   color: string | number;
   size: string | number;
   gender: string | number;
+  images?: ProductImageDBOutput[]
 }
+
+// Product Class
 
 export class Product {
   constructor(
@@ -119,41 +163,3 @@ export class Product {
       this.gender = gender;
   }
 }
-
-export interface CategoryDB {
-    name: string;
-    description?: string;
-  }
-
-  export interface CategoryDBOutput {
-    category_id: number,
-    name: string;
-    description?: string;
-  }
-  
-  export interface ColorDB {
-    name: string;
-    hex_code?: string
-  }
-  export interface ColorDBOutput {
-    color_id: number,
-    name: string;
-  }
-  
-  export interface SizeDB {
-    name: string;
-  }
-  export interface SizeDBOutput {
-    size_id: number, 
-    name: string;
-  }
-  
-  export interface GenderDB {
-    name: string;
-  }
-
-  export interface GenderDBOutPut {
-    gender_id: number,
-    name: string;
-  }
-  

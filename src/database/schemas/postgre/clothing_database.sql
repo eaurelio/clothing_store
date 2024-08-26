@@ -138,8 +138,6 @@ INSERT INTO colors (name, hex_code) VALUES
 ('Cyan', '#00FFFF'),
 ('Magenta', '#FF00FF');
 
-
-
 CREATE TABLE sizes (
     size_id SERIAL PRIMARY KEY,
     name TEXT NOT NULL
@@ -184,6 +182,13 @@ CREATE TABLE products (
 
 SELECT id, price
 FROM products;
+
+CREATE TABLE products_image (
+    id SERIAL PRIMARY KEY,
+    product_id TEXT NOT NULL,
+    url TEXT NOT NULL,
+    alt TEXT
+);
 
 -------------------------------------------------------------------------------
 -- Excluir tabelas se existirem

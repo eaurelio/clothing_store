@@ -62,8 +62,8 @@
       "./@types",        
       "./node_modules/@types"
     ],
-    "types": ["jest", "node"],  
-    "rootDir": "."  // Define a raiz do projeto como rootDir
+    "types": ["jest", "node", "express"],  
+    "rootDir": "."
   },
   "include": [
     "src/**/*",         
@@ -74,4 +74,3 @@
     "node_modules"
   ]
 }
-
