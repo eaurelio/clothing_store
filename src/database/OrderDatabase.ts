@@ -161,10 +161,11 @@ public async findOrdersByUserId(userId?: string, orderId?: string) {
   public async insertOrderItem(orderItem: OrderItemDB): Promise<void> {
     await BaseDatabase.connection.raw(
       `
-      INSERT INTO order_items (order_id, product_id, quantity, price)
-      VALUES (?, ?, ?, ?)
+      INSERT INTO order_items (id, order_id, product_id, quantity, price)
+      VALUES (?, ?, ?, ?, ?)
       `,
       [
+        orderItem.id,
         orderItem.order_id,
         orderItem.product_id,
         orderItem.quantity,
