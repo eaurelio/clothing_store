@@ -66,7 +66,7 @@ CREATE TABLE orders (
 );
 
 CREATE TABLE order_items (
-    item_id SERIAL PRIMARY KEY,
+    id TEXT PRIMARY KEY UNIQUE NOT NULL,
     order_id TEXT NOT NULL,
     product_id TEXT NOT NULL,
     quantity INTEGER NOT NULL,
@@ -74,6 +74,8 @@ CREATE TABLE order_items (
     FOREIGN KEY (order_id) REFERENCES orders(order_id),
     FOREIGN KEY (product_id) REFERENCES products(id)
 );
+
+DROP TABLE order_items;
 
 
 select * from orders;

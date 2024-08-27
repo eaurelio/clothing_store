@@ -209,3 +209,5 @@
 {"issues":[{"code":"invalid_type","expected":"string","message":"Expected string, received number","path":["gender"],"received":"number"}],"level":"error","name":"ZodError","timestamp":"2024-08-26T18:56:01.810Z"}
 {"level":"error","statusCode":404,"timestamp":"2024-08-26T18:56:43.639Z"}
 {"level":"error","statusCode":404,"timestamp":"2024-08-26T18:57:04.458Z"}
+{"level":"error","timestamp":"2024-08-27T02:27:52.467Z"}
+{"code":"42703","file":"parse_target.c","length":126,"level":"error","line":"1066","name":"error","position":"33","routine":"checkInsertTargets","severity":"ERROR","timestamp":"2024-08-27T02:29:07.596Z"}
