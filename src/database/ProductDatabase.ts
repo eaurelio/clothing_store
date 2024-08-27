@@ -199,6 +199,23 @@ export class ProductDatabase extends BaseDatabase {
     return result.rows;
   }
 
+    // --------------------------------------------------------------------
+
+    public async getImageByUrl(
+      url: string
+    ): Promise<ProductImageDB[]> {
+      const result = await BaseDatabase.connection.raw(
+        `
+        SELECT *
+        FROM ${ProductDatabase.TABLE_IMAGES}
+        WHERE url = ?
+      `,
+        [url]
+      );
+  
+      return result.rows;
+    }
+
   // --------------------------------------------------------------------
 
   public async insertProductImage(

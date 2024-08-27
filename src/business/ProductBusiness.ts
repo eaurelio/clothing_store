@@ -350,11 +350,9 @@ export class ProductBusiness {
   public async insertProductImage(input: ProductImageDBInput): Promise<ProductImageOutput> {
     const { product_id, url, alt } = input;
 
-    const existingImages = await this.productDatabase.getImagesByProductId(product_id);
-
-    const isDuplicate = existingImages.some(image => image.url === url);
+    const existingImage = await this.productDatabase.getImageByUrl(url);
   
-    if (isDuplicate) {
+    if (existingImage) {
       throw new ConflictError("This URL is already associated with the specified product");
     }
 
