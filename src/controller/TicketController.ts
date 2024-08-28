@@ -101,12 +101,12 @@ export class TicketController {
   public updateTicket = async (req: Request, res: Response) => {
     try {
       const input = UpdateTicketSchema.parse({
-        ticketId: req.body.ticked_id,
-        type_id: req.body.type_id,
+        ticketId: req.body.tickedId,
+        typeId: req.body.typeId,
         solution: req.body.solution,
-        status_id: req.body.status_id,
-        analist_name: req.body.analist_name,
-        analist_email: req.body.analist_email
+        statusId: req.body.statusId,
+        analistName: req.body.analistName,
+        analistEmail: req.body.analistEmail
       });
 
       const output = await this.ticketBusiness.updateTicket(

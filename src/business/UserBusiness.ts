@@ -66,136 +66,13 @@ export class UserBusiness {
   // USER DATA
   // --------------------------------------------------------------------
 
-  // public createUser = async (
-  //   input: CreateUserInputDTO
-  // ): Promise<CreateUserOutputDTO> => {
-  //   const {
-  //     token,
-  //     personal_id,
-  //     entity_type,
-  //     name,
-  //     email,
-  //     password,
-  //     birthdate,
-  //     role,
-  //     address,
-  //     number,
-  //     neighborhood,
-  //     city,
-  //     country,
-  //     gender,
-  //     phones,
-  //   } = input;
-
-  //   const userDBEmailExists: UserDB | undefined =
-  //     await this.userDatabase.findUserByEmail(email);
-
-  //   if (userDBEmailExists) {
-  //     throw new ConflictError("'email' already exists");
-  //   }
-
-  //   const userDBPersonalIdExists: UserDB | undefined =
-  //     await this.userDatabase.findUserByPersonalId(personal_id);
-
-  //   if (userDBPersonalIdExists) {
-  //     throw new ConflictError("'personal Id' already exists");
-  //   }
-
-  //   let userRole = USER_ROLES.CLIENT;
-
-  //   if (token) {
-  //     const authorizedUser = this.tokenService.verifyToken(token);
-  //     if (authorizedUser?.role === USER_ROLES.ADMIN) {
-  //       if (role === USER_ROLES.ADMIN) {
-  //         userRole = USER_ROLES.ADMIN;
-  //       }
-  //     } else {
-  //       throw new ForbiddenError(
-  //         "User does not have permission to create an admin account"
-  //       );
-  //     }
-  //   }
-
-  //   const id = this.idGenerator.generate();
-  //   const hashedPassword = await this.hashManager.hash(password);
-
-  //   const newUser = new User(
-  //     id,
-  //     personal_id,
-  //     entity_type as EntityType,
-  //     name,
-  //     email,
-  //     hashedPassword,
-  //     birthdate,
-  //     userRole,
-  //     new Date().toISOString(),
-  //     address,
-  //     number,
-  //     neighborhood,
-  //     city,
-  //     country,
-  //     gender
-  //   );
-
-  //   const newUserDB: UserDB = {
-  //     id: newUser.getId(),
-  //     personal_id: newUser.getPersonalId(),
-  //     entity_type: newUser.getEntityType(),
-  //     name: newUser.getName(),
-  //     email: newUser.getEmail(),
-  //     password: newUser.getPassword(),
-  //     birthdate: newUser.getBirthdate(),
-  //     role: newUser.getRole(),
-  //     created_at: newUser.getCreatedAt(),
-  //     address: newUser.getAddress(),
-  //     number: newUser.getNumber(),
-  //     neighborhood: newUser.getNeighborhood(),
-  //     city: newUser.getCity(),
-  //     country: newUser.getCountry(),
-  //     gender: newUser.getGender(),
-  //   };
-
-  //   await this.userDatabase.insertUser(newUserDB);
-
-  //   if (phones && phones.length > 0) {
-  //     for (const phone of phones) {
-  //       const phoneData: PhoneDB = {
-  //         phone_id: await this.idGenerator.generate(),
-  //         user_id: newUser.getId(),
-  //         number: phone.number,
-  //         type: phone.type,
-  //       };
-
-  //       await this.userDatabase.insertPhone(phoneData);
-  //     }
-  //   }
-
-  //   const newToken = this.tokenService.generateToken(
-  //     newUser.getId(),
-  //     newUser.getRole()
-  //   );
-
-  //   const output: CreateUserOutputDTO = {
-  //     message: "User created successfully",
-  //     user: {
-  //       id: newUser.getId(),
-  //       name: newUser.getName(),
-  //       email: newUser.getEmail(),
-  //       createdAt: newUser.getCreatedAt(),
-  //       token: newToken,
-  //     },
-  //   };
-
-  //   return output;
-  // };
-
   public createUser = async (
     input: CreateUserInputDTO
   ): Promise<CreateUserOutputDTO> => {
     const {
       token,
-      personal_id,
-      entity_type,
+      personalId,
+      entityType,
       name,
       email,
       password,
@@ -209,11 +86,10 @@ export class UserBusiness {
       gender,
       phones,
     } = input;
-  
+
     let userRole = USER_ROLES.CLIENT;
-  
+
     if (token) {
-      // Verificar e decodificar o token
       const authorizedUser = await this.tokenService.verifyToken(token);
       if (authorizedUser?.role === USER_ROLES.ADMIN) {
         if (role === USER_ROLES.ADMIN) {
@@ -225,28 +101,26 @@ export class UserBusiness {
         );
       }
     }
-  
-    // Verificar se o email já existe
+
     const userDBEmailExists = await this.userDatabase.findUserByEmail(email);
     if (userDBEmailExists) {
       throw new ConflictError("'email' already exists");
     }
-  
-    // Verificar se o personal_id já existe
-    const userDBPersonalIdExists = await this.userDatabase.findUserByPersonalId(personal_id);
+
+    const userDBPersonalIdExists = await this.userDatabase.findUserByPersonalId(
+      personalId
+    );
     if (userDBPersonalIdExists) {
       throw new ConflictError("'personal Id' already exists");
     }
-  
-    // Gerar um novo id e hash da senha
+
     const id = await this.idGenerator.generate();
     const hashedPassword = await this.hashManager.hash(password);
-  
-    // Criar um novo usuário
+
     const newUser = new User(
       id,
-      personal_id,
-      entity_type as EntityType,
+      personalId,
+      entityType as EntityType,
       name,
       email,
       hashedPassword,
@@ -260,7 +134,7 @@ export class UserBusiness {
       country,
       gender
     );
-  
+
     const newUserDB: UserDB = {
       id: newUser.getId(),
       personal_id: newUser.getPersonalId(),
@@ -278,11 +152,9 @@ export class UserBusiness {
       country: newUser.getCountry(),
       gender: newUser.getGender(),
     };
-  
-    // Inserir o novo usuário na base de dados
+
     await this.userDatabase.insertUser(newUserDB);
-  
-    // Inserir telefones, se houver
+
     if (phones && phones.length > 0) {
       for (const phone of phones) {
         const phoneData: PhoneDB = {
@@ -294,13 +166,12 @@ export class UserBusiness {
         await this.userDatabase.insertPhone(phoneData);
       }
     }
-  
-    // Gerar o token para o novo usuário
+
     const newToken = this.tokenService.generateToken(
       newUser.getId(),
       newUser.getRole()
     );
-  
+
     const output: CreateUserOutputDTO = {
       message: "User created successfully",
       user: {
@@ -311,11 +182,10 @@ export class UserBusiness {
         token: newToken,
       },
     };
-  
+
     return output;
   };
-  
-  
+
   // --------------------------------------------------------------------
 
   public login = async (input: LoginInputDTO): Promise<LoginOutputDTO> => {
@@ -364,7 +234,7 @@ export class UserBusiness {
   public editUser = async (
     input: UpdateUserInputDTO
   ): Promise<UpdateUserOutputDTO> => {
-    const { userId, personal_id, password, ...rest } = input;
+    const { userId, personalId, password, ...rest } = input;
 
     const userDB = await this.userDatabase.findUserById(userId);
 
@@ -376,9 +246,9 @@ export class UserBusiness {
       throw new ForbiddenError("User account is deactivated");
     }
 
-    if (personal_id) {
+    if (personalId) {
       const userDBPersonalIdExists =
-        await this.userDatabase.findUserByPersonalId(personal_id);
+        await this.userDatabase.findUserByPersonalId(personalId);
 
       if (userDBPersonalIdExists && userDBPersonalIdExists.id !== userId) {
         throw new ConflictError(
@@ -393,8 +263,8 @@ export class UserBusiness {
 
     const updatedUser: UserDB = {
       ...userDB,
-      personal_id: personal_id ?? userDB.personal_id,
-      entity_type: (rest.entity_type as EntityType) ?? userDB.entity_type,
+      personal_id: personalId ?? userDB.personal_id,
+      entity_type: (rest.entityType as EntityType) ?? userDB.entity_type,
       name: rest.name ?? userDB.name,
       email: rest.email ?? userDB.email,
       password: hashedPassword,
@@ -431,7 +301,6 @@ export class UserBusiness {
 
     return output;
   };
-  
 
   // --------------------------------------------------------------------
 
@@ -509,7 +378,7 @@ export class UserBusiness {
   public getAllUsers = async (input: GetAllUserInputDTO): Promise<UserDB[]> => {
     const { q, onlyActive = true } = input;
 
-    console.log(q)
+    console.log(q);
 
     const usersDB = await this.userDatabase.findUsers(q, onlyActive);
 

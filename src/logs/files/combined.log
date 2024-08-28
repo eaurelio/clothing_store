@@ -221,3 +221,11 @@
 {"level":"error","statusCode":400,"timestamp":"2024-08-27T21:39:32.004Z"}
 {"issues":[{"code":"too_big","exact":false,"inclusive":true,"maximum":16,"message":"String must contain at most 16 character(s)","path":["oldPassword"],"type":"string"}],"level":"error","name":"ZodError","timestamp":"2024-08-27T21:39:45.073Z"}
 {"level":"error","statusCode":400,"timestamp":"2024-08-27T21:39:55.327Z"}
+{"level":"error","statusCode":409,"timestamp":"2024-08-28T20:56:47.664Z"}
+{"level":"error","timestamp":"2024-08-28T20:56:53.840Z"}
+{"level":"error","timestamp":"2024-08-28T20:58:35.017Z"}
+{"level":"error","timestamp":"2024-08-28T21:00:58.988Z"}
+{"issues":[{"code":"too_big","exact":false,"inclusive":true,"maximum":16,"message":"String must contain at most 16 character(s)","path":["personalId"],"type":"string"}],"level":"error","name":"ZodError","timestamp":"2024-08-28T21:18:39.059Z"}
+{"level":"error","statusCode":403,"timestamp":"2024-08-28T21:19:07.816Z"}
+{"level":"error","statusCode":403,"timestamp":"2024-08-28T21:19:58.538Z"}
+{"level":"error","statusCode":403,"timestamp":"2024-08-28T21:20:42.053Z"}

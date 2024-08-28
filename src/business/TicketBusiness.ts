@@ -121,8 +121,8 @@ export class TicketBusiness {
       statusId: ticketDB.status_id,
       description: ticketDB.description,
       solution: ticketDB.solution,
-      analist_name: ticketDB.analist_name,
-      analist_email: ticketDB.analist_email,
+      analistName: ticketDB.analist_name,
+      analistEmail: ticketDB.analist_email,
       createdAt: ticketDB.created_at,
       updatedAt: ticketDB.updated_at,
     };
@@ -176,11 +176,11 @@ export class TicketBusiness {
   ): Promise<UpdateTicketOutputDTO> {
     const {
       ticketId,
-      type_id,
+      typeId,
       solution,
-      status_id,
-      analist_name,
-      analist_email,
+      statusId,
+      analistName,
+      analistEmail,
     } = input;
 
     const ticketDB = await this.ticketDatabase.findTicketById(ticketId);
@@ -190,11 +190,11 @@ export class TicketBusiness {
 
     const updatedTicketDB: Partial<TicketDB> = {
       id: ticketId,
-      type_id: type_id ?? ticketDB.type_id,
+      type_id: typeId ?? ticketDB.type_id,
       solution: solution ?? ticketDB.solution,
-      status_id: status_id ?? ticketDB.status_id,
-      analist_name: analist_name ?? ticketDB.analist_name,
-      analist_email: analist_email ?? ticketDB.analist_email,
+      status_id: statusId ?? ticketDB.status_id,
+      analist_name: analistName ?? ticketDB.analist_name,
+      analist_email: analistEmail ?? ticketDB.analist_email,
       updated_at: new Date().toISOString(),
     };
 

@@ -2,11 +2,11 @@ import z from 'zod';
 
 export interface UpdateTicketInputDTO {
     ticketId: string;
-    type_id?: number;
+    typeId?: number;
     solution?: string;
-    status_id?: number;
-    analist_name?: string;
-    analist_email?: string;
+    statusId?: number;
+    analistName?: string;
+    analistEmail?: string;
 }
 
 export interface UpdateTicketOutputDTO {

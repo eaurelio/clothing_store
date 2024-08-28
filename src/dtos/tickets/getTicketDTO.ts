@@ -10,8 +10,8 @@ export interface GetTicketOutputDTO {
   typeId: number;
   statusId: number;
   solution?: string;
-  analist_name?: string;
-  analist_email?: string;
+  analistName?: string;
+  analistEmail?: string;
   createdAt: string;
   updatedAt: string;
   description: string;

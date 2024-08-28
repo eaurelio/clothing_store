@@ -11,13 +11,12 @@ export interface UpdateWishListInputDTO {
 export interface UpdateWishListOutputDTO {
   message: string;
   wishlist: {
-    wishlist_id: string; // Corrigido para `wishlistId`
+    wishlist_id: string;
     userId: string;
     created_at: string;
     items: { productId: string }[];
   };
 }
-
 
 export const UpdateWishListSchema = z.object({
   userId: z.string(),

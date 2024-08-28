@@ -7,10 +7,10 @@ export interface CreateProductInputDTO {
   description?: string;
   price: number;
   stock: number;
-  category_id: number;
-  color_id: number;
-  size_id: number;
-  gender_id: number;
+  categoryId: number;
+  colorId: number;
+  sizeId: number;
+  genderId: number;
   images?: ProductImageDB[];
 }
 
@@ -23,10 +23,10 @@ export interface CreateProductOutputDTO {
     price: number;
     stock: number;
     createdAt: string;
-    category_id?: number;
-    color_id?: number;
-    size_id?: number;
-    gender_id?: number;
+    categoryId?: number;
+    colorId?: number;
+    sizeId?: number;
+    genderId?: number;
     images?: ProductImageDB[];
   };
 }
@@ -42,10 +42,10 @@ export const CreateProductSchema = z.object({
   description: z.string().optional(),
   price: z.number().min(0),
   stock: z.number().int().min(0),
-  category_id: z.number().optional(),
-  color_id: z.number().optional(),
-  size_id: z.number().optional(),
-  gender_id: z.number().optional(),
+  categoryId: z.number().optional(),
+  colorId: z.number().optional(),
+  sizeId: z.number().optional(),
+  genderId: z.number().optional(),
   images: z.array(ProductImageSchema).optional(),
 }).transform(data => data as CreateProductInputDTO);
 
@@ -74,7 +74,7 @@ export const CreateCategorySchema = z.object({
 
 export interface CreateColorInputDTO {
   name: string;
-  hex_code?: string;
+  hexCode?: string;
 }
 
 export interface CreateColorOutputDTO {
@@ -87,7 +87,7 @@ export interface CreateColorOutputDTO {
 
 export const CreateColorSchema = z.object({
   name: z.string().min(3),
-  hex_code: z.string().min(4)
+  hexCode: z.string().min(4)
 }).transform(data => data as CreateColorInputDTO);
 
 // --------------------------------------------------------------------

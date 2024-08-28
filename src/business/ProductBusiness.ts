@@ -90,10 +90,10 @@ export class ProductBusiness {
       description,
       price,
       stock,
-      category_id,
-      color_id,
-      size_id,
-      gender_id,
+      categoryId,
+      colorId,
+      sizeId,
+      genderId,
       images, // Adicionando o parâmetro de imagens
     } = input;
   
@@ -112,10 +112,10 @@ export class ProductBusiness {
       price,
       stock,
       created_at,
-      category_id,
-      color_id,
-      size_id,
-      gender_id
+      categoryId,
+      colorId,
+      sizeId,
+      genderId
     );
   
     const newProductDB: ProductDB = {
@@ -158,10 +158,10 @@ export class ProductBusiness {
         price: newProduct.getPrice(),
         stock: newProduct.getStock(),
         createdAt: newProduct.getCreatedAt(),
-        category_id: newProduct.getCategory() as number,
-        color_id: newProduct.getColor() as number,
-        size_id: newProduct.getSize() as number,
-        gender_id: newProduct.getGender() as number,
+        categoryId: newProduct.getCategory() as number,
+        colorId: newProduct.getColor() as number,
+        sizeId: newProduct.getSize() as number,
+        genderId: newProduct.getGender() as number,
         images: productImages
       },
     };
@@ -439,7 +439,7 @@ export class ProductBusiness {
   public createColor = async (
     input: CreateColorInputDTO
   ): Promise<CreateColorOutputDTO> => {
-    const { name, hex_code } = input;
+    const { name, hexCode } = input;
 
     const existingColor = await this.productDatabase.findColorByName(name);
     if (existingColor) {
@@ -448,7 +448,7 @@ export class ProductBusiness {
 
     const newColorDB: ColorDB = {
       name,
-      hex_code,
+      hex_code: hexCode,
     };
 
     await this.productDatabase.insertColor(newColorDB);

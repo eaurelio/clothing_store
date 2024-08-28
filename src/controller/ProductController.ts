@@ -45,10 +45,10 @@ export class ProductController {
         description: req.body.description,
         price: req.body.price,
         stock: req.body.stock,
-        category_id: req.body.category_id,
-        color_id: req.body.color_id,
-        size_id: req.body.size_id,
-        gender_id: req.body.gender_id,
+        categoryId: req.body.categoryId,
+        colorId: req.body.colorId,
+        sizeId: req.body.sizeId,
+        genderId: req.body.genderId,
         images: req.body.images
       });
 
@@ -70,10 +70,10 @@ export class ProductController {
         description: req.body.description,
         price: req.body.price,
         stock: req.body.stock,
-        category_id: req.body.category_id,
-        color_id: req.body.color_id,
-        size_id: req.body.size_id,
-        gender_id: req.body.gender_id
+        categoryId: req.body.categoryId,
+        colorId: req.body.colorId,
+        sizeId: req.body.sizeId,
+        genderId: req.body.genderId
       });
 
       const output = await this.productBusiness.editProduct(input);
@@ -90,7 +90,7 @@ export class ProductController {
   public insertProductImage = async (req: Request, res: Response) => {
     try {
       const input = InsertProductImageSchema.parse({
-        product_id: req.body.product_id,
+        productId: req.body.productId,
         url: req.body.url,
         alt: req.body.alt
       });
@@ -110,7 +110,7 @@ export class ProductController {
     try {
       const input = DeleteProductImageSchema.parse({
         id: req.body.id,
-        product_id: req.body.product_id
+        productId: req.body.productId
       });
 
       const output = await this.productBusiness.deleteProductImage(input);
@@ -129,10 +129,10 @@ export class ProductController {
       const input = GetAllProductsSchema.parse({
         id: req.body.id,
         name: req.body.name,
-        category_id: req.body.category_id,
-        color_id: req.body.color_id,
-        size_id: req.body.size_id,
-        gender_id: req.body.gender_id,
+        categoryId: req.body.categoryId,
+        colorId: req.body.colorId,
+        sizeId: req.body.sizeId,
+        genderId: req.body.genderId,
         active: req.body.active,
       });
 
@@ -225,7 +225,7 @@ export class ProductController {
     try {
       const input = CreateColorSchema.parse({
         name: req.body.name,
-        hex_code: req.body.hex_code,
+        hexCode: req.body.hexCode,
       });
 
       const output = await this.productBusiness.createColor(input);
@@ -241,7 +241,7 @@ export class ProductController {
       const input = UpdateColorSchema.parse({
         id: req.params.id,
         name: req.body.name,
-        hex_code: req.body.hex_code,
+        hexCode: req.body.hexCode,
       });
 
       const output = await this.productBusiness.updateColor(input);
