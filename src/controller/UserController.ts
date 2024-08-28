@@ -16,7 +16,7 @@ import { GetUserSchema, GetAllUserSchema } from "../dtos/users/getUser.dto";
 import { PhoneDeleteSchema, PhoneInputSchema, PhoneUpdtateInputSchema } from "../dtos/users/phone";
 
 // Errors
-import { ErrorHandler } from "../errors/ErrorHandler";
+import ErrorHandler from "../errors/ErrorHandler";
 
 // Logging
 import logger from "../logs/logger";
@@ -81,9 +81,9 @@ export class UserController {
       const input = GetUserSchema.parse({
         userId: req.params.id as string,
       });
-
+  
       const output = await this.userBusiness.getUserById(input);
-      res.status(200).send(output);
+      res.status(200).json(output);
     } catch (error) {
       logger.error(error);
       ErrorHandler.handleError(error, res);
@@ -141,7 +141,7 @@ export class UserController {
   public changePassword = async (req: Request, res: Response) => {
     try {
       const input = UpdatePasswordSchema.parse({
-        userId: req.params.id,
+        userId: req.body.userId,
         email: req.body.email,
         oldPassword: req.body.oldPassword,
         newPassword: req.body.newPassword,
@@ -178,7 +178,7 @@ export class UserController {
   public addPhone = async (req: Request, res: Response) => {
     try {
       const input = PhoneInputSchema.parse({
-        userId: req.params.id,
+        userId: req.body.userId,
         number: req.body.number,
         type: req.body.type,
       });
@@ -196,7 +196,7 @@ export class UserController {
   public updatePhone = async (req: Request, res: Response) => {
     try {
       const input = PhoneUpdtateInputSchema.parse({
-        userId: req.params.id,
+        userId: req.body.userId,
         phoneId: req.body.phoneId,
         number: req.body.number,
         type: req.body.type,
@@ -215,9 +215,8 @@ export class UserController {
   public deletePhone = async (req: Request, res: Response) => {
     try {
       const input = PhoneDeleteSchema.parse({
-        userId: req.params.id,
-        // token: req.headers.authorization,
-        phoneId: req.body.phoneId,
+        userId: req.body.userId,
+        phoneId: req.body.phoneId
       });
 
       const output = await this.userBusiness.deletePhone(input);

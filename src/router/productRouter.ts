@@ -6,7 +6,7 @@ import { HashManager } from "../services/HashManager"
 import { ProductController } from "../controller/ProductController"
 import { ProductBusiness } from "../business/ProductBusiness"
 import { UserDatabase } from "../database/UserDatabase";
-import { ErrorHandler } from "../errors/ErrorHandler";
+import ErrorHandler from "../errors/ErrorHandler";
 import { ensureAdmin } from "../middlewares/ensureAdminMiddleware";
 import { USER_ROLES } from "../models/User";
 

@@ -211,3 +211,13 @@
 {"level":"error","statusCode":404,"timestamp":"2024-08-26T18:57:04.458Z"}
 {"level":"error","timestamp":"2024-08-27T02:27:52.467Z"}
 {"code":"42703","file":"parse_target.c","length":126,"level":"error","line":"1066","name":"error","position":"33","routine":"checkInsertTargets","severity":"ERROR","timestamp":"2024-08-27T02:29:07.596Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-27T17:48:37.859Z"}
+{"level":"error","statusCode":400,"timestamp":"2024-08-27T17:49:20.543Z"}
+{"level":"error","timestamp":"2024-08-27T21:15:49.003Z"}
+{"level":"error","statusCode":400,"timestamp":"2024-08-27T21:38:24.264Z"}
+{"level":"error","statusCode":400,"timestamp":"2024-08-27T21:38:35.792Z"}
+{"level":"error","statusCode":400,"timestamp":"2024-08-27T21:39:10.284Z"}
+{"level":"error","statusCode":400,"timestamp":"2024-08-27T21:39:18.726Z"}
+{"level":"error","statusCode":400,"timestamp":"2024-08-27T21:39:32.004Z"}
+{"issues":[{"code":"too_big","exact":false,"inclusive":true,"maximum":16,"message":"String must contain at most 16 character(s)","path":["oldPassword"],"type":"string"}],"level":"error","name":"ZodError","timestamp":"2024-08-27T21:39:45.073Z"}
+{"level":"error","statusCode":400,"timestamp":"2024-08-27T21:39:55.327Z"}

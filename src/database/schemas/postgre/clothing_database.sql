@@ -26,6 +26,10 @@ CREATE TABLE users (
 ALTER TABLE users
 ALTER COLUMN gender TYPE INTEGER USING gender::INTEGER;
 
+delete from users
+where id = 'c155abc4-1fa7-44e1-a531-eab91332d9ac';
+
+select * from phones_audit;
 
 ALTER TABLE users
 ADD CONSTRAINT fk_gender

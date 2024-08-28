@@ -17,7 +17,7 @@ public async findUsers(q: string | undefined, onlyActive: boolean): Promise<User
           users.personal_id,
           users.entity_type,
           users.name,
-          genders.name AS gender,  -- Nome do gênero retornado como 'gender'
+          genders.name AS gender,
           users.email,
           users.password,
           users.role,

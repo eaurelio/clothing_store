@@ -65,7 +65,7 @@ import {
   ConflictError,
   ForbiddenError,
 } from "../errors/Errors";
-import { ErrorHandler } from "../errors/ErrorHandler";
+import ErrorHandler from "../errors/ErrorHandler";
 import { ProductImageDB, ProductImageDBInput, ProductImageDBOutput, ProductImageOutput } from "../models/ProductImage";
 
 export class ProductBusiness {
@@ -81,75 +81,6 @@ export class ProductBusiness {
   // --------------------------------------------------------------------
   // PRODUCTS
   // --------------------------------------------------------------------
-
-  // public createProduct = async (
-  //   input: CreateProductInputDTO
-  // ): Promise<CreateProductOutputDTO> => {
-  //   const {
-  //     name,
-  //     description,
-  //     price,
-  //     stock,
-  //     category_id,
-  //     color_id,
-  //     size_id,
-  //     gender_id,
-  //   } = input;
-
-  //   const existingProduct = await this.productDatabase.findProductByName(name);
-  //   if (existingProduct) {
-  //     throw new ConflictError("'name' already exists");
-  //   }
-
-  //   const id = this.idGenerator.generate();
-  //   const created_at = new Date().toISOString();
-
-  //   const newProduct = new Product(
-  //     id,
-  //     name,
-  //     description,
-  //     price,
-  //     stock,
-  //     created_at,
-  //     category_id,
-  //     color_id,
-  //     size_id,
-  //     gender_id
-  //   );
-
-  //   const newProductDB: ProductDB = {
-  //     id: newProduct.getId(),
-  //     name: newProduct.getName(),
-  //     description: newProduct.getDescription(),
-  //     price: newProduct.getPrice(),
-  //     stock: newProduct.getStock(),
-  //     created_at: newProduct.getCreatedAt(),
-  //     category_id: newProduct.getCategory() as number,
-  //     color_id: newProduct.getColor() as number,
-  //     size_id: newProduct.getSize() as number,
-  //     gender_id: newProduct.getGender() as number,
-  //   };
-
-  //   await this.productDatabase.insertProduct(newProductDB);
-
-  //   const output: CreateProductOutputDTO = {
-  //     message: "Product created successfully",
-  //     product: {
-  //       id: newProduct.getId(),
-  //       name: newProduct.getName(),
-  //       description: newProduct.getDescription(),
-  //       price: newProduct.getPrice(),
-  //       stock: newProduct.getStock(),
-  //       createdAt: newProduct.getCreatedAt(),
-  //       category_id: newProduct.getCategory() as number,
-  //       color_id: newProduct.getColor() as number,
-  //       size_id: newProduct.getSize() as number,
-  //       gender_id: newProduct.getGender() as number,
-  //     },
-  //   };
-
-  //   return output;
-  // };
 
   public createProduct = async (
     input: CreateProductInputDTO

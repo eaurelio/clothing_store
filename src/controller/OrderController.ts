@@ -29,7 +29,7 @@ import {
 } from "../dtos/orders/deleteOrder.dto";
 
 // Errors
-import { ErrorHandler } from "../errors/ErrorHandler";
+import ErrorHandler from "../errors/ErrorHandler";
 
 // Logging
 import logger from "../logs/logger";
@@ -61,7 +61,7 @@ export class OrderController {
   public getUserOrders = async (req: Request, res: Response) => {
     try {
       const input = GetOrdersSchema.parse({
-        userId: req.params.id,
+        userId: req.body.userId,
         orderId: req.body.orderId
       });
 

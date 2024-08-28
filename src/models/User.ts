@@ -18,7 +18,7 @@ export interface UserDB {
         number: string;
         type: string;
     }[]
-    active?: string;
+    active?: boolean;
 }
 
 export interface UserDBOutput {

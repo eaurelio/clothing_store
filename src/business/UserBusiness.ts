@@ -51,7 +51,7 @@ import {
   BadRequestError,
   NotFoundError,
 } from "../errors/Errors";
-import { ErrorHandler } from "../errors/ErrorHandler";
+import ErrorHandler from "../errors/ErrorHandler";
 
 export class UserBusiness {
   constructor(
@@ -508,6 +508,8 @@ export class UserBusiness {
 
   public getAllUsers = async (input: GetAllUserInputDTO): Promise<UserDB[]> => {
     const { q, onlyActive = true } = input;
+
+    console.log(q)
 
     const usersDB = await this.userDatabase.findUsers(q, onlyActive);
 

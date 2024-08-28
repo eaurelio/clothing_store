@@ -38,7 +38,7 @@ import { HashManager } from "../services/HashManager";
 
 // Errors
 import { NotFoundError } from "../errors/Errors";
-import { ErrorHandler } from "../errors/ErrorHandler";
+import ErrorHandler from "../errors/ErrorHandler";
 
 
 export class WishlistBusiness {

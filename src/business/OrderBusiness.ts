@@ -36,7 +36,7 @@ import {
 
 // Errors
 import { UnauthorizedError, ForbiddenError, NotFoundError } from "../errors/Errors";
-import { ErrorHandler } from "../errors/ErrorHandler";
+import ErrorHandler from "../errors/ErrorHandler";
 
 
 export class OrderBusiness {

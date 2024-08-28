@@ -19,7 +19,7 @@ import {
 } from "../dtos/wishlist/deleteWishList.dto";
 
 // Errors
-import { ErrorHandler } from "../errors/ErrorHandler";
+import ErrorHandler from "../errors/ErrorHandler";
 
 // Logging
 import logger from "../logs/logger";
