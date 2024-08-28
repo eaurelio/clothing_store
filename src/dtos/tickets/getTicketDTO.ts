@@ -4,11 +4,6 @@ export interface GetTicketInputDTO {
   ticketId: string;
 }
 
-export const GetTicketSchema = z.object({
-  ticketId: z.string()
-}).transform(data => data as GetTicketInputDTO)
-
-
 export interface GetTicketOutputDTO {
   ticketId: string;
   userId: string;
@@ -21,6 +16,10 @@ export interface GetTicketOutputDTO {
   updatedAt: string;
   description: string;
 }
+
+export const GetTicketSchema = z.object({
+  ticketId: z.string()
+}).transform(data => data as GetTicketInputDTO)
 
 // ---------
 
