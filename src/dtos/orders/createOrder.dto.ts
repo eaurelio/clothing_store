@@ -7,7 +7,7 @@ export interface CreateOrderInputDTO {
     quantity: number;
     price: number;
   }[];
-  status_id: number; // Ajustado para number
+  // status_id: number; // Ajustado para number
   total: number;
 }
 

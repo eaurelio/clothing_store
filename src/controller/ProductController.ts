@@ -25,7 +25,7 @@ import {
 import { GetAllProductsSchema } from "../dtos/products/getProduct.dto";
 
 // Errors
-import { ErrorHandler } from "../errors/ErrorHandler";
+import ErrorHandler from "../errors/ErrorHandler";
 
 // Logging
 import logger from "../logs/logger";

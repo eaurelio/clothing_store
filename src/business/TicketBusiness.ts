@@ -33,7 +33,7 @@ import {
 import { UserDatabase } from "../database/UserDatabase";
 import TokenService from "../services/TokenService";
 import { HashManager } from "../services/HashManager";
-import { ErrorHandler } from "../errors/ErrorHandler";
+import ErrorHandler from "../errors/ErrorHandler";
 
 export class TicketBusiness {
   constructor(

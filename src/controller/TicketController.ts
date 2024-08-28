@@ -17,7 +17,7 @@ import {
 } from "../dtos/tickets/updateTicketDTO";
 
 // Errors
-import { ErrorHandler } from "../errors/ErrorHandler";
+import ErrorHandler from "../errors/ErrorHandler";
 
 // Logging
 import logger from "../logs/logger";

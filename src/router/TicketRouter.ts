@@ -6,7 +6,7 @@ import { TicketDatabase } from "../database/TicketDatabase";
 import { UserDatabase } from "../database/UserDatabase";
 import { IdGenerator } from "../services/idGenerator";
 import { HashManager } from "../services/HashManager";
-import { ErrorHandler } from "../errors/ErrorHandler";
+import ErrorHandler from "../errors/ErrorHandler";
 import { authMiddleware } from "../middlewares/authMiddleware";
 import { USER_ROLES } from "../models/User";
 import { ensureAdmin } from "../middlewares/ensureAdminMiddleware";

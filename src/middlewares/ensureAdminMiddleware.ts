@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { USER_ROLES } from '../models/User';
 import { ForbiddenError, UnauthorizedError } from '../errors/Errors';
-import { ErrorHandler } from '../errors/ErrorHandler';
+import ErrorHandler from "../errors/ErrorHandler";
 import TokenService from '../services/TokenService';
 
 export const ensureAdmin = (requiredRole: USER_ROLES) => {

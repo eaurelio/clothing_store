@@ -1,7 +1,7 @@
 import { ForbiddenError, UnauthorizedError } from './../errors/Errors';
 import { Request, Response, NextFunction } from 'express';
 import TokenService from '../services/TokenService';
-import { ErrorHandler } from '../errors/ErrorHandler';
+import ErrorHandler from "../errors/ErrorHandler";
 import { USER_ROLES, UserDB } from '../models/User'; 
 import { UserDatabase } from '../database/UserDatabase';
 

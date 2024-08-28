@@ -2,7 +2,7 @@ import express from "express"
 import TokenService from "../services/TokenService"
 import { IdGenerator } from "../services/idGenerator"
 import { HashManager } from "../services/HashManager"
-import { ErrorHandler } from "../errors/ErrorHandler";
+import ErrorHandler from "../errors/ErrorHandler";
 import { WishlistController } from "../controller/WishListController";
 import { WishlistDatabase } from "../database/WishListDatabase";
 import { WishlistBusiness } from "../business/WishListBusiness";

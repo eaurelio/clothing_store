@@ -44,10 +44,10 @@ export interface UpdateUserOutputDTO {
 export const UpdateUserSchema = z.object({
   userId: z.string(),
   personal_id: z.string().min(6).optional(),
-  entity_type: z.string().min(6).optional(),
+  entity_type: z.string().optional(),
   name: z.string().min(2).optional(),
   email: z.string().email().optional(),
-  password: z.string().min(8).max(12).optional(),
+  password: z.string().min(8).max(16).optional(),
   birthdate: z.string().optional(),
   address: z.string().min(2).max(40).optional(),
   number: z.string().min(1).optional(),

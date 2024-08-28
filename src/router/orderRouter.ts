@@ -2,7 +2,7 @@ import express from "express"
 import TokenService from "../services/TokenService"
 import { IdGenerator } from "../services/idGenerator"
 import { HashManager } from "../services/HashManager"
-import { ErrorHandler } from "../errors/ErrorHandler";
+import ErrorHandler from "../errors/ErrorHandler";
 import { OrderController } from "../controller/OrderController";
 import { OrderDatabase } from "../database/OrderDatabase";
 import { OrderBusiness } from "../business/OrderBusiness";
@@ -26,7 +26,7 @@ const orderController = new OrderController(
   )
 )
 
-orderRouter.get("/getUserOrders/:id", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), orderController.getUserOrders)
+orderRouter.get("/getUserOrders", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), orderController.getUserOrders)
 orderRouter.get("/getAllOrders", authMiddleware([USER_ROLES.ADMIN]), ensureAdmin(USER_ROLES.ADMIN), orderController.getAllOrders)
 orderRouter.get("/getAllStatus", orderController.getAllStatus)
 orderRouter.post("/createOrder", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), orderController.createOrder)
