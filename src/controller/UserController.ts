@@ -33,8 +33,8 @@ export class UserController {
     try {
       const input = CreateUserSchema.parse({
         token: req.headers.authorization,
-        personal_id: req.body.personal_id,
-        entity_type: req.body.entity_type,
+        personalId: req.body.personalId,
+        entityType: req.body.entityType,
         name: req.body.name,
         email: req.body.email,
         password: req.body.password,
@@ -113,8 +113,8 @@ export class UserController {
     try {
       const input = UpdateUserSchema.parse({
         userId: req.params.id,
-        personal_id: req.body.personal_id,
-        entity_type: req.body.entity_type,
+        personalId: req.body.personalId,
+        entityType: req.body.entityType,
         name: req.body.name,
         email: req.body.email,
         password: req.body.password,

@@ -3,8 +3,8 @@ import { LoginOutputDTO } from './login';
 
 export interface UpdateUserInputDTO {
   userId: string;
-  personal_id?: string;
-  entity_type?: string;
+  personalId?: string;
+  entityType?: string;
   name?: string;
   email?: string;
   password?: string;
@@ -43,8 +43,8 @@ export interface UpdateUserOutputDTO {
 
 export const UpdateUserSchema = z.object({
   userId: z.string(),
-  personal_id: z.string().min(6).optional(),
-  entity_type: z.string().optional(),
+  personalId: z.string().min(6).optional(),
+  entityType: z.string().optional(),
   name: z.string().min(2).optional(),
   email: z.string().email().optional(),
   password: z.string().min(8).max(16).optional(),

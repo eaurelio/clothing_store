@@ -5,25 +5,16 @@ import { Request, Response } from "express";
 import { WishlistBusiness } from "../business/WishListBusiness";
 
 // DTOs
-import {
-  CreateWishListSchema,
-} from "../dtos/wishlist/createWishList.dto";
-import {
-  GetWishListSchema,
-} from "../dtos/wishlist/getWishList.dto";
-import {
-  UpdateWishListSchema,
-} from "../dtos/wishlist/updateWishList.dto";
-import {
-  DeleteWishListSchema,
-} from "../dtos/wishlist/deleteWishList.dto";
+import { CreateWishListSchema } from "../dtos/wishlist/createWishList.dto";
+import { GetWishListSchema } from "../dtos/wishlist/getWishList.dto";
+import { UpdateWishListSchema } from "../dtos/wishlist/updateWishList.dto";
+import { DeleteWishListSchema } from "../dtos/wishlist/deleteWishList.dto";
 
 // Errors
 import ErrorHandler from "../errors/ErrorHandler";
 
 // Logging
 import logger from "../logs/logger";
-
 
 export class WishlistController {
   constructor(private wishlistBusiness: WishlistBusiness) {}
@@ -38,7 +29,7 @@ export class WishlistController {
         userId: req.body.userId,
         items: req.body.items,
       });
-  
+
       const output = await this.wishlistBusiness.createWishlist(input);
       res.status(201).send(output);
     } catch (error) {
@@ -46,14 +37,13 @@ export class WishlistController {
       ErrorHandler.handleError(error, res);
     }
   };
-  
 
   // --------------------------------------------------------------------
 
   public getWishlist = async (req: Request, res: Response) => {
     try {
       const input = GetWishListSchema.parse({
-        userId: req.params.id
+        userId: req.params.id,
       });
 
       const output = await this.wishlistBusiness.getWishlist(input);
@@ -70,7 +60,9 @@ export class WishlistController {
     try {
       const input = UpdateWishListSchema.parse({
         userId: req.body.userId,
-        items: req.body.items.map((item: any) => ({ productId: item.productId })),
+        items: req.body.items.map((item: any) => ({
+          productId: item.productId,
+        })),
       });
 
       const output = await this.wishlistBusiness.updateWishlist(input);
@@ -86,7 +78,7 @@ export class WishlistController {
   public deleteWishlist = async (req: Request, res: Response) => {
     try {
       const input = DeleteWishListSchema.parse({
-        userId: req.body.userId
+        userId: req.body.userId,
       });
 
       await this.wishlistBusiness.deleteWishlist(input);

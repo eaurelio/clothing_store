@@ -3,8 +3,8 @@ import { USER_ROLES } from '../../models/User';
 
 export interface CreateUserInputDTO {
   token?: string;
-  personal_id: string;
-  entity_type: string;
+  personalId: string;
+  entityType: string;
   name: string;
   gender: string; 
   email: string;
@@ -42,8 +42,8 @@ export interface CreateUserOutputDTO {
 
 export const CreateUserSchema = z.object({
   token: z.string().optional(),
-  personal_id: z.string().min(2).max(16),
-  entity_type: z.string().min(8),
+  personalId: z.string().min(2).max(16),
+  entityType: z.string().min(8),
   name: z.string().min(2),
   gender: z.string().min(1),
   email: z.string().email(),
