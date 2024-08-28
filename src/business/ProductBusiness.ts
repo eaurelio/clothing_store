@@ -212,8 +212,7 @@ export class ProductBusiness {
         images: await this.productDatabase.getImagesByProductId(product.id),
       }))),
     };
-   
-
+    
     return output;
   };
 
