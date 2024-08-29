@@ -109,7 +109,6 @@ export class OrderBusiness {
       for (const item of validItems) {
         const itemData = {
           id: this.idGenerator.generate(),
-          item_id: await this.idGenerator.generate(),
           order_id: newOrder.getOrderId(),
           product_id: item.productId,
           quantity: item.quantity,

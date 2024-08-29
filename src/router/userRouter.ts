@@ -32,7 +32,7 @@ userRouter.post("/createUser", userController.createUser);
 userRouter.post("/login", userController.login);
 userRouter.post("/getUserById/:id", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), userController.getUserById);
 userRouter.post("/getUsers", ensureAdmin(USER_ROLES.ADMIN), userController.getUsers);
-userRouter.patch("/editUser", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), userController.editUser);
+userRouter.patch("/editUser/:id", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), userController.editUser);
 
 userRouter.patch("/changePassword", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), userController.changePassword);
 userRouter.patch("/resetPassword", ensureAdmin(USER_ROLES.ADMIN), userController.resetPassword);

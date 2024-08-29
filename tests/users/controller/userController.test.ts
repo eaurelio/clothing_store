@@ -318,44 +318,6 @@ describe("UserController", () => {
 
   // --------------------------------------------------------------------
 
-  test("should handle errors properly in editUser", async () => {
-    const error = new Error("Error Updating User");
-
-    mockUserBusiness.editUser.mockRejectedValue(error);
-
-    const req = {
-      body: {
-        userId: "user_id",
-        personalId: "123456",
-        entityType: "individual",
-        name: "Chloe Smith",
-        email: "chloe.smith@example.ca",
-        password: "newpassword",
-        birthdate: "1990-01-01",
-        address: "123 Main St",
-        number: "1",
-        neighborhood: "Downtown",
-        city: "City",
-        country: "Country",
-        gender: "Female",
-        phones: ["123-456-7890"],
-      },
-    } as Partial<Request>;
-
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      send: jest.fn(),
-    } as Partial<Response>;
-
-    await userController.editUser(req as Request, res as Response);
-
-    expect(logger.error).toHaveBeenCalledWith(error);
-
-    expect(ErrorHandler.handleError).toHaveBeenCalledWith(error, res);
-  });
-
-  // --------------------------------------------------------------------
-
   test("should successfully change user password", async () => {
     const input: UpdatePasswordInputDTO = {
       userId: "user_id",

@@ -3,7 +3,6 @@ import { BaseDatabase } from "./connection/BaseDatabase";
 import { PhoneDB } from "../models/Phones";
 import { UserDB } from "../models/User";
 
-
 export class UserDatabase extends BaseDatabase {
   public static TABLE_USERS = "users";
   public static TABLE_PHONES = "phones";
@@ -12,9 +11,55 @@ export class UserDatabase extends BaseDatabase {
   // USER DATA
   // --------------------------------------------------------------------
 
+  // public async findUsers(
+  //   q: string | undefined,
+  //   onlyActive: boolean
+  // ): Promise<UserDB[]> {
+  //   let query = `
+  //     SELECT
+  //         users.id,
+  //         users.personal_id,
+  //         users.entity_type,
+  //         users.name,
+  //         genders.gender_id,
+  //         genders.name AS gender,
+  //         users.email,
+  //         users.password,
+  //         users.role,
+  //         users.created_at,
+  //         users.birthdate,
+  //         users.address,
+  //         users.number,
+  //         users.neighborhood,
+  //         users.city,
+  //         users.country,
+  //         users.active,
+  //         users.last_login
+  //     FROM ${UserDatabase.TABLE_USERS} users
+  //     LEFT JOIN genders ON users.gender = genders.gender_id
+  // `;
+
+  //   const params: any[] = [];
+
+  //   if (q) {
+  //     query += ` WHERE users.name ILIKE ?`;
+  //     params.push(`%${q}%`);
+  //   }
+
+  //   query += (q ? ` AND` : ` WHERE`) + ` users.active = ${onlyActive}`;
+
+  //   const result = await BaseDatabase.connection.raw(query, params);
+
+  //   return result.rows;
+  // }
+
   public async findUsers(
-    q: string | undefined,
-    onlyActive: boolean
+    q?: string,
+    onlyActive: boolean = true,
+    personalId?: string,
+    genderId?: number,
+    email?: string,
+    role?: string
   ): Promise<UserDB[]> {
     let query = `
       SELECT 
@@ -38,69 +83,67 @@ export class UserDatabase extends BaseDatabase {
           users.last_login
       FROM ${UserDatabase.TABLE_USERS} users
       LEFT JOIN genders ON users.gender = genders.gender_id
-  `;
+    `;
 
+    const conditions: string[] = [];
     const params: any[] = [];
 
     if (q) {
-      query += ` WHERE users.name ILIKE ?`;
+      conditions.push("users.name ILIKE ?");
       params.push(`%${q}%`);
     }
 
-    query += (q ? ` AND` : ` WHERE`) + ` users.active = ${onlyActive}`;
+    if (personalId) {
+      conditions.push("users.personal_id = ?");
+      params.push(personalId);
+    }
 
-    const result = await BaseDatabase.connection.raw(query, params);
+    if (genderId) {
+      conditions.push("users.gender = ?");
+      params.push(genderId);
+    }
+
+    if (email) {
+      conditions.push("users.email = ?");
+      params.push(email);
+    }
+
+    if (role) {
+      conditions.push("users.role = ?");
+      params.push(role);
+    }
+
+    console.log(onlyActive);
+
+    conditions.push("users.active = ?");
+    params.push(onlyActive);
+
+    const whereClause =
+      conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+
+    const result = await BaseDatabase.connection.raw(
+      `${query} ${whereClause}`,
+      params
+    );
 
     return result.rows;
   }
 
   // --------------------------------------------------------------------
 
-  // public async findUserById(id: string): Promise<UserDB | undefined> {
-  //   const result = await BaseDatabase.connection.raw(
-  //     `
-  //     SELECT *
-  //     FROM ${UserDatabase.TABLE_USERS}
-  //     WHERE id = ?
-  //   `,
-  //     [id]
-  //   );
-
-  //   return result.rows[0];
-  // }
-
   public async findUserById(id: string): Promise<UserDB | undefined> {
     const result = await BaseDatabase.connection.raw(
       `
-      SELECT 
-        users.id,
-        users.personal_id,
-        users.entity_type,
-        users.name,
-        genders.gender_id,
-        genders.name AS gender,
-        users.email,
-        users.password,
-        users.role,
-        users.created_at,
-        users.birthdate,
-        users.address,
-        users.number,
-        users.neighborhood,
-        users.city,
-        users.country,
-        users.active,
-        users.last_login
-      FROM ${UserDatabase.TABLE_USERS} AS users
-      LEFT JOIN genders ON users.gender = genders.gender_id
-      WHERE users.id = ?
-      `,
+      SELECT *
+      FROM ${UserDatabase.TABLE_USERS}
+      WHERE id = ?
+    `,
       [id]
     );
-  
+
     return result.rows[0];
   }
-  
+
   // --------------------------------------------------------------------
 
   public async findUserByEmail(email: string): Promise<UserDB | undefined> {
@@ -160,6 +203,11 @@ export class UserDatabase extends BaseDatabase {
     const updates = Object.entries(updatedUserDB)
       .map(([key, value]) => `${key} = ?`)
       .join(", ");
+
+    console.log(
+      updatedUserDB,
+      "----------------------------------------------"
+    );
 
     const query = `
       UPDATE ${UserDatabase.TABLE_USERS}

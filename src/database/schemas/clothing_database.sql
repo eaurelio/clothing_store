@@ -26,6 +26,8 @@ CREATE TABLE users (
     last_login TIMESTAMP
 );
 
+select * from users;
+
 -- Alter column type
 ALTER TABLE users
 ALTER COLUMN gender TYPE INTEGER USING gender::INTEGER;
@@ -60,6 +62,10 @@ CREATE TABLE order_status (
     status_id SERIAL PRIMARY KEY,
     status_name TEXT NOT NULL
 );
+
+select * from orders;
+select * from order_items;
+delete from orders;
 
 -- Insert sample data for order status
 INSERT INTO order_status (status_name) VALUES ('Pending');

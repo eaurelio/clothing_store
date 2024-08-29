@@ -70,6 +70,8 @@ export class OrderDatabase extends BaseDatabase {
     const placeholders = columns.map(() => "?").join(", ");
     const values = Object.values(newOrderDB);
 
+    console.log(newOrderDB,'-----------------')
+
     const query = `
       INSERT INTO ${OrderDatabase.TABLE_ORDERS} (${columns.join(", ")})
       VALUES (${placeholders})
