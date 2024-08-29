@@ -1,4 +1,4 @@
-import z from 'zod';
+import z from "zod";
 
 export interface Phone {
   phone_id: string;
@@ -8,50 +8,56 @@ export interface Phone {
 }
 
 export interface PhoneInputDTO {
-  userId: string,
-  number: string,
-  type: string
+  userId: string;
+  number: string;
+  type: string;
 }
 
 export interface PhoneOutputDTO {
-  message: string,
-  phones: Phone[]
+  message: string;
+  phones: Phone[];
 }
 
-export const PhoneInputSchema = z.object({
-  userId: z.string(),
-  number: z.string(),
-  type: z.string().optional()
-}).transform(data => data as PhoneInputDTO)
+export const PhoneInputSchema = z
+  .object({
+    userId: z.string(),
+    number: z.string(),
+    type: z.string().optional(),
+  })
+  .transform((data) => data as PhoneInputDTO);
 
 // --------------------------------------------------------------------
 export interface PhoneUpdateInputDTO {
-  userId: string,
-  phoneId: string,
-  number: string,
-  type: string
+  userId: string;
+  phoneId: string;
+  number: string;
+  type: string;
 }
 
 export interface PhoneUpdateOutputDTO {
-  message: string,
-  phones: Phone[]
+  message: string;
+  phones: Phone[];
 }
 
-export const PhoneUpdtateInputSchema = z.object({
-  userId: z.string(),
-  phoneId: z.string(),
-  number: z.string(),
-  type: z.string().optional()
-}).transform(data => data as PhoneUpdateInputDTO)
+export const PhoneUpdtateInputSchema = z
+  .object({
+    userId: z.string(),
+    phoneId: z.string(),
+    number: z.string(),
+    type: z.string().optional(),
+  })
+  .transform((data) => data as PhoneUpdateInputDTO);
 
 // --------------------------------------------------------------------
 
 export interface PhoneDeleteDTO {
-  userId: string,
-  phoneId: string
+  userId: string;
+  phoneId: string;
 }
 
-export const PhoneDeleteSchema = z.object({
-  userId: z.string(),
-  phoneId: z.string()
-}).transform(data => data as PhoneDeleteDTO)
+export const PhoneDeleteSchema = z
+  .object({
+    userId: z.string(),
+    phoneId: z.string(),
+  })
+  .transform((data) => data as PhoneDeleteDTO);

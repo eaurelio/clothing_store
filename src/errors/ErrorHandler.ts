@@ -1,6 +1,12 @@
 import { Response } from "express";
 import { ZodError } from "zod";
-import { BadRequestError, NotFoundError, UnauthorizedError, ConflictError, ForbiddenError } from "./Errors";
+import {
+  BadRequestError,
+  NotFoundError,
+  UnauthorizedError,
+  ConflictError,
+  ForbiddenError,
+} from "./Errors";
 
 export default class ErrorHandler {
   public static handleError(error: any, res: Response): void {

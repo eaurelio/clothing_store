@@ -1,14 +1,20 @@
-import express from "express"
-import TokenService from "../services/TokenService"
-import { ProductDatabase } from './../database/ProductDatabase';
-import { IdGenerator } from "../services/idGenerator"
-import { HashManager } from "../services/HashManager"
-import { ProductController } from "../controller/ProductController"
-import { ProductBusiness } from "../business/ProductBusiness"
-import { UserDatabase } from "../database/UserDatabase";
+// External library imports
+import express from "express";
+
+// Internal service imports
+import TokenService from "../services/TokenService";
+import { IdGenerator } from "../services/idGenerator";
+import { HashManager } from "../services/HashManager";
 import ErrorHandler from "../errors/ErrorHandler";
+
+// Local file imports
+import { ProductController } from "../controller/ProductController";
+import { ProductBusiness } from "../business/ProductBusiness";
+import { ProductDatabase } from './../database/ProductDatabase';
+import { UserDatabase } from "../database/UserDatabase";
 import { ensureAdmin } from "../middlewares/ensureAdminMiddleware";
 import { USER_ROLES } from "../models/User";
+
 
 export const productRouter = express.Router()
 

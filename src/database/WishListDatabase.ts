@@ -1,14 +1,20 @@
+// Local file imports
 import { BaseDatabase } from "./connection/BaseDatabase";
 import { WishlistDB, WishlistDBInput } from "../models/WishList";
 import { WishlistItemDB } from "../models/WishList";
+
 
 export class WishlistDatabase extends BaseDatabase {
   public static TABLE_WISHLISTS = "wishlists";
   public static TABLE_WISHLIST_ITEMS = "wishlist_items";
 
-  // WISHLIST DATA
+  // --------------------------------------------------------------------
+  // WISH LIST DATA
+  // --------------------------------------------------------------------
 
-  public async findWishlistById(wishlist_id: string): Promise<WishlistDB | undefined> {
+  public async findWishlistById(
+    wishlist_id: string
+  ): Promise<WishlistDB | undefined> {
     const result = await BaseDatabase.connection.raw(
       `
       SELECT 
@@ -20,13 +26,15 @@ export class WishlistDatabase extends BaseDatabase {
       `,
       [wishlist_id]
     );
-  
+
     return result.rows[0];
   }
 
   // --------------------------------------------------------------------
 
-  public async findWishlistByUserId(user_id: string): Promise<WishlistDB | undefined> {
+  public async findWishlistByUserId(
+    user_id: string
+  ): Promise<WishlistDB | undefined> {
     const result = await BaseDatabase.connection.raw(
       `
       SELECT 
@@ -38,7 +46,7 @@ export class WishlistDatabase extends BaseDatabase {
       `,
       [user_id]
     );
-  
+
     return result.rows[0];
   }
 
@@ -48,15 +56,14 @@ export class WishlistDatabase extends BaseDatabase {
     const columns = Object.keys(newWishlistDB);
     const placeholders = columns.map(() => "?").join(", ");
     const values = Object.values(newWishlistDB);
-  
+
     const query = `
       INSERT INTO ${WishlistDatabase.TABLE_WISHLISTS} (${columns.join(", ")})
       VALUES (${placeholders})
     `;
-  
+
     await BaseDatabase.connection.raw(query, values);
   }
-  
 
   // --------------------------------------------------------------------
 
@@ -94,14 +101,20 @@ export class WishlistDatabase extends BaseDatabase {
   }
 
   // --------------------------------------------------------------------
+  // WISH LIST ITEM
+  // --------------------------------------------------------------------
 
-  public async insertWishlistItem(newWishlistItemDB: WishlistItemDB): Promise<void> {
+  public async insertWishlistItem(
+    newWishlistItemDB: WishlistItemDB
+  ): Promise<void> {
     const columns = Object.keys(newWishlistItemDB);
     const placeholders = columns.map(() => "?").join(", ");
     const values = Object.values(newWishlistItemDB);
 
     const query = `
-      INSERT INTO ${WishlistDatabase.TABLE_WISHLIST_ITEMS} (${columns.join(", ")})
+      INSERT INTO ${WishlistDatabase.TABLE_WISHLIST_ITEMS} (${columns.join(
+      ", "
+    )})
       VALUES (${placeholders})
     `;
 
@@ -110,7 +123,9 @@ export class WishlistDatabase extends BaseDatabase {
 
   // --------------------------------------------------------------------
 
-  public async deleteWishlistItemsByWishlistId(wishlist_id: string): Promise<void> {
+  public async deleteWishlistItemsByWishlistId(
+    wishlist_id: string
+  ): Promise<void> {
     await BaseDatabase.connection.raw(
       `
       DELETE FROM ${WishlistDatabase.TABLE_WISHLIST_ITEMS}

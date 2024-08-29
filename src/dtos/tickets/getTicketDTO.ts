@@ -1,4 +1,4 @@
-import z from 'zod';
+import z from "zod";
 
 export interface GetTicketInputDTO {
   ticketId: string;
@@ -17,17 +17,19 @@ export interface GetTicketOutputDTO {
   description: string;
 }
 
-export const GetTicketSchema = z.object({
-  ticketId: z.string()
-}).transform(data => data as GetTicketInputDTO)
+export const GetTicketSchema = z
+  .object({
+    ticketId: z.string(),
+  })
+  .transform((data) => data as GetTicketInputDTO);
 
 // ---------
 
 export interface GetAllTicketsInputDTO {
-    id?: string,
-    userId?: string,
-    typeId?: number,
-    statusId?: number
+  id?: string;
+  userId?: string;
+  typeId?: number;
+  statusId?: number;
 }
 
 export interface GetAllTicketsOutputDTO {
@@ -39,17 +41,18 @@ export interface GetAllTicketsOutputDTO {
     createdAt: string;
     updatedAt: string;
     description: string;
-    solution?: string; 
+    solution?: string;
     analistName?: string;
     analistEmail?: string;
   }>;
   total: number;
 }
 
-
-export const GetAllTicketsSchema = z.object({
-  id: z.string().optional(),
-  userId: z.string().optional(),
-  typeId: z.number().optional(),
-  statusId: z.number().optional(),
-}).transform(data => data as GetAllTicketsInputDTO);
+export const GetAllTicketsSchema = z
+  .object({
+    id: z.string().optional(),
+    userId: z.string().optional(),
+    typeId: z.number().optional(),
+    statusId: z.number().optional(),
+  })
+  .transform((data) => data as GetAllTicketsInputDTO);

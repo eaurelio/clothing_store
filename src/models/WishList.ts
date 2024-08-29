@@ -61,10 +61,7 @@ export class Wishlist {
 }
 
 export class WishlistItem {
-  constructor(
-    private wishlistId: string,
-    private productId: string
-  ) {}
+  constructor(private wishlistId: string, private productId: string) {}
 
   getWishlistId(): string {
     return this.wishlistId;

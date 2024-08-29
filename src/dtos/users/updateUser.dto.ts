@@ -1,5 +1,4 @@
-import z from 'zod';
-import { LoginOutputDTO } from './login';
+import z from "zod";
 
 export interface UpdateUserInputDTO {
   userId: string;
@@ -8,19 +7,18 @@ export interface UpdateUserInputDTO {
   name?: string;
   email?: string;
   password?: string;
-  birthdate?: string; 
-  address?: string; 
-  number?: string; 
-  neighborhood?: string; 
-  city?: string; 
-  country?: string; 
-  gender?: string; 
+  birthdate?: string;
+  address?: string;
+  number?: string;
+  neighborhood?: string;
+  city?: string;
+  country?: string;
+  gender?: string;
   phones?: {
     number: string;
     type: string;
   }[];
 }
-
 
 export interface UpdateUserOutputDTO {
   message: string;
@@ -40,22 +38,23 @@ export interface UpdateUserOutputDTO {
   };
 }
 
-
-export const UpdateUserSchema = z.object({
-  userId: z.string(),
-  personalId: z.string().min(6).optional(),
-  entityType: z.string().optional(),
-  name: z.string().min(2).optional(),
-  email: z.string().email().optional(),
-  password: z.string().min(8).max(16).optional(),
-  birthdate: z.string().optional(),
-  address: z.string().min(2).max(40).optional(),
-  number: z.string().min(1).optional(),
-  neighborhood: z.string().min(2).max(20).optional(),
-  city: z.string().min(2).max(20).optional(),
-  country: z.string().min(2).max(20).optional(),
-  gender: z.string().min(1).optional(),
-}).transform(data => data as UpdateUserInputDTO);
+export const UpdateUserSchema = z
+  .object({
+    userId: z.string(),
+    personalId: z.string().min(6).optional(),
+    entityType: z.string().optional(),
+    name: z.string().min(2).optional(),
+    email: z.string().email().optional(),
+    password: z.string().min(8).max(16).optional(),
+    birthdate: z.string().optional(),
+    address: z.string().min(2).max(40).optional(),
+    number: z.string().min(1).optional(),
+    neighborhood: z.string().min(2).max(20).optional(),
+    city: z.string().min(2).max(20).optional(),
+    country: z.string().min(2).max(20).optional(),
+    gender: z.string().min(1).optional(),
+  })
+  .transform((data) => data as UpdateUserInputDTO);
 
 //----------------------------------------------------
 
@@ -70,12 +69,34 @@ export interface UpdatePasswordOutputDTO {
   message: string;
 }
 
-export const UpdatePasswordSchema = z.object({
-  userId: z.string(),
-  email: z.string(),
-  oldPassword: z.string().min(8).max(16),
-  newPassword: z.string().min(8).max(16)
-}).transform(data => data as UpdatePasswordInputDTO)
+export const UpdatePasswordSchema = z
+  .object({
+    userId: z.string(),
+    email: z.string(),
+    oldPassword: z.string().min(8).max(16),
+    newPassword: z.string().min(8).max(16),
+  })
+  .transform((data) => data as UpdatePasswordInputDTO);
+
+  //----------------------------------------------------
+
+export interface ResetPasswordInputDTO {
+  userId: string;
+  email: string;
+  newPassword: string
+}
+
+export interface ResetPasswordOutputDTO {
+  message: string;
+}
+
+export const ResetPasswordSchema = z
+  .object({
+    userId: z.string(),
+    email: z.string(),
+    newPassword: z.string().min(8).max(16),
+  })
+  .transform((data) => data as ResetPasswordInputDTO);
 
 //----------------------------------------------------
 
@@ -88,7 +109,9 @@ export interface ToggleUserActiveStatusOutputDTO {
   message: string;
 }
 
-export const ToggleUserActiveStatusSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8)
-}).transform(data => data as ToggleUserActiveStatusInputDTO);
+export const ToggleUserActiveStatusSchema = z
+  .object({
+    email: z.string().email(),
+    password: z.string().min(8),
+  })
+  .transform((data) => data as ToggleUserActiveStatusInputDTO);

@@ -3,41 +3,41 @@
 import { ProductImageDBOutput } from "./ProductImage";
 
 export interface CategoryDB {
-    name: string;
-    description?: string;
-  }
+  name: string;
+  description?: string;
+}
 
-  export interface CategoryDBOutput {
-    category_id: number,
-    name: string;
-    description?: string;
-  }
-  
-  export interface ColorDB {
-    name: string;
-    hex_code?: string
-  }
-  export interface ColorDBOutput {
-    color_id: number,
-    name: string;
-  }
-  
-  export interface SizeDB {
-    name: string;
-  }
-  export interface SizeDBOutput {
-    size_id: number, 
-    name: string;
-  }
-  
-  export interface GenderDB {
-    name: string;
-  }
+export interface CategoryDBOutput {
+  category_id: number;
+  name: string;
+  description?: string;
+}
 
-  export interface GenderDBOutPut {
-    gender_id: number,
-    name: string;
-  }
+export interface ColorDB {
+  name: string;
+  hex_code?: string;
+}
+export interface ColorDBOutput {
+  color_id: number;
+  name: string;
+}
+
+export interface SizeDB {
+  name: string;
+}
+export interface SizeDBOutput {
+  size_id: number;
+  name: string;
+}
+
+export interface GenderDB {
+  name: string;
+}
+
+export interface GenderDBOutPut {
+  gender_id: number;
+  name: string;
+}
 
 export interface ProductDB {
   id: string;
@@ -56,110 +56,114 @@ export interface ProductDBOutput {
   id: string;
   name: string;
   description?: string;
-  active?: boolean
+  active?: boolean;
   price: number;
   stock: number;
   created_at: string | number;
+  category_id: number,
   category: string | number;
+  color_id: number,
   color: string | number;
+  size_id: number,
   size: string | number;
+  gender_id: GenderDB;
   gender: string | number;
-  images?: ProductImageDBOutput[]
+  images?: ProductImageDBOutput[];
 }
 
 // Product Class
 
 export class Product {
   constructor(
-      private id: string,
-      private name: string,
-      private description: string | undefined,
-      private price: number,
-      private stock: number,
-      private createdAt: string,
-      private category: number | string,
-      private color: number | string,
-      private size: number | string,
-      private gender: number | string
+    private id: string,
+    private name: string,
+    private description: string | undefined,
+    private price: number,
+    private stock: number,
+    private createdAt: string,
+    private category: number | string,
+    private color: number | string,
+    private size: number | string,
+    private gender: number | string
   ) {}
 
   getId(): string {
-      return this.id;
+    return this.id;
   }
 
   setId(id: string): void {
-      this.id = id;
+    this.id = id;
   }
 
   getName(): string {
-      return this.name;
+    return this.name;
   }
 
   setName(name: string): void {
-      this.name = name;
+    this.name = name;
   }
 
   getDescription(): string | undefined {
-      return this.description;
+    return this.description;
   }
 
   setDescription(description: string | undefined): void {
-      this.description = description;
+    this.description = description;
   }
 
   getPrice(): number {
-      return this.price;
+    return this.price;
   }
 
   setPrice(price: number): void {
-      this.price = price;
+    this.price = price;
   }
 
   getStock(): number {
-      return this.stock;
+    return this.stock;
   }
 
   setStock(stock: number): void {
-      this.stock = stock;
+    this.stock = stock;
   }
 
   getCreatedAt(): string {
-      return this.createdAt;
+    return this.createdAt;
   }
 
   setCreatedAt(createdAt: string): void {
-      this.createdAt = createdAt;
+    this.createdAt = createdAt;
   }
 
   getCategory(): number | string {
-      return this.category;
+    return this.category;
   }
 
   setCategory(category: number | string): void {
-      this.category = category;
+    this.category = category;
   }
 
   getColor(): number | string {
-      return this.color;
+    return this.color;
   }
 
   setColor(color: number | string): void {
-      this.color = color;
+    this.color = color;
   }
 
   getSize(): number | string {
-      return this.size;
+    return this.size;
   }
 
   setSize(size: number | string): void {
-      this.size = size;
+    this.size = size;
   }
 
   getGender(): number | string {
-      return this.gender;
+    return this.gender;
   }
 
   setGender(gender: number | string): void {
-      this.gender = gender;
+    this.gender = gender;
   }
 }

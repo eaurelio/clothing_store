@@ -1,8 +1,13 @@
-import express from "express"
-import TokenService from "../services/TokenService"
-import { IdGenerator } from "../services/idGenerator"
-import { HashManager } from "../services/HashManager"
+// External library imports
+import express from "express";
+
+// Internal service imports
+import TokenService from "../services/TokenService";
+import { IdGenerator } from "../services/idGenerator";
+import { HashManager } from "../services/HashManager";
 import ErrorHandler from "../errors/ErrorHandler";
+
+// Local file imports
 import { OrderController } from "../controller/OrderController";
 import { OrderDatabase } from "../database/OrderDatabase";
 import { OrderBusiness } from "../business/OrderBusiness";
@@ -11,6 +16,7 @@ import { UserDatabase } from "../database/UserDatabase";
 import { authMiddleware } from "../middlewares/authMiddleware";
 import { USER_ROLES } from "../models/User";
 import { ensureAdmin } from "../middlewares/ensureAdminMiddleware";
+
 
 export const orderRouter = express.Router()
 
@@ -27,7 +33,7 @@ const orderController = new OrderController(
 )
 
 orderRouter.get("/getUserOrders", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), orderController.getUserOrders)
-orderRouter.get("/getAllOrders", authMiddleware([USER_ROLES.ADMIN]), ensureAdmin(USER_ROLES.ADMIN), orderController.getAllOrders)
+orderRouter.get("/getAllOrders", ensureAdmin(USER_ROLES.ADMIN), orderController.getAllOrders)
 orderRouter.get("/getAllStatus", orderController.getAllStatus)
 orderRouter.post("/createOrder", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), orderController.createOrder)
 orderRouter.patch("/updateOrder/:id", ensureAdmin(USER_ROLES.ADMIN), orderController.updateOrder)

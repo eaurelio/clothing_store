@@ -229,3 +229,17 @@
 {"level":"error","statusCode":403,"timestamp":"2024-08-28T21:19:07.816Z"}
 {"level":"error","statusCode":403,"timestamp":"2024-08-28T21:19:58.538Z"}
 {"level":"error","statusCode":403,"timestamp":"2024-08-28T21:20:42.053Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-29T00:11:53.079Z"}
+{"level":"error","statusCode":400,"timestamp":"2024-08-29T00:41:48.118Z"}
+{"level":"error","statusCode":400,"timestamp":"2024-08-29T00:41:53.262Z"}
+{"issues":[{"code":"invalid_type","expected":"string","message":"Required","path":["oldPassword"],"received":"undefined"}],"level":"error","name":"ZodError","timestamp":"2024-08-29T00:52:41.881Z"}
+{"level":"error","statusCode":400,"timestamp":"2024-08-29T00:53:37.046Z"}
+{"level":"error","statusCode":400,"timestamp":"2024-08-29T00:53:58.086Z"}
+{"level":"error","statusCode":400,"timestamp":"2024-08-29T00:56:16.538Z"}
+{"issues":[{"code":"invalid_type","expected":"string","message":"Required","path":["userId"],"received":"undefined"}],"level":"error","name":"ZodError","timestamp":"2024-08-29T01:00:52.006Z"}
+{"issues":[{"code":"invalid_type","expected":"string","message":"Required","path":["userId"],"received":"undefined"}],"level":"error","name":"ZodError","timestamp":"2024-08-29T01:01:03.988Z"}
+{"issues":[{"code":"invalid_type","expected":"string","message":"Required","path":["userId"],"received":"undefined"}],"level":"error","name":"ZodError","timestamp":"2024-08-29T01:01:11.037Z"}
+{"issues":[{"code":"invalid_type","expected":"string","message":"Required","path":["userId"],"received":"undefined"}],"level":"error","name":"ZodError","timestamp":"2024-08-29T01:01:21.204Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-29T01:02:39.210Z"}
+{"issues":[{"code":"invalid_type","expected":"string","message":"Required","path":["id"],"received":"undefined"}],"level":"error","name":"ZodError","timestamp":"2024-08-29T01:03:02.502Z"}
+{"level":"error","timestamp":"2024-08-29T01:24:33.934Z"}

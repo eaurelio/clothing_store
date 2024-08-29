@@ -25,7 +25,7 @@ export interface GetOrdersOutputDTO {
 export const GetOrdersSchema = z
   .object({
     userId: z.string(),
-    orderId: z.string().optional()
+    orderId: z.string().optional(),
   })
   .transform((data) => data as GetOrdersInputDTO);
 
@@ -39,6 +39,7 @@ export interface GetAllOrdersOutputDTO {
   orders: {
     orderId: string;
     userId: string;
+    status_id: number;
     status: string;
     total: number;
     orderDate: string;
@@ -54,6 +55,6 @@ export interface GetAllOrdersOutputDTO {
 
 export const GetAllOrdersSchema = z
   .object({
-    userId: z.string().optional()
+    userId: z.string().optional(),
   })
   .transform((data) => data as GetAllOrdersInputDTO);

@@ -1,4 +1,4 @@
-import z from 'zod';
+import z from "zod";
 import { WishlistItemDB } from "../../models/WishList";
 
 export interface CreateWishListInputDTO {
@@ -9,14 +9,16 @@ export interface CreateWishListInputDTO {
 export interface CreateWishListOutputDTO {
   message: string;
   wishlistId: string;
-  items: WishlistItemDB[]
+  items: WishlistItemDB[];
 }
 
-export const CreateWishListSchema = z.object({
-  userId: z.string(),
-  items: z.array(
-    z.object({
-      productId: z.string()
-    })
-  )
-}).transform(data => data as CreateWishListInputDTO)
+export const CreateWishListSchema = z
+  .object({
+    userId: z.string(),
+    items: z.array(
+      z.object({
+        productId: z.string(),
+      })
+    ),
+  })
+  .transform((data) => data as CreateWishListInputDTO);

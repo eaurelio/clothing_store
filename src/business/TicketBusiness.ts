@@ -25,11 +25,7 @@ import {
 } from "../dtos/tickets/getTicketDTO";
 
 // Errors
-import {
-  UnauthorizedError,
-  NotFoundError,
-  ConflictError,
-} from "../errors/Errors";
+import { NotFoundError } from "../errors/Errors";
 import { UserDatabase } from "../database/UserDatabase";
 import TokenService from "../services/TokenService";
 import { HashManager } from "../services/HashManager";
@@ -59,7 +55,7 @@ export class TicketBusiness {
       statusId,
       userName,
       userEmail,
-      userPhoneNumber
+      userPhoneNumber,
     } = input;
 
     const id = this.idGenerator.generate();
@@ -174,14 +170,8 @@ export class TicketBusiness {
   public async updateTicket(
     input: UpdateTicketInputDTO
   ): Promise<UpdateTicketOutputDTO> {
-    const {
-      ticketId,
-      typeId,
-      solution,
-      statusId,
-      analistName,
-      analistEmail,
-    } = input;
+    const { ticketId, typeId, solution, statusId, analistName, analistEmail } =
+      input;
 
     const ticketDB = await this.ticketDatabase.findTicketById(ticketId);
     if (!ticketDB) {
@@ -216,6 +206,8 @@ export class TicketBusiness {
     const statuses = await this.ticketDatabase.getAllStatus();
     return statuses;
   };
+
+  // --------------------------------------------------------------------
 
   public getAllTypes = async (): Promise<TicketTypeDB[]> => {
     const types = await this.ticketDatabase.getAllTypes();

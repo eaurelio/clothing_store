@@ -7,10 +7,10 @@ export interface UpdateProductInputDTO {
   description?: string;
   price?: number;
   stock?: number;
-  category_id?: number;
-  color_id?: number;
-  size_id?: number;
-  gender_id?: number;
+  categoryId?: number;
+  colorId?: number;
+  sizeId?: number;
+  genderId?: number;
 }
 
 export interface UpdateProductOutputDTO {
@@ -21,11 +21,11 @@ export interface UpdateProductOutputDTO {
     description: string;
     price: number;
     stock: number;
-    category_id: number;
-    color_id: number;
-    size_id: number;
-    gender_id: number;
-    created_at: string;
+    categoryId: number;
+    colorId: number;
+    sizeId: number;
+    genderId: number;
+    createdAt: string;
     images: ProductImageDBOutput[]
   };
 }
@@ -36,35 +36,35 @@ export const UpdateProductSchema = z.object({
   description: z.string().optional(),
   price: z.number().optional(),
   stock: z.number().optional(),
-  category_id: z.number().optional(),
-  color_id: z.number().optional(),
-  size_id: z.number().optional(),
-  gender_id: z.number().optional()
+  categoryId: z.number().optional(),
+  colorId: z.number().optional(),
+  sizeId: z.number().optional(),
+  genderId: z.number().optional()
 }).transform((data) => data as UpdateProductInputDTO);
 
 // --------------------------------------------------------------------
 
 export interface ProductImageInsert {
-  product_id: string;
+  productId: string;
   url: string;
   alt?: string;
 }
 
 export const InsertProductImageSchema = z.object({
-  product_id: z.string(),
+  productId: z.string(),
   url: z.string().url(),
   alt: z.string().optional()
-})
+}).transform(data => data as ProductImageInsert)
 
 export interface ProductImageDelete {
   id: string,
-  product_id: string;
+  productId: string;
 }
 
 export const DeleteProductImageSchema = z.object({
   id: z.string(),
-  product_id: z.string()
-})
+  productId: z.string()
+}).transform(data => data as ProductImageDelete)
 
 // --------------------------------------------------------------------
 
@@ -115,7 +115,6 @@ export interface UpdateColorInputDTO {
 export interface UpdateColorOutputDTO {
   message: string;
   color: {
-    // id: number;
     name: string;
   };
 }
@@ -138,7 +137,6 @@ export interface UpdateSizeInputDTO {
 export interface UpdateSizeOutputDTO {
   message: string;
   size: {
-    // id: number;
     name: string;
   };
 }
@@ -160,7 +158,6 @@ export interface UpdateGenderInputDTO {
 export interface UpdateGenderOutputDTO {
   message: string;
   gender: {
-    // id: number;
     name: string;
   };
 }

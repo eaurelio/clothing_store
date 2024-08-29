@@ -34,7 +34,6 @@ import ErrorHandler from "../errors/ErrorHandler";
 // Logging
 import logger from "../logs/logger";
 
-
 export class OrderController {
   constructor(private orderBusiness: OrderBusiness) {}
 
@@ -62,12 +61,11 @@ export class OrderController {
     try {
       const input = GetOrdersSchema.parse({
         userId: req.body.userId,
-        orderId: req.body.orderId
+        orderId: req.body.orderId,
       });
 
-      const output: GetOrdersOutputDTO | GetAllOrdersOutputDTO = await this.orderBusiness.getUserOrders(
-        input
-      );
+      const output: GetOrdersOutputDTO | GetAllOrdersOutputDTO =
+        await this.orderBusiness.getUserOrders(input);
       res.status(200).send(output);
     } catch (error) {
       logger.error(error);
@@ -80,7 +78,7 @@ export class OrderController {
   public getAllOrders = async (req: Request, res: Response) => {
     try {
       const input = GetAllOrdersSchema.parse({
-        userId: req.body.userId
+        userId: req.body.userId,
       });
 
       const output: GetAllOrdersOutputDTO =
@@ -95,7 +93,7 @@ export class OrderController {
 
   public getAllStatus = async (req: Request, res: Response) => {
     try {
-      const output =await this.orderBusiness.getAllStatus();
+      const output = await this.orderBusiness.getAllStatus();
       res.status(200).send(output);
     } catch (error) {
       logger.error(error);
@@ -115,9 +113,7 @@ export class OrderController {
         total: req.body.total,
       });
 
-      const output = await this.orderBusiness.updateOrder(
-        input
-      );
+      const output = await this.orderBusiness.updateOrder(input);
       res.status(200).send(output);
     } catch (error) {
       logger.error(error);
@@ -140,6 +136,8 @@ export class OrderController {
       ErrorHandler.handleError(error, res);
     }
   };
+
+  // --------------------------------------------------------------------
 
   public deleteOrder = async (req: Request, res: Response) => {
     try {
