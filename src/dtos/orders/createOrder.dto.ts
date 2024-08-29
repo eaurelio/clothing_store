@@ -7,7 +7,6 @@ export interface CreateOrderInputDTO {
     quantity: number;
     price: number;
   }[];
-  // status_id: number; // Ajustado para number
   total: number;
 }
 
@@ -17,17 +16,16 @@ export interface CreateOrderOutputDTO {
     orderId: string;
     userId: string;
     orderDate: string;
-    status: number; // Ajustado para number
+    status: number;
     total: number;
     items: {
-      itemId: string; // Incluído itemId
+      itemId: string;
       productId: string;
       quantity: number;
       price: number;
     }[];
   };
 }
-
 
 export const CreateOrderSchema = z
   .object({

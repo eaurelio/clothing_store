@@ -1,3 +1,4 @@
+// Local file imports
 import { BaseDatabase } from "./connection/BaseDatabase";
 import {
   CategoryDB,
@@ -12,6 +13,7 @@ import {
 } from "../models/Products";
 import { ProductImageDB } from "../models/ProductImage";
 
+
 export class ProductDatabase extends BaseDatabase {
   public static TABLE_PRODUCTS = "products";
   public static TABLE_CATEGORIES = "categories";
@@ -20,7 +22,9 @@ export class ProductDatabase extends BaseDatabase {
   public static TABLE_GENDERS = "genders";
   public static TABLE_IMAGES = "product_images";
 
+  // --------------------------------------------------------------------
   // PRODUCT DATA
+  // --------------------------------------------------------------------
 
   public async findProducts(
     id?: string,
@@ -75,9 +79,13 @@ export class ProductDatabase extends BaseDatabase {
         products.price, 
         products.stock, 
         products.created_at, 
+        categories.category_id,
         categories.name AS category, 
+        colors.color_id,
         colors.name AS color, 
-        sizes.name AS size, 
+        sizes.size_id,
+        sizes.name AS size,
+        genders.gender_id,
         genders.name AS gender,
         products.active
       FROM ${ProductDatabase.TABLE_PRODUCTS}
@@ -430,7 +438,9 @@ export class ProductDatabase extends BaseDatabase {
     );
   }
 
+  // --------------------------------------------------------------------
   // SIZE DATA
+  // --------------------------------------------------------------------
 
   public async getAllSizes(): Promise<SizeDBOutput[]> {
     const result = await BaseDatabase.connection.raw(`
@@ -440,6 +450,8 @@ export class ProductDatabase extends BaseDatabase {
 
     return result.rows;
   }
+
+  // --------------------------------------------------------------------
 
   public async findSizeById(size_id: string): Promise<SizeDB | undefined> {
     const result = await BaseDatabase.connection.raw(

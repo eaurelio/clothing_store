@@ -30,9 +30,11 @@ export interface UpdateTicketOutputDTO {
 
 export const UpdateTicketSchema = z.object({
     ticketId: z.string(),
-    type_id: z.number().int().positive().optional(),
+    typeId: z.number().int().positive().optional(),
     solution: z.string().optional(),
-    status_id: z.number().int().positive().optional(),
-    analist_name: z.string().optional(),
-    analist_email: z.string().email().optional()
+    statusId: z.number().int().positive().optional(),
+    analistName: z.string().optional(),
+    analistEmail: z.string().email().optional()
 }).transform(data => data as UpdateTicketInputDTO);
+
+

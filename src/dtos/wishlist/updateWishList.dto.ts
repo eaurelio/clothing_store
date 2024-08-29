@@ -1,7 +1,4 @@
-import { Wishlist, WishlistDB } from './../../models/WishList';
-import z from 'zod';
-import { WishlistItemDB } from "../../models/WishList";
-import { GetWishListOutputDTO } from './getWishList.dto';
+import z from "zod";
 
 export interface UpdateWishListInputDTO {
   userId: string;
@@ -18,11 +15,13 @@ export interface UpdateWishListOutputDTO {
   };
 }
 
-export const UpdateWishListSchema = z.object({
-  userId: z.string(),
-  items: z.array(
-    z.object({
-      productId: z.string()
-    })
-  )
-}).transform(data => data as UpdateWishListInputDTO);
+export const UpdateWishListSchema = z
+  .object({
+    userId: z.string(),
+    items: z.array(
+      z.object({
+        productId: z.string(),
+      })
+    ),
+  })
+  .transform((data) => data as UpdateWishListInputDTO);

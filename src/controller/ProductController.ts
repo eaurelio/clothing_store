@@ -209,6 +209,8 @@ export class ProductController {
   };
 
   // --------------------------------------------------------------------
+  // CCOLORS
+  // --------------------------------------------------------------------
 
   public getAllColors = async (req: Request, res: Response) => {
     try {
@@ -220,6 +222,8 @@ export class ProductController {
       ErrorHandler.handleError(error, res);
     }
   };
+
+  // --------------------------------------------------------------------
 
   public createColor = async (req: Request, res: Response) => {
     try {
@@ -235,6 +239,8 @@ export class ProductController {
       ErrorHandler.handleError(error, res);
     }
   };
+
+  // --------------------------------------------------------------------
 
   public updateColor = async (req: Request, res: Response) => {
     try {
@@ -253,6 +259,8 @@ export class ProductController {
   };
 
   // --------------------------------------------------------------------
+  // SIZES
+  // --------------------------------------------------------------------
 
   public getAllSizes = async (req: Request, res: Response) => {
     try {
@@ -264,6 +272,8 @@ export class ProductController {
       ErrorHandler.handleError(error, res);
     }
   };
+
+  // --------------------------------------------------------------------
 
   public createSize = async (req: Request, res: Response) => {
     try {
@@ -278,6 +288,8 @@ export class ProductController {
       ErrorHandler.handleError(error, res);
     }
   };
+
+  // --------------------------------------------------------------------
 
   public updateSize = async (req: Request, res: Response) => {
     try {
@@ -295,6 +307,8 @@ export class ProductController {
   };
 
   // --------------------------------------------------------------------
+  // GENDERS
+  // --------------------------------------------------------------------
 
   public getAllGenders = async (req: Request, res: Response) => {
     try {
@@ -306,6 +320,8 @@ export class ProductController {
       ErrorHandler.handleError(error, res);
     }
   };
+
+  // --------------------------------------------------------------------
 
   public createGender = async (req: Request, res: Response) => {
     try {
@@ -320,6 +336,8 @@ export class ProductController {
       ErrorHandler.handleError(error, res);
     }
   };
+
+  // --------------------------------------------------------------------
 
   public updateGender = async (req: Request, res: Response) => {
     try {

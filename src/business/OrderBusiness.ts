@@ -240,6 +240,7 @@ export class OrderBusiness {
         return {
           orderId: order.order_id,
           userId: order.user_id,
+          status_id: order.status_id,
           status_name: order.status_name,
           total: order.total,
           orderDate: order.order_date,

@@ -8,19 +8,23 @@ import { UserBusiness } from "../business/UserBusiness";
 import { CreateUserSchema } from "../dtos/users/createUser.dto";
 import { LoginSchema } from "../dtos/users/login";
 import {
+  ResetPasswordSchema,
   ToggleUserActiveStatusSchema,
   UpdatePasswordSchema,
   UpdateUserSchema,
 } from "../dtos/users/updateUser.dto";
 import { GetUserSchema, GetAllUserSchema } from "../dtos/users/getUser.dto";
-import { PhoneDeleteSchema, PhoneInputSchema, PhoneUpdtateInputSchema } from "../dtos/users/phone";
+import {
+  PhoneDeleteSchema,
+  PhoneInputSchema,
+  PhoneUpdtateInputSchema,
+} from "../dtos/users/phone";
 
 // Errors
 import ErrorHandler from "../errors/ErrorHandler";
 
 // Logging
 import logger from "../logs/logger";
-
 
 export class UserController {
   constructor(private userBusiness: UserBusiness) {}
@@ -81,7 +85,7 @@ export class UserController {
       const input = GetUserSchema.parse({
         userId: req.params.id as string,
       });
-  
+
       const output = await this.userBusiness.getUserById(input);
       res.status(200).json(output);
     } catch (error) {
@@ -96,7 +100,7 @@ export class UserController {
     try {
       const input = GetAllUserSchema.parse({
         q: req.query.q as string,
-        onlyActive: req.body.onlyActive
+        onlyActive: req.body.onlyActive,
       });
 
       const output = await this.userBusiness.getAllUsers(input);
@@ -112,7 +116,7 @@ export class UserController {
   public editUser = async (req: Request, res: Response) => {
     try {
       const input = UpdateUserSchema.parse({
-        userId: req.params.id,
+        userId: req.body.userId,
         personalId: req.body.personalId,
         entityType: req.body.entityType,
         name: req.body.name,
@@ -155,13 +159,33 @@ export class UserController {
     }
   };
 
+   // --------------------------------------------------------------------
+
+   public resetPassword = async (req: Request, res: Response) => {
+    try {
+      const input = ResetPasswordSchema.parse({
+        userId: req.body.userId,
+        email: req.body.email,
+        newPassword: req.body.newPassword,
+      });
+
+      const output = await this.userBusiness.resetPassword(input);
+      res.status(200).send(output);
+    } catch (error) {
+      logger.error(error);
+      ErrorHandler.handleError(error, res);
+    }
+  };
+
+  // --------------------------------------------------------------------
+
   public toggleUserActiveStatus = async (req: Request, res: Response) => {
     try {
       const input = ToggleUserActiveStatusSchema.parse({
         email: req.body.email,
-        password: req.body.password
+        password: req.body.password,
       });
-  
+
       const output = await this.userBusiness.toggleUserActiveStatus(input);
       res.status(200).send(output);
     } catch (error) {
@@ -169,7 +193,6 @@ export class UserController {
       ErrorHandler.handleError(error, res);
     }
   };
-  
 
   // --------------------------------------------------------------------
   // USER PHONE
@@ -216,7 +239,7 @@ export class UserController {
     try {
       const input = PhoneDeleteSchema.parse({
         userId: req.body.userId,
-        phoneId: req.body.phoneId
+        phoneId: req.body.phoneId,
       });
 
       const output = await this.userBusiness.deletePhone(input);

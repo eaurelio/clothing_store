@@ -25,10 +25,6 @@ import logger from "../logs/logger";
 export class TicketController {
   constructor(private ticketBusiness: TicketBusiness) {}
 
-  // --------------------------------------------------------------------
-  // CREATE TICKET
-  // --------------------------------------------------------------------
-
   public createTicket = async (req: Request, res: Response) => {
     try {
       const input = CreateTicketSchema.parse({
@@ -52,8 +48,6 @@ export class TicketController {
   };
 
   // --------------------------------------------------------------------
-  // GET TICKET BY ID
-  // --------------------------------------------------------------------
 
   public getTicket = async (req: Request, res: Response) => {
     try {
@@ -71,8 +65,6 @@ export class TicketController {
     }
   };
 
-  // --------------------------------------------------------------------
-  // GET ALL TICKETS
   // --------------------------------------------------------------------
 
   public getAllTickets = async (req: Request, res: Response) => {
@@ -95,32 +87,33 @@ export class TicketController {
   };
 
   // --------------------------------------------------------------------
-  // UPDATE TICKET
-  // --------------------------------------------------------------------
 
   public updateTicket = async (req: Request, res: Response) => {
     try {
-      const input = UpdateTicketSchema.parse({
-        ticketId: req.body.tickedId,
-        typeId: req.body.typeId,
-        solution: req.body.solution,
-        statusId: req.body.statusId,
-        analistName: req.body.analistName,
-        analistEmail: req.body.analistEmail
-      });
+        console.log("Request body:", req.body);  // Adicionado para debug
 
-      const output = await this.ticketBusiness.updateTicket(
-        input
-      );
-      res.status(200).send(output);
+        const input = UpdateTicketSchema.parse({
+            ticketId: req.body.ticketId,
+            typeId: req.body.typeId,
+            solution: req.body.solution,
+            statusId: req.body.statusId,
+            analistName: req.body.analistName,
+            analistEmail: req.body.analistEmail
+        });
+
+        console.log("Parsed input:", input);  // Adicionado para debug
+
+        const output = await this.ticketBusiness.updateTicket(input);
+        console.log("Business output:", output);  // Adicionado para debug
+
+        res.status(200).send(output);
     } catch (error) {
-      logger.error(error);
-      ErrorHandler.handleError(error, res);
+        logger.error(error);
+        ErrorHandler.handleError(error, res);
     }
-  };
+};
 
-  // --------------------------------------------------------------------
-  // GET ALL STATUSES
+
   // --------------------------------------------------------------------
 
   public getAllStatus = async (req: Request, res: Response) => {
@@ -133,8 +126,6 @@ export class TicketController {
     }
   };
 
-  // --------------------------------------------------------------------
-  // GET ALL TYPES
   // --------------------------------------------------------------------
 
   public getAllTypes = async (req: Request, res: Response) => {

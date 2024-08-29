@@ -1,6 +1,8 @@
+// Local file imports
 import { BaseDatabase } from "./connection/BaseDatabase";
 import { PhoneDB } from "../models/Phones";
 import { UserDB } from "../models/User";
+
 
 export class UserDatabase extends BaseDatabase {
   public static TABLE_USERS = "users";
@@ -10,13 +12,17 @@ export class UserDatabase extends BaseDatabase {
   // USER DATA
   // --------------------------------------------------------------------
 
-public async findUsers(q: string | undefined, onlyActive: boolean): Promise<UserDB[]> {
-  let query = `
+  public async findUsers(
+    q: string | undefined,
+    onlyActive: boolean
+  ): Promise<UserDB[]> {
+    let query = `
       SELECT 
           users.id,
           users.personal_id,
           users.entity_type,
           users.name,
+          genders.gender_id,
           genders.name AS gender,
           users.email,
           users.password,
@@ -34,35 +40,67 @@ public async findUsers(q: string | undefined, onlyActive: boolean): Promise<User
       LEFT JOIN genders ON users.gender = genders.gender_id
   `;
 
-  const params: any[] = [];
+    const params: any[] = [];
 
-  if (q) {
+    if (q) {
       query += ` WHERE users.name ILIKE ?`;
       params.push(`%${q}%`);
+    }
+
+    query += (q ? ` AND` : ` WHERE`) + ` users.active = ${onlyActive}`;
+
+    const result = await BaseDatabase.connection.raw(query, params);
+
+    return result.rows;
   }
-  
-  query += (q ? ` AND` : ` WHERE`) + ` users.active = ${onlyActive}`;
-
-  const result = await BaseDatabase.connection.raw(query, params);
-
-  return result.rows;
-}
 
   // --------------------------------------------------------------------
+
+  // public async findUserById(id: string): Promise<UserDB | undefined> {
+  //   const result = await BaseDatabase.connection.raw(
+  //     `
+  //     SELECT *
+  //     FROM ${UserDatabase.TABLE_USERS}
+  //     WHERE id = ?
+  //   `,
+  //     [id]
+  //   );
+
+  //   return result.rows[0];
+  // }
 
   public async findUserById(id: string): Promise<UserDB | undefined> {
     const result = await BaseDatabase.connection.raw(
       `
-      SELECT *
-      FROM ${UserDatabase.TABLE_USERS}
-      WHERE id = ?
-    `,
+      SELECT 
+        users.id,
+        users.personal_id,
+        users.entity_type,
+        users.name,
+        genders.gender_id,
+        genders.name AS gender,
+        users.email,
+        users.password,
+        users.role,
+        users.created_at,
+        users.birthdate,
+        users.address,
+        users.number,
+        users.neighborhood,
+        users.city,
+        users.country,
+        users.active,
+        users.last_login
+      FROM ${UserDatabase.TABLE_USERS} AS users
+      LEFT JOIN genders ON users.gender = genders.gender_id
+      WHERE users.id = ?
+      `,
       [id]
     );
-
+  
     return result.rows[0];
   }
-
+  
   // --------------------------------------------------------------------
 
   public async findUserByEmail(email: string): Promise<UserDB | undefined> {
@@ -161,7 +199,10 @@ public async findUsers(q: string | undefined, onlyActive: boolean): Promise<User
 
   // --------------------------------------------------------------------
 
-  public async updateUserActiveStatus(id: string, isActive: boolean): Promise<void> {
+  public async updateUserActiveStatus(
+    id: string,
+    isActive: boolean
+  ): Promise<void> {
     await BaseDatabase.connection.raw(
       `
       UPDATE ${UserDatabase.TABLE_USERS}
@@ -171,7 +212,7 @@ public async findUsers(q: string | undefined, onlyActive: boolean): Promise<User
       [isActive ? 1 : 0, id]
     );
   }
-  
+
   // --------------------------------------------------------------------
   // PHONE USER
   // --------------------------------------------------------------------

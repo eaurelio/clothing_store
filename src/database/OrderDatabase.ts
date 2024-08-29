@@ -1,6 +1,8 @@
+// Local file imports
 import { BaseDatabase } from "./connection/BaseDatabase";
 import { OrderDB } from "../models/Order";
 import { OrderItemDB } from "./../models/OrderItem";
+
 
 export class OrderDatabase extends BaseDatabase {
   public static TABLE_ORDERS = "orders";
@@ -47,10 +49,9 @@ export class OrderDatabase extends BaseDatabase {
       `,
       [order_id]
     );
-  
+
     return result.rows[0];
   }
-  
 
   // --------------------------------------------------------------------
 
@@ -97,7 +98,6 @@ export class OrderDatabase extends BaseDatabase {
     await BaseDatabase.connection.raw(query, [...values, order_id]);
   }
 
-  
   // --------------------------------------------------------------------
 
   public async findOrderItemsByOrderId(order_id: string) {
@@ -115,12 +115,13 @@ export class OrderDatabase extends BaseDatabase {
 
   // --------------------------------------------------------------------
 
-public async findOrdersByUserId(userId?: string, orderId?: string) {
-  let query = `
+  public async findOrdersByUserId(userId?: string, orderId?: string) {
+    let query = `
     SELECT 
       orders.order_id, 
       orders.user_id, 
       orders.order_date, 
+      order_status.status_id,
       order_status.status_name AS status_name, 
       orders.total,
       orders.tracking_code
@@ -129,22 +130,22 @@ public async findOrdersByUserId(userId?: string, orderId?: string) {
       ON orders.status_id = order_status.status_id
     WHERE 1=1
   `;
-  const params: (string | undefined)[] = [];
+    const params: (string | undefined)[] = [];
 
-  if (userId) {
-    query += ' AND orders.user_id = ?';
-    params.push(userId);
+    if (userId) {
+      query += " AND orders.user_id = ?";
+      params.push(userId);
+    }
+
+    if (orderId) {
+      query += " AND orders.order_id = ?";
+      params.push(orderId);
+    }
+
+    const result = await BaseDatabase.connection.raw(query, params);
+
+    return result.rows;
   }
-
-  if (orderId) {
-    query += ' AND orders.order_id = ?';
-    params.push(orderId);
-  }
-
-  const result = await BaseDatabase.connection.raw(query, params);
-
-  return result.rows;
-}
 
   // --------------------------------------------------------------------
 
@@ -158,22 +159,36 @@ public async findOrdersByUserId(userId?: string, orderId?: string) {
     );
   }
 
+  // --------------------------------------------------------------------
+
+  // public async insertOrderItem(orderItem: OrderItemDB): Promise<void> {
+  //   await BaseDatabase.connection.raw(
+  //     `
+  //     INSERT INTO order_items (id, order_id, product_id, quantity, price)
+  //     VALUES (?, ?, ?, ?, ?)
+  //     `,
+  //     [
+  //       orderItem.id,
+  //       orderItem.order_id,
+  //       orderItem.product_id,
+  //       orderItem.quantity,
+  //       orderItem.price,
+  //     ]
+  //   );
+  // }
+
   public async insertOrderItem(orderItem: OrderItemDB): Promise<void> {
-    await BaseDatabase.connection.raw(
-      `
-      INSERT INTO order_items (id, order_id, product_id, quantity, price)
-      VALUES (?, ?, ?, ?, ?)
-      `,
-      [
-        orderItem.id,
-        orderItem.order_id,
-        orderItem.product_id,
-        orderItem.quantity,
-        orderItem.price
-      ]
-    );
+    const columns = Object.keys(orderItem);
+    const placeholders = columns.map(() => "?").join(", ");
+    const values = Object.values(orderItem);
+
+    const query = `
+      INSERT INTO order_items (${columns.join(", ")})
+      VALUES (${placeholders})
+    `;
+
+    await BaseDatabase.connection.raw(query, values);
   }
-  
 
   // --------------------------------------------------------------------
 
@@ -198,8 +213,7 @@ public async findOrdersByUserId(userId?: string, orderId?: string) {
     );
   }
 
-// --------------------------------------------------------------------
-
+  // --------------------------------------------------------------------
 
   public async deleteOrder(order_id: string): Promise<void> {
     const query = `

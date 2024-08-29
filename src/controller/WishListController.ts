@@ -19,10 +19,6 @@ import logger from "../logs/logger";
 export class WishlistController {
   constructor(private wishlistBusiness: WishlistBusiness) {}
 
-  // --------------------------------------------------------------------
-  // WISHLIST
-  // --------------------------------------------------------------------
-
   public createWishlist = async (req: Request, res: Response) => {
     try {
       const input = CreateWishListSchema.parse({

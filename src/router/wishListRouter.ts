@@ -1,8 +1,13 @@
-import express from "express"
-import TokenService from "../services/TokenService"
-import { IdGenerator } from "../services/idGenerator"
-import { HashManager } from "../services/HashManager"
+// External library imports
+import express from "express";
+
+// Internal service imports
+import TokenService from "../services/TokenService";
+import { IdGenerator } from "../services/idGenerator";
+import { HashManager } from "../services/HashManager";
 import ErrorHandler from "../errors/ErrorHandler";
+
+// Local file imports
 import { WishlistController } from "../controller/WishListController";
 import { WishlistDatabase } from "../database/WishListDatabase";
 import { WishlistBusiness } from "../business/WishListBusiness";
@@ -10,6 +15,7 @@ import { ProductDatabase } from "../database/ProductDatabase";
 import { UserDatabase } from "../database/UserDatabase";
 import { authMiddleware } from "../middlewares/authMiddleware";
 import { USER_ROLES } from "../models/User";
+
 
 export const wishListRouter = express.Router()
 

@@ -13,6 +13,7 @@ export interface OrderDBOutput {
   order_id: string;
   user_id: string;
   items: OrderItemDB[];
+  status_id: number;
   status_name: string;
   total: number;
   order_date: string;

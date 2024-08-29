@@ -39,6 +39,7 @@ import {
 } from "../dtos/products/createProduct.dto";
 import {
   ProductImageDelete,
+  ProductImageInsert,
   ToggleProductActiveStatusInputDTO,
   ToggleProductActiveStatusOutputDTO,
   UpdateCategoryInputDTO,
@@ -53,7 +54,6 @@ import {
   UpdateSizeOutputDTO,
 } from "../dtos/products/updateProduct.dto";
 import {
-  GetProductOutputDTO,
   GetAllProductsInputDTO,
   GetAllProductsOutputDTO,
 } from "../dtos/products/getProduct.dto";
@@ -66,7 +66,10 @@ import {
   ForbiddenError,
 } from "../errors/Errors";
 import ErrorHandler from "../errors/ErrorHandler";
-import { ProductImageDB, ProductImageDBInput, ProductImageDBOutput, ProductImageOutput } from "../models/ProductImage";
+import {
+  ProductImageDB,
+  ProductImageOutput,
+} from "../models/ProductImage";
 
 export class ProductBusiness {
   constructor(
@@ -94,17 +97,17 @@ export class ProductBusiness {
       colorId,
       sizeId,
       genderId,
-      images, // Adicionando o parâmetro de imagens
+      images,
     } = input;
-  
+
     const existingProduct = await this.productDatabase.findProductByName(name);
     if (existingProduct) {
       throw new ConflictError("'name' already exists");
     }
-  
+
     const id = this.idGenerator.generate();
     const created_at = new Date().toISOString();
-  
+
     const newProduct = new Product(
       id,
       name,
@@ -117,7 +120,7 @@ export class ProductBusiness {
       sizeId,
       genderId
     );
-  
+
     const newProductDB: ProductDB = {
       id: newProduct.getId(),
       name: newProduct.getName(),
@@ -130,25 +133,26 @@ export class ProductBusiness {
       size_id: newProduct.getSize() as number,
       gender_id: newProduct.getGender() as number,
     };
-  
+
     await this.productDatabase.insertProduct(newProductDB);
-  
-    // Inserção de imagens associadas ao produto
+
     if (images && images.length > 0) {
       for (const image of images) {
         const imageData: ProductImageDB = {
           id: this.idGenerator.generate(),
           product_id: newProduct.getId(),
           url: image.url,
-          alt: image.alt
+          alt: image.alt,
         };
-  
+
         await this.productDatabase.insertProductImage(imageData);
       }
     }
 
-    const productImages = await this.productDatabase.getImagesByProductId(newProduct.getId());
-  
+    const productImages = await this.productDatabase.getImagesByProductId(
+      newProduct.getId()
+    );
+
     const output: CreateProductOutputDTO = {
       message: "Product created successfully",
       product: {
@@ -162,13 +166,12 @@ export class ProductBusiness {
         colorId: newProduct.getColor() as number,
         sizeId: newProduct.getSize() as number,
         genderId: newProduct.getGender() as number,
-        images: productImages
+        images: productImages,
       },
     };
-  
+
     return output;
   };
-  
 
   // --------------------------------------------------------------------
 
@@ -178,41 +181,46 @@ export class ProductBusiness {
     const {
       id,
       name,
-      category_id,
-      color_id,
-      size_id,
-      gender_id,
+      categoryId,
+      colorId,
+      sizeId,
+      genderId,
       active = true,
     } = input;
 
     const products: ProductDBOutput[] = await this.productDatabase.findProducts(
       id,
       name,
-      category_id,
-      color_id,
-      size_id,
-      gender_id,
+      categoryId,
+      colorId,
+      sizeId,
+      genderId,
       active
     );
 
-
     const output: GetAllProductsOutputDTO = {
-      products: await Promise.all(products.map(async (product) => ({
-        id: product.id,
-        name: product.name,
-        description: product.description,
-        active: product.active,
-        price: product.price,
-        stock: product.stock,
-        created_at: product.created_at,
-        category: product.category,
-        color: product.color,
-        size: product.size,
-        gender: product.gender,
-        images: await this.productDatabase.getImagesByProductId(product.id),
-      }))),
+      products: await Promise.all(
+        products.map(async (product) => ({
+          id: product.id,
+          name: product.name,
+          description: product.description,
+          active: product.active,
+          price: product.price,
+          stock: product.stock,
+          created_at: product.created_at,
+          category_id: product.category_id,
+          category: product.category,
+          color_id: product.color_id,
+          color: product.color,
+          size_id: product.size_id,
+          size: product.size,
+          gender_id: product.gender_id,
+          gender: product.gender,
+          images: await this.productDatabase.getImagesByProductId(product.id),
+        }))
+      ),
     };
-    
+
     return output;
   };
 
@@ -221,7 +229,7 @@ export class ProductBusiness {
   public editProduct = async (
     input: UpdateProductInputDTO
   ): Promise<UpdateProductOutputDTO> => {
-    const { id } = input;
+    const { id, categoryId } = input;
 
     const productDB = await this.productDatabase.findPureProductById(id);
 
@@ -235,11 +243,13 @@ export class ProductBusiness {
       description: input.description ?? productDB.description,
       price: input.price ?? productDB.price,
       stock: input.stock ?? productDB.stock,
-      category_id: input.category_id ?? productDB.category_id,
-      color_id: input.color_id ?? productDB.color_id,
-      size_id: input.size_id ?? productDB.size_id,
-      gender_id: input.gender_id ?? productDB.gender_id,
+      category_id: input.categoryId ?? productDB.category_id,
+      color_id: input.colorId ?? productDB.color_id,
+      size_id: input.sizeId ?? productDB.size_id,
+      gender_id: input.genderId ?? productDB.gender_id,
     };
+
+    console.log(categoryId);
 
     await this.productDatabase.updateProduct(id, updatedProduct);
 
@@ -263,12 +273,12 @@ export class ProductBusiness {
         description: updatedProductData.description,
         price: updatedProductData.price,
         stock: updatedProductData.stock,
-        created_at: updatedProductData.created_at,
-        category_id: updatedProductData.category_id,
-        color_id: updatedProductData.color_id,
-        size_id: updatedProductData.size_id,
-        gender_id: updatedProductData.gender_id,
-        images: productImages
+        createdAt: updatedProductData.created_at,
+        categoryId: updatedProductData.category_id,
+        colorId: updatedProductData.color_id,
+        sizeId: updatedProductData.size_id,
+        genderId: updatedProductData.gender_id,
+        images: productImages,
       },
     };
 
@@ -277,27 +287,33 @@ export class ProductBusiness {
 
   // --------------------------------------------------------------------
 
-  public async insertProductImage(input: ProductImageDBInput): Promise<ProductImageOutput> {
-    const { product_id, url, alt } = input;
+  public async insertProductImage(
+    input: ProductImageInsert
+  ): Promise<ProductImageOutput> {
+    const { productId, url, alt } = input;
 
     const existingImage = await this.productDatabase.getImageByUrl(url);
-  
+
     if (existingImage) {
-      throw new ConflictError("This URL is already associated with the specified product");
+      throw new ConflictError(
+        "This URL is already associated with the specified product"
+      );
     }
 
     const imageId = this.idGenerator.generate();
 
     const imageData: ProductImageDB = {
       id: imageId,
-      product_id,
+      product_id: productId,
       url,
-      alt
+      alt,
     };
 
     await this.productDatabase.insertProductImage(imageData);
 
-    const insertedImage = await this.productDatabase.getImagesByProductId(product_id);
+    const insertedImage = await this.productDatabase.getImagesByProductId(
+      productId
+    );
 
     const output: ProductImageOutput = {
       message: "Image inserted successfully",
@@ -309,28 +325,34 @@ export class ProductBusiness {
 
   // --------------------------------------------------------------------
 
-  public async deleteProductImage(input: ProductImageDelete): Promise<ProductImageOutput> {
-    const { id, product_id } = input;
-  
+  public async deleteProductImage(
+    input: ProductImageDelete
+  ): Promise<ProductImageOutput> {
+    const { id, productId } = input;
+
     const image = await this.productDatabase.getImageById(id);
-  
+
     if (!image) {
       throw new NotFoundError("Image not found");
     }
-  
-    if (image.product_id !== product_id) {
-      throw new ForbiddenError("Image does not belong to the specified product");
+
+    if (image.product_id !== productId) {
+      throw new ForbiddenError(
+        "Image does not belong to the specified product"
+      );
     }
-  
+
     await this.productDatabase.deleteProductImage(id);
-  
-    const remainingImages = await this.productDatabase.getImagesByProductId(product_id);
-  
+
+    const remainingImages = await this.productDatabase.getImagesByProductId(
+      productId
+    );
+
     const output: ProductImageOutput = {
       message: "Image deleted successfully",
       images: remainingImages,
     };
-  
+
     return output;
   }
 
@@ -364,6 +386,8 @@ export class ProductBusiness {
 
     return categories;
   };
+
+  // --------------------------------------------------------------------
 
   public createCategory = async (
     input: CreateCategoryInputDTO
@@ -436,6 +460,8 @@ export class ProductBusiness {
     return colors;
   };
 
+  // --------------------------------------------------------------------
+
   public createColor = async (
     input: CreateColorInputDTO
   ): Promise<CreateColorOutputDTO> => {
@@ -480,6 +506,8 @@ export class ProductBusiness {
       throw new NotFoundError("Color not found");
     }
 
+    console.log(colorDB)
+
     const updatedColor = {
       ...colorDB,
       name: name ?? colorDB.name,
@@ -502,6 +530,8 @@ export class ProductBusiness {
     const sizes = await this.productDatabase.getAllSizes();
     return sizes;
   };
+
+  // --------------------------------------------------------------------
 
   public createSize = async (
     input: CreateSizeInputDTO
@@ -567,6 +597,8 @@ export class ProductBusiness {
     const genders = await this.productDatabase.getAllGenders();
     return genders;
   };
+
+  // --------------------------------------------------------------------
 
   public createGender = async (
     input: CreateGenderInputDTO

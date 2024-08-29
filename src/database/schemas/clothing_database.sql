@@ -1,8 +1,11 @@
 -- Active: 1724265540917@@127.0.0.1@5432@clothing_db
+
+-- Create the main database
 CREATE DATABASE CLOTHING_DB;
 
 -------------------------------------------------------------------------------
 
+-- Table for storing user information
 CREATE TABLE users (
     id TEXT PRIMARY KEY UNIQUE NOT NULL,
     personal_id TEXT UNIQUE NOT NULL,
@@ -23,21 +26,22 @@ CREATE TABLE users (
     last_login TIMESTAMP
 );
 
+-- Alter column type
 ALTER TABLE users
 ALTER COLUMN gender TYPE INTEGER USING gender::INTEGER;
 
-delete from users
-where id = 'c155abc4-1fa7-44e1-a531-eab91332d9ac';
-
-select * from phones_audit;
-
+-- Add foreign key constraint
 ALTER TABLE users
 ADD CONSTRAINT fk_gender
 FOREIGN KEY (gender) REFERENCES genders(gender_id);
 
+-- Insert sample data for users
+-- DELETE FROM users WHERE id = 'c155abc4-1fa7-44e1-a531-eab91332d9ac'; -- Uncomment if needed
+
+-- Select data
 SELECT * FROM users;
 
-
+-- Table for storing phone information
 CREATE TABLE phones (
     phone_id TEXT PRIMARY KEY UNIQUE NOT NULL,
     user_id TEXT NOT NULL,
@@ -46,18 +50,25 @@ CREATE TABLE phones (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
+-- Query to check audit data (assuming it's for debugging purposes)
+-- SELECT * FROM phones_audit; -- Uncomment if needed
+
 -------------------------------------------------------------------------------
+
+-- Table for storing order status
 CREATE TABLE order_status (
     status_id SERIAL PRIMARY KEY,
     status_name TEXT NOT NULL
 );
 
+-- Insert sample data for order status
 INSERT INTO order_status (status_name) VALUES ('Pending');
 INSERT INTO order_status (status_name) VALUES ('Processing');
 INSERT INTO order_status (status_name) VALUES ('Shipped');
 INSERT INTO order_status (status_name) VALUES ('Completed');
 INSERT INTO order_status (status_name) VALUES ('Canceled');
 
+-- Table for storing orders
 CREATE TABLE orders (
     order_id TEXT PRIMARY KEY UNIQUE NOT NULL,
     user_id TEXT NOT NULL,
@@ -69,6 +80,7 @@ CREATE TABLE orders (
     FOREIGN KEY (status_id) REFERENCES order_status(status_id)
 );
 
+-- Table for storing order items
 CREATE TABLE order_items (
     id TEXT PRIMARY KEY UNIQUE NOT NULL,
     order_id TEXT NOT NULL,
@@ -79,19 +91,23 @@ CREATE TABLE order_items (
     FOREIGN KEY (product_id) REFERENCES products(id)
 );
 
-DROP TABLE order_items;
+-- Drop table if it exists (useful for resets or debugging)
+-- DROP TABLE order_items; -- Uncomment if needed
 
-
-select * from orders;
-select * from order_items;
+-- Select data
+SELECT * FROM orders;
+SELECT * FROM order_items;
 
 -------------------------------------------------------------------------------
+
+-- Table for storing product categories
 CREATE TABLE categories (
     category_id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     description TEXT
 );
 
+-- Insert sample data for categories
 INSERT INTO categories (name, description) VALUES 
 ('T-Shirts', 'Casual shirts typically made from cotton or synthetic materials.'),
 ('Jeans', 'Denim pants available in various cuts and styles.'),
@@ -114,14 +130,14 @@ INSERT INTO categories (name, description) VALUES
 ('Pajamas', 'Comfortable clothing worn for sleeping.'),
 ('Shirts', 'Button-down shirts that can be dressed up or down.');
 
-
-
+-- Table for storing colors
 CREATE TABLE colors (
     color_id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     hex_code TEXT
 );
 
+-- Insert sample data for colors
 INSERT INTO colors (name, hex_code) VALUES 
 ('Red', '#FF0000'),
 ('Blue', '#0000FF'),
@@ -133,22 +149,19 @@ INSERT INTO colors (name, hex_code) VALUES
 ('Pink', '#FFC0CB'),
 ('Purple', '#800080'),
 ('Orange', '#FFA500'),
-('Gray', '#808080'),
-('Yellow', '#FFFF00'),
-('Pink', '#FFC0CB'),
-('Purple', '#800080'),
-('Orange', '#FFA500'),
 ('Brown', '#A52A2A'),
 ('Beige', '#F5F5DC'),
 ('Teal', '#008080'),
 ('Cyan', '#00FFFF'),
 ('Magenta', '#FF00FF');
 
+-- Table for storing sizes
 CREATE TABLE sizes (
     size_id SERIAL PRIMARY KEY,
     name TEXT NOT NULL
 );
 
+-- Insert sample data for sizes
 INSERT INTO sizes (name) VALUES 
 ('S'),       -- Small
 ('M'),       -- Medium
@@ -156,18 +169,19 @@ INSERT INTO sizes (name) VALUES
 ('XL'),      -- Extra Large
 ('XXL');     -- Double Extra Large
 
-
+-- Table for storing genders
 CREATE TABLE genders (
     gender_id SERIAL PRIMARY KEY,
     name TEXT NOT NULL
 );
 
+-- Insert sample data for genders
 INSERT INTO genders (name) VALUES 
 ('Male'),
 ('Female'),
 ('Unisex');
 
-
+-- Table for storing products
 CREATE TABLE products (
     id TEXT PRIMARY KEY UNIQUE NOT NULL,
     name TEXT NOT NULL,
@@ -186,9 +200,10 @@ CREATE TABLE products (
     FOREIGN KEY (gender_id) REFERENCES genders(gender_id)
 );
 
-SELECT id, price
-FROM products;
+-- Select product data
+SELECT id, price FROM products;
 
+-- Table for storing product images
 CREATE TABLE product_images (
     id TEXT PRIMARY KEY,
     product_id TEXT NOT NULL,
@@ -196,13 +211,16 @@ CREATE TABLE product_images (
     alt TEXT
 );
 
-drop table product_images;
+-- Drop table if it exists (useful for resets or debugging)
+-- DROP TABLE product_images; -- Uncomment if needed
 
 -------------------------------------------------------------------------------
--- Excluir tabelas se existirem
+
+-- Drop tables if they exist (useful for resets or debugging)
 DROP TABLE IF EXISTS wishlist_items;
 DROP TABLE IF EXISTS wishlists;
 
+-- Table for storing wishlists
 CREATE TABLE wishlists (
     wishlist_id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL,
@@ -210,6 +228,7 @@ CREATE TABLE wishlists (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
+-- Table for storing items in wishlists
 CREATE TABLE wishlist_items (
     wishlist_id TEXT NOT NULL,
     product_id TEXT NOT NULL,
@@ -218,12 +237,15 @@ CREATE TABLE wishlist_items (
     PRIMARY KEY (wishlist_id, product_id)
 );
 
-select * from wishlist_items;
+-- Select wishlist items
+SELECT * FROM wishlist_items;
 
-----------------------------------------------------------------
+-------------------------------------------------------------------------------
 
-DROP TABLE TICKETS;
+-- Drop table if it exists (useful for resets or debugging)
+DROP TABLE IF EXISTS tickets;
 
+-- Table for storing tickets
 CREATE TABLE tickets (
     id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL,
@@ -248,19 +270,19 @@ CREATE TABLE tickets (
         ON DELETE SET NULL
 );
 
-----------------------------------------------------------------
-
+-- Table for storing ticket status
 CREATE TABLE ticket_status (
     id SERIAL PRIMARY KEY,
     status VARCHAR(50) UNIQUE NOT NULL
 );
 
-
+-- Table for storing ticket types
 CREATE TABLE ticket_types (
     id SERIAL PRIMARY KEY,
     type_name VARCHAR(255) UNIQUE NOT NULL
 );
 
+-- Insert sample data for ticket types
 INSERT INTO ticket_types (type_name) VALUES ('reset_password');
 INSERT INTO ticket_types (type_name) VALUES ('order_issue');
 INSERT INTO ticket_types (type_name) VALUES ('product_problem');
@@ -268,7 +290,7 @@ INSERT INTO ticket_types (type_name) VALUES ('account_issue');
 INSERT INTO ticket_types (type_name) VALUES ('refund_request');
 INSERT INTO ticket_types (type_name) VALUES ('general_inquiry');
 
-
+-- Insert sample data for ticket status
 INSERT INTO ticket_status (status) VALUES ('Pending');
 INSERT INTO ticket_status (status) VALUES ('In Progress');
 INSERT INTO ticket_status (status) VALUES ('Resolved');

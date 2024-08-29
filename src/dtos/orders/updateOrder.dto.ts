@@ -44,8 +44,6 @@ export const UpdateOrderSchema = z
       )
       .optional(),
     total: z.number().optional(),
-    trackingCode: z.string().optional()
+    trackingCode: z.string().optional(),
   })
   .transform((data) => data as UpdateOrderInputDTO);
-
-

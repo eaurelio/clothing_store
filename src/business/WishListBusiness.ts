@@ -22,7 +22,6 @@ import {
 // Models
 import {
   WishlistDBInput,
-  WishlistDBOutput,
   WishlistItemDB,
 } from "../models/WishList";
 
@@ -151,7 +150,6 @@ export class WishlistBusiness {
     const items = activeItems
       .filter(({ productDB }) => productDB?.active)
       .map(({ item }) => ({
-        // wishlistId: item.wishlist_id,
         productId: item.product_id,
       }));
 

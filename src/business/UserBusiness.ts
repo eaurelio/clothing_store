@@ -7,6 +7,8 @@ import {
 import { LoginInputDTO, LoginOutputDTO } from "../dtos/users/login";
 
 import {
+  ResetPasswordInputDTO,
+  ResetPasswordOutputDTO,
   ToggleUserActiveStatusInputDTO,
   ToggleUserActiveStatusOutputDTO,
   UpdatePasswordInputDTO,
@@ -350,6 +352,37 @@ export class UserBusiness {
     };
   };
 
+    // --------------------------------------------------------------------
+
+    public resetPassword = async (
+      input: ResetPasswordInputDTO
+    ): Promise<ResetPasswordOutputDTO> => {
+      const { userId, email, newPassword } = input;
+    
+      const user = await this.userDatabase.findUserById(userId);
+    
+      if (!user) {
+        throw new NotFoundError("User not found");
+      }
+    
+      if (!user.active) {
+        throw new ForbiddenError("User account is deactivated");
+      }
+    
+      if (user.email !== email) {
+        throw new BadRequestError("Email does not match our records");
+      }
+    
+      const hashedNewPassword = await this.hashManager.hash(newPassword);
+    
+      await this.userDatabase.updatePassword(userId, hashedNewPassword);
+    
+      return {
+        message: "Password updated successfully",
+      };
+    };
+    
+
   // --------------------------------------------------------------------
 
   public getUserById = async (input: any): Promise<UserDBOutput> => {
@@ -377,8 +410,6 @@ export class UserBusiness {
 
   public getAllUsers = async (input: GetAllUserInputDTO): Promise<UserDB[]> => {
     const { q, onlyActive = true } = input;
-
-    console.log(q);
 
     const usersDB = await this.userDatabase.findUsers(q, onlyActive);
 

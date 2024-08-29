@@ -1,13 +1,17 @@
+// Local file imports
 import { BaseDatabase } from "./connection/BaseDatabase";
 import { TicketDB, TicketDBOutput } from "../models/Ticket";
 import { TicketStatusDB, TicketTypeDB } from "../models/Ticket";
+
 
 export class TicketDatabase extends BaseDatabase {
   public static TABLE_TICKETS = "tickets";
   public static TABLE_TICKET_STATUS = "ticket_status";
   public static TABLE_TICKET_TYPES = "ticket_types";
 
+  // --------------------------------------------------------------------
   // TICKET DATA
+  // --------------------------------------------------------------------
 
   public async findTickets(
     id?: string,

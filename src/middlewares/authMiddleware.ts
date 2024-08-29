@@ -1,9 +1,15 @@
-import { ForbiddenError, UnauthorizedError } from './../errors/Errors';
+// External library imports
 import { Request, Response, NextFunction } from 'express';
+
+// Internal service imports
 import TokenService from '../services/TokenService';
 import ErrorHandler from "../errors/ErrorHandler";
+
+// Local file imports
+import { ForbiddenError, UnauthorizedError } from './../errors/Errors';
 import { USER_ROLES, UserDB } from '../models/User'; 
 import { UserDatabase } from '../database/UserDatabase';
+
 
 export const authMiddleware = (requiredRoles?: USER_ROLES[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
