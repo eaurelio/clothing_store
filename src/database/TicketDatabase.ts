@@ -20,7 +20,6 @@ export class TicketDatabase extends BaseDatabase {
     statusId?: number
   ): Promise<TicketDBOutput[]> {
     const conditions: string[] = [];
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const params: any[] = [];
 
     if (id) {
