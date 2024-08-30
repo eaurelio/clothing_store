@@ -96,27 +96,47 @@ export class UserController {
 
   // --------------------------------------------------------------------
 
+  // public getUsers = async (req: Request, res: Response) => {
+  //   try {
+  //     const input = GetAllUserSchema.parse({
+  //       q: req.query.q as string,
+  //       onlyActive: req.body.onlyActive,
+  //     });
+
+  //     const output = await this.userBusiness.getAllUsers(input);
+  //     res.status(200).send(output);
+  //   } catch (error) {
+  //     logger.error(error);
+  //     ErrorHandler.handleError(error, res);
+  //   }
+  // };
+
   public getUsers = async (req: Request, res: Response) => {
     try {
-      const input = GetAllUserSchema.parse({
-        q: req.query.q as string,
-        onlyActive: req.body.onlyActive,
-      });
+        const input = GetAllUserSchema.parse({
+            q: req.query.q as string,
+            onlyActive: req.body.onlyActive,
+            personalId: req.body.personalId,
+            genderId: req.body.genderId,
+            email: req.body.email,
+            role: req.body.role
+        });
 
-      const output = await this.userBusiness.getAllUsers(input);
-      res.status(200).send(output);
+        const output = await this.userBusiness.getAllUsers(input);
+        res.status(200).send(output);
     } catch (error) {
-      logger.error(error);
-      ErrorHandler.handleError(error, res);
+        logger.error(error);
+        ErrorHandler.handleError(error, res);
     }
-  };
+};
+
 
   // --------------------------------------------------------------------
 
   public editUser = async (req: Request, res: Response) => {
     try {
       const input = UpdateUserSchema.parse({
-        userId: req.body.userId,
+        userId: req.params.id,
         personalId: req.body.personalId,
         entityType: req.body.entityType,
         name: req.body.name,

@@ -221,7 +221,7 @@ export class ProductDatabase extends BaseDatabase {
         [url]
       );
   
-      return result.rows;
+      return result.rows[0];
     }
 
   // --------------------------------------------------------------------
