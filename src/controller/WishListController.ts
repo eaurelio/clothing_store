@@ -56,9 +56,7 @@ export class WishlistController {
     try {
       const input = UpdateWishListSchema.parse({
         userId: req.body.userId,
-        items: req.body.items.map((item: any) => ({
-          productId: item.productId,
-        })),
+        items: req.body.items
       });
 
       const output = await this.wishlistBusiness.updateWishlist(input);

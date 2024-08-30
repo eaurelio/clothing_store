@@ -25,7 +25,7 @@ import {
   PhoneUpdateOutputDTO,
 } from "../dtos/users/phone";
 
-import { GetAllUserInputDTO } from "../dtos/users/getUser.dto";
+import { GetAllUserInputDTO, GetUserInputDTO } from "../dtos/users/getUser.dto";
 
 // Models
 import {
@@ -352,40 +352,41 @@ export class UserBusiness {
     };
   };
 
-    // --------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
-    public resetPassword = async (
-      input: ResetPasswordInputDTO
-    ): Promise<ResetPasswordOutputDTO> => {
-      const { userId, email, newPassword } = input;
-    
-      const user = await this.userDatabase.findUserById(userId);
-    
-      if (!user) {
-        throw new NotFoundError("User not found");
-      }
-    
-      if (!user.active) {
-        throw new ForbiddenError("User account is deactivated");
-      }
-    
-      if (user.email !== email) {
-        throw new BadRequestError("Email does not match our records");
-      }
-    
-      const hashedNewPassword = await this.hashManager.hash(newPassword);
-    
-      await this.userDatabase.updatePassword(userId, hashedNewPassword);
-    
-      return {
-        message: "Password updated successfully",
-      };
+  public resetPassword = async (
+    input: ResetPasswordInputDTO
+  ): Promise<ResetPasswordOutputDTO> => {
+    const { userId, email, newPassword } = input;
+
+    const user = await this.userDatabase.findUserById(userId);
+
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+
+    if (!user.active) {
+      throw new ForbiddenError("User account is deactivated");
+    }
+
+    if (user.email !== email) {
+      throw new BadRequestError("Email does not match our records");
+    }
+
+    const hashedNewPassword = await this.hashManager.hash(newPassword);
+
+    await this.userDatabase.updatePassword(userId, hashedNewPassword);
+
+    return {
+      message: "Password updated successfully",
     };
-    
+  };
 
   // --------------------------------------------------------------------
 
-  public getUserById = async (input: any): Promise<UserDBOutput> => {
+  public getUserById = async (
+    input: GetUserInputDTO
+  ): Promise<UserDBOutput> => {
     const { userId } = input;
 
     const userFromDatabase = await this.userDatabase.findUserById(userId);
@@ -399,6 +400,7 @@ export class UserBusiness {
     }
 
     const phonesFromDatabase = await this.userDatabase.getPhones(userId);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...userOutput } = userFromDatabase as UserDB;
 
     userOutput.phones = phonesFromDatabase;
@@ -408,48 +410,34 @@ export class UserBusiness {
 
   // --------------------------------------------------------------------
 
-  // public getAllUsers = async (input: GetAllUserInputDTO): Promise<UserDB[]> => {
-  //   const { q, onlyActive = true } = input;
-
-  //   const usersDB = await this.userDatabase.findUsers(q, onlyActive);
-
-  //   if (usersDB.length === 0) {
-  //     throw new NotFoundError("No users found");
-  //   }
-
-  //   const usersOutput = await Promise.all(
-  //     usersDB.map(async (userDB) => {
-  //       const phonesFromDatabase = await this.userDatabase.getPhones(userDB.id);
-  //       const { password, ...userWithoutPassword } = userDB;
-  //       userWithoutPassword.phones = phonesFromDatabase;
-  //       return userWithoutPassword as UserDB;
-  //     })
-  //   );
-
-  //   return usersOutput;
-  // };
-
   public getAllUsers = async (input: GetAllUserInputDTO): Promise<UserDB[]> => {
     const { q, onlyActive = true, personalId, genderId, email, role } = input;
 
-    const usersDB = await this.userDatabase.findUsers(q, onlyActive, personalId, genderId, email, role);
+    const usersDB = await this.userDatabase.findUsers(
+      q,
+      onlyActive,
+      personalId,
+      genderId,
+      email,
+      role
+    );
 
     if (usersDB.length === 0) {
-        throw new NotFoundError("No users found");
+      throw new NotFoundError("No users found");
     }
 
     const usersOutput = await Promise.all(
-        usersDB.map(async (userDB) => {
-            const phonesFromDatabase = await this.userDatabase.getPhones(userDB.id);
-            const { password, ...userWithoutPassword } = userDB;
-            userWithoutPassword.phones = phonesFromDatabase;
-            return userWithoutPassword as UserDB;
-        })
+      usersDB.map(async (userDB) => {
+        const phonesFromDatabase = await this.userDatabase.getPhones(userDB.id);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { password, ...userWithoutPassword } = userDB;
+        userWithoutPassword.phones = phonesFromDatabase;
+        return userWithoutPassword as UserDB;
+      })
     );
 
     return usersOutput;
-};
-
+  };
 
   // --------------------------------------------------------------------
 

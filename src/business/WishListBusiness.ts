@@ -207,14 +207,6 @@ export class WishlistBusiness {
       }
     }
 
-    const updatedItemsDB =
-      await this.wishlistDatabase.findWishlistItemsByWishlistId(
-        wishlistDB.wishlist_id
-      );
-    const updatedItems = updatedItemsDB.map((item: WishlistItemDB) => ({
-      productId: item.product_id,
-    }));
-
     const output: UpdateWishListOutputDTO = {
       message: "Wishlist updated successfully",
       wishlist: {

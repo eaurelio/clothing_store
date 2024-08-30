@@ -35,8 +35,9 @@ export class ProductDatabase extends BaseDatabase {
     gender_id?: number,
     active?: boolean
   ) {
-    let conditions: string[] = [];
-    let params: any[] = [];
+    const conditions: string[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const params: any[] = [];
 
     if (id) {
       conditions.push("products.id = ?");

@@ -18,8 +18,7 @@ import {
 } from "../dtos/orders/getOrder.dto";
 import {
   UpdateOrderSchema,
-  UpdateOrderInputDTO,
-  UpdateOrderOutputDTO,
+  UpdateOrderInputDTO
 } from "../dtos/orders/updateOrder.dto";
 import {
   DeleteOrderSchema,
