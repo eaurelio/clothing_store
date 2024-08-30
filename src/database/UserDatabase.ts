@@ -61,7 +61,7 @@ export class UserDatabase extends BaseDatabase {
     email?: string,
     role?: string
   ): Promise<UserDB[]> {
-    let query = `
+    const query = `
       SELECT 
           users.id,
           users.personal_id,
@@ -86,6 +86,7 @@ export class UserDatabase extends BaseDatabase {
     `;
 
     const conditions: string[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const params: any[] = [];
 
     if (q) {
@@ -199,7 +200,7 @@ export class UserDatabase extends BaseDatabase {
     updatedUserDB: UserDB
   ): Promise<void> {
     const updates = Object.entries(updatedUserDB)
-      .map(([key, value]) => `${key} = ?`)
+      .map(([key]) => `${key} = ?`)
       .join(", ");
 
     console.log(

@@ -19,8 +19,9 @@ export class TicketDatabase extends BaseDatabase {
     typeId?: number,
     statusId?: number
   ): Promise<TicketDBOutput[]> {
-    let conditions: string[] = [];
-    let params: any[] = [];
+    const conditions: string[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const params: any[] = [];
 
     if (id) {
       conditions.push("tickets.id = ?");
