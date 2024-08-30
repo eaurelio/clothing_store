@@ -1,5 +1,5 @@
 {
-    "name": "clothing__store",
+    "name": "clothing_store",
     "version": "1.0.0",
     "description": "",
     "main": "index.js",
@@ -32,7 +32,6 @@
         "express": "^4.18.2",
         "knex": "^2.4.2",
         "pg": "^8.12.0",
-        "sqlite3": "^5.1.4",
         "uuid": "^9.0.0",
         "winston": "^3.13.1",
         "zod": "^3.21.4"
