@@ -101,7 +101,7 @@ The database uses PostgreSQL, and the following triggers are implemented to main
 - **Purpose**: Manage client requests.
 - **Operations**: Create, update and finish support requests.
 
-#### Installation
+## Installation
 
 To set up and run the Clothing Store API, follow these steps:
 
@@ -114,7 +114,7 @@ To set up and run the Clothing Store API, follow these steps:
      ```
 
 2. **Restore the Database Backup**:
-   - If a database backup (`backup.sql`) is provided, follow these steps to restore it:
+   - Since the backup file (`backup.sql`) is located in the root of the project, follow these steps to restore it:
      - **Copy the backup to the PostgreSQL container**:
 
        ```bash
@@ -136,7 +136,7 @@ To set up and run the Clothing Store API, follow these steps:
 3. **Verify the Application**:
    - Ensure the application is running by visiting [http://localhost:3003](http://localhost:3003).
 
-### Testing with User Accounts
+## Testing with User Accounts
 
 To test the API, you can log in with one of the following pre-created accounts to receive a token:
 
@@ -186,7 +186,7 @@ The User endpoints manage user accounts, including registration, login, profile 
 
 #### **1. Create User**
 
-- **Endpoint**: `/createUser`
+- **Endpoint**: `users/createUser`
 - **Method**: `POST`
 - **Description**: Registers a new user with the provided details. By default, this route creates users with the `CLIENT` role. However, if a user with an `ADMIN` token makes the request, they can specify the `role` parameter as `ADMIN` to create an admin user.
 
@@ -244,7 +244,7 @@ The User endpoints manage user accounts, including registration, login, profile 
 
 #### **2. Login**
 
-- **Endpoint**: `/login`
+- **Endpoint**: `users/login`
 - **Method**: `POST`
 - **Description**: Authenticates a user and returns a JWT token.
 
@@ -287,7 +287,7 @@ The User endpoints manage user accounts, including registration, login, profile 
 
 #### **3. Get User By Id**
 
-- **Endpoint**: `/getUserById/:id`
+- **Endpoint**: `users/getUserById/:id`
 - **Method**: `POST`
 - **Description**: Retrieves detailed information for a specific user, including their phones. This endpoint allows users to obtain their own data using their authentication token.
 
@@ -349,7 +349,7 @@ The User endpoints manage user accounts, including registration, login, profile 
 
 #### **4. Get All Users**
 
-- **Endpoint**: `/getAllUsers`
+- **Endpoint**: `users/getAllUsers`
 - **Method**: `POST`
 - **Description**: Retrieves a list of all users with optional query parameters for search and filtering. This endpoint is restricted to users with admin roles.
 
@@ -410,7 +410,7 @@ The User endpoints manage user accounts, including registration, login, profile 
 
 #### **5. Edit User**
 
-- **Endpoint**: `/editUser/:id`
+- **Endpoint**: `users/editUser/:id`
 - **Method**: `PATCH`
 - **Description**: Updates user details.
 - **Request Headers**:
@@ -452,7 +452,7 @@ The User endpoints manage user accounts, including registration, login, profile 
 
 #### **6. Change Password**
 
-- **Endpoint**: `/changePassword`
+- **Endpoint**: `users/changePassword`
 - **Method**: `PATCH`
 - **Description**: Changes the password for the specified user.
 - **Request Headers**:
@@ -478,7 +478,7 @@ The User endpoints manage user accounts, including registration, login, profile 
 
 #### **7. Reset Password**
 
-- **Endpoint**: `/resetPassword`
+- **Endpoint**: `users/resetPassword`
 - **Method**: `PATCH`
 - **Description**: Resets the password for any user. This endpoint is restricted to admin users who can reset passwords for other users using their admin token.
 - **Request Headers**:
@@ -504,7 +504,7 @@ The User endpoints manage user accounts, including registration, login, profile 
 
 #### **8. Add Phone**
 
-- **Endpoint**: `/addPhone/:id`
+- **Endpoint**: `users/addPhone/:id`
 - **Method**: `POST`
 - **Description**: Adds a new phone number to the specified user.
 - **Request Headers**:
@@ -538,7 +538,7 @@ The User endpoints manage user accounts, including registration, login, profile 
 
 #### **9. Update Phone**
 
-- **Endpoint**: `/updatePhone/:id`
+- **Endpoint**: `users/updatePhone/:id`
 - **Method**: `PATCH`
 - **Description**: Updates the phone number for the specified user.
 - **Request Headers**:
@@ -572,7 +572,7 @@ The User endpoints manage user accounts, including registration, login, profile 
 
 #### **10. Delete Phone**
 
-- **Endpoint**: `/deletePhone/:id`
+- **Endpoint**: `users/deletePhone/:id`
 - **Method**: `DELETE`
 - **Description**: Deletes a phone number from the specified user.
 - **Request Headers**:
@@ -604,9 +604,9 @@ The User endpoints manage user accounts, including registration, login, profile 
 
 ### Products Endpoints
 
-### Create Product
+### **1. Create Product**
 
-- **URL:** `/createProduct`
+- **URL:** `products/createProduct`
 - **Method:** `POST`
 - **Description:** Creates a new product with specified details.
 - **Request Headers:**
@@ -659,9 +659,9 @@ The User endpoints manage user accounts, including registration, login, profile 
   - **400 Bad Request**: If the request body is invalid or missing required fields.
   - **409 Conflict**: If the product name already exists.
 
-### Get Products
+### **2. Get Products**
 
-- **URL:** `/getProducts`
+- **URL:** `products/getProducts`
 - **Method:** `GET`
 - **Description:** Retrieves a list of products based on specified filters.
 - **Request Headers:**
@@ -707,9 +707,9 @@ The User endpoints manage user accounts, including registration, login, profile 
     }
     ```
 
-### Edit Product
+### **3. Edit Product**
 
-- **URL:** `/editProduct`
+- **URL:** `products/editProduct`
 - **Method:** `PUT`
 - **Description:** Updates an existing product.
 - **Request Headers:**
@@ -757,9 +757,9 @@ The User endpoints manage user accounts, including registration, login, profile 
   - **400 Bad Request**: If the request body is invalid or missing required fields.
   - **404 Not Found**: If the product is not found.
 
-### Insert Product Image
+### **4. Insert Product Image**
 
-- **URL:** `/insertProductImage`
+- **URL:** `products/insertProductImage`
 - **Method:** `POST`
 - **Description:** Inserts a new image for a specified product.
 - **Request Headers:**
@@ -789,9 +789,9 @@ The User endpoints manage user accounts, including registration, login, profile 
   - **400 Bad Request**: If the request body is invalid.
   - **409 Conflict**: If the image URL already exists for the product.
 
-### Delete Product Image
+### **5. Delete Product Image**
 
-- **URL:** `/deleteProductImage`
+- **URL:** `products/deleteProductImage`
 - **Method:** `DELETE`
 - **Description:** Deletes a product image.
 - **Request Headers:**
@@ -821,9 +821,9 @@ The User endpoints manage user accounts, including registration, login, profile 
   - **404 Not Found**: If the image is not found.
   - **403 Forbidden**: If the image does not belong to the specified product.
 
-### Toggle Product Active Status
+### **6. Toggle Product Active Status**
 
-- **URL:** `/toggleProductActiveStatus`
+- **URL:** `products/toggleProductActiveStatus`
 - **Method:** `PATCH`
 - **Description:** Toggles the active status of a product.
 - **Request Headers:**
@@ -844,9 +844,9 @@ The User endpoints manage user accounts, including registration, login, profile 
   - **400 Bad Request**: If the request body is invalid.
   - **404 Not Found**: If the product is not found.
 
-### Get All Categories
+### **7. Get All Categories**
 
-- **URL:** `/getAllCategories`
+- **URL:** `products/getAllCategories`
 - **Method:** `GET`
 - **Description:** Retrieves a list of all product categories.
 - **Request Headers:**
@@ -863,9 +863,9 @@ The User endpoints manage user accounts, including registration, login, profile 
     ]
     ```
 
-### Create Category
+### **8. Create Category**
 
-- **URL:** `/createCategory`
+- **URL:** `products/createCategory`
 - **Method:** `POST`
 - **Description:** Creates a new product category.
 - **Request Headers:**
@@ -891,9 +891,9 @@ The User endpoints manage user accounts, including registration, login, profile 
     ```
   - **400 Bad Request**: If the category name already exists.
 
-### Update Category
+### **9. Update Category**
 
-- **URL:** `/updateCategory`
+- **URL:** `products/updateCategory`
 - **Method:** `PUT`
 - **Description:** Updates an existing product category.
 - **Request Headers:**
@@ -921,9 +921,9 @@ The User endpoints manage user accounts, including registration, login, profile 
   - **400 Bad Request**: If the request body is invalid.
   - **404 Not Found**: If the category is not found.
 
-### Get All Colors
+### **10. Get All Colors**
 
-- **URL:** `/getAllColors`
+- **URL:** `products/getAllColors`
 - **Method:** `GET`
 - **Description:** Retrieves a list of all product colors.
 - **Request Headers:**
@@ -942,9 +942,9 @@ The User endpoints manage user accounts, including registration, login, profile 
     ]
     ```
 
-### Create Color
+### **11. Create Color**
 
-- **URL:** `/createColor`
+- **URL:** `products/createColor`
 - **Method:** `POST`
 - **Description:** Creates a new product color.
 - **Request Headers:**
@@ -970,9 +970,9 @@ The User endpoints manage user accounts, including registration, login, profile 
     ```
   - **400 Bad Request**: If the color name already exists.
 
-### Update Color
+### **12. Update Color**
 
-- **URL:** `/updateColor`
+- **URL:** `products/updateColor`
 - **Method:** `PUT`
 - **Description:** Updates an existing product color.
 - **Request Headers:**
@@ -1000,9 +1000,9 @@ The User endpoints manage user accounts, including registration, login, profile 
   - **400 Bad Request**: If the request body is invalid.
   - **404 Not Found**: If the color is not found.
 
-### Get All Sizes
+### **13. Get All Sizes**
 
-- **URL:** `/getAllSizes`
+- **URL:** `products/getAllSizes`
 - **Method:** `GET`
 - **Description:** Retrieves a list of all product sizes.
 - **Request Headers:**
@@ -1018,9 +1018,9 @@ The User endpoints manage user accounts, including registration, login, profile 
     ]
     ```
 
-### Create Size
+### **14. Create Size**
 
-- **URL:** `/createSize`
+- **URL:** `products/createSize`
 - **Method:** `POST`
 - **Description:** Creates a new product size.
 - **Request Headers:**
@@ -1044,9 +1044,9 @@ The User endpoints manage user accounts, including registration, login, profile 
     ```
   - **400 Bad Request**: If the size name already exists.
 
-### Update Size
+### **15. Update Size**
 
-- **URL:** `/updateSize`
+- **URL:** `products/updateSize`
 - **Method:** `PUT`
 - **Description:** Updates an existing product size.
 - **Request Headers:**
@@ -1072,9 +1072,9 @@ The User endpoints manage user accounts, including registration, login, profile 
   - **400 Bad Request**: If the request body is invalid.
   - **404 Not Found**: If the size is not found.
 
-### Get All Genders
+### **16. Get All Genders**
 
-- **URL:** `/getAllGenders`
+- **URL:** `products/getAllGenders`
 - **Method:** `GET`
 - **Description:** Retrieves a list of all product genders.
 - **Request Headers:**
@@ -1090,9 +1090,9 @@ The User endpoints manage user accounts, including registration, login, profile 
     ]
     ```
 
-### Create Gender
+### **17. Create Gender**
 
-- **URL:** `/createGender`
+- **URL:** `products/createGender`
 - **Method:** `POST`
 - **Description:** Creates a new product gender.
 - **Request Headers:**
@@ -1116,9 +1116,9 @@ The User endpoints manage user accounts, including registration, login, profile 
     ```
   - **400 Bad Request**: If the gender name already exists.
 
-### Update Gender
+### **18 .Update Gender**
 
-- **URL:** `/updateGender`
+- **URL:** `products/updateGender`
 - **Method:** `PUT`
 - **Description:** Updates an existing product gender.
 - **Request Headers:**
@@ -1146,9 +1146,9 @@ The User endpoints manage user accounts, including registration, login, profile 
 
   ### Orders Endpoints
 
-  ### Create Order
+  ### **1. Create Order**
 
-- **URL:** `/createOrder`
+- **URL:** `orders/createOrder`
 - **Method:** `POST`
 - **Description:** Creates a new order with specified items and details.
 - **Request Headers:**
@@ -1204,9 +1204,9 @@ The User endpoints manage user accounts, including registration, login, profile 
     - Creates the new order and stores it in the database.
   - **Output**: Returns a success message and details of the created order.
 
-### Get User Orders
+### **2. Get User Orders**
 
-- **Endpoint**: `/getUserOrders/`
+- **Endpoint**: `orders/getUserOrders/`
 - **Method**: `GET`
 - **Description**: Retrieves a specific order by its ID or all orders for a specific user. If `orderId` is provided, retrieves that specific order. If `orderId` is not provided, retrieves all orders for the specified `userId`.
 
@@ -1305,9 +1305,9 @@ The User endpoints manage user accounts, including registration, login, profile 
     - If `orderId` is not provided, retrieves all orders for the specified `userId`.
   - **Output**: Returns order details or a list of orders with associated items.
 
-### Get All Orders
+### **3. Get All Orders**
 
-- **Endpoint**: `/getAllOrders`
+- **Endpoint**: `orders/getAllOrders`
 - **Method**: `GET`
 - **Description**: Retrieves all orders for the authenticated user. If `userId` is provided, retrieves orders for that specific user; otherwise, retrieves all orders from the database.
 
@@ -1372,9 +1372,9 @@ The User endpoints manage user accounts, including registration, login, profile 
     - Aggregates order details and items from the database.
   - **Output**: Returns a list of orders with their associated items.
 
-#### Get All Statuses
+#### **4. Get All Statuses**
 
-- **URL:** `/getAllStatus`
+- **URL:** `orders/getAllStatus`
 - **Method:** `GET`
 - **Description:** Retrieves all possible statuses for orders.
 - **Response:**
@@ -1389,9 +1389,9 @@ The User endpoints manage user accounts, including registration, login, profile 
     ]
     ```
 
-### Update Order
+### **5. Update Order**
 
-- **URL:** `/updateOrder/:id`
+- **URL:** `orders/updateOrder/:id`
 - **Method:** `PATCH`
 - **Description:** Updates an existing order with new details.
 - **Request Headers:**
@@ -1450,9 +1450,9 @@ The User endpoints manage user accounts, including registration, login, profile 
 
 Aqui está a documentação para o endpoint de cancelamento de pedido:
 
-### Cancel Order
+### **6. Cancel Order**
 
-- **URL:** `/cancelOrder/:id`
+- **URL:** `orders/cancelOrder/:id`
 - **Method:** `DELETE`
 - **Description:** Cancels an existing order if its status is `1` (Pending). Orders with other statuses cannot be canceled.
 - **Request Headers:**
@@ -1482,9 +1482,9 @@ Aqui está a documentação para o endpoint de cancelamento de pedido:
 
 ### Wish List Endpoints
 
-### Create Wishlist
+### **1. Create Wishlist**
 
-- **URL:** `/createWishList`
+- **URL:** `wishlist/createWishList`
 - **Method:** `POST`
 - **Description:** Creates a new wishlist for the authenticated user.
 - **Request Headers:**
@@ -1518,9 +1518,9 @@ Aqui está a documentação para o endpoint de cancelamento de pedido:
   - **401 Unauthorized:** Invalid or missing token.
   - **404 Not Found:** Product not found or inactive.
 
-### Get Wishlist
+### **2. Get Wishlist**
 
-- **URL:** `/getWishList`
+- **URL:** `wishlist/getWishList`
 - **Method:** `GET`
 - **Description:** Retrieves the wishlist for the authenticated user.
 - **Request Headers:**
@@ -1547,9 +1547,9 @@ Aqui está a documentação para o endpoint de cancelamento de pedido:
   - **401 Unauthorized:** Invalid or missing token.
   - **404 Not Found:** Wishlist not found for the authenticated user.
 
-### Update Wishlist
+### **3. Update Wishlist**
 
-- **URL:** `/updateWishList`
+- **URL:** `wishlist/updateWishList`
 - **Method:** `PATCH`
 - **Description:** Updates the wishlist for the authenticated user.
 - **Request Headers:**
@@ -1588,9 +1588,9 @@ Aqui está a documentação para o endpoint de cancelamento de pedido:
   - **404 Not Found:** Wishlist not found for the authenticated user.
   - **404 Not Found:** Product not found or inactive.
 
-### Delete Wishlist
+### **4 Delete Wishlist**
 
-- **URL:** `/deleteWishList`
+- **URL:** `wishlist/deleteWishList`
 - **Method:** `DELETE`
 - **Description:** Deletes the wishlist for the authenticated user.
 - **Request Headers:**
@@ -1609,9 +1609,9 @@ Aqui está a documentação para o endpoint de cancelamento de pedido:
 
 ### Tickets Endpoints
 
-### Create Ticket
+### **1. Create Ticket**
 
-- **URL:** `/createTicket`
+- **URL:** `tickets/createTicket`
 - **Method:** `POST`
 - **Description:** Creates a new ticket with the specified details.
 - **Request Headers:**
@@ -1650,9 +1650,9 @@ Aqui está a documentação para o endpoint de cancelamento de pedido:
   - **400 Bad Request**: If the request body is invalid.
   - **409 Conflict**: If the ticket already exists.
 
-### Get Ticket
+### **2. Get Ticket**
 
-- **URL:** `/getTicket/:id`
+- **URL:** `tickets/getTicket/:id`
 - **Method:** `GET`
 - **Description:** Retrieves the details of a specific ticket by ID.
 - **Request Headers:**
@@ -1677,9 +1677,9 @@ Aqui está a documentação para o endpoint de cancelamento de pedido:
     ```
   - **404 Not Found**: If the ticket is not found.
 
-### Get All Tickets
+### **3. Get All Tickets**
 
-- **URL:** `/getAllTickets`
+- **URL:** `tickets/getAllTickets`
 - **Method:** `POST`
 - **Description:** Retrieves a list of tickets based on specified filters, for admin users only.
 - **Request Headers:**
@@ -1719,9 +1719,9 @@ Aqui está a documentação para o endpoint de cancelamento de pedido:
     }
     ```
 
-### Update Ticket
+### **4. Update Ticket**
 
-- **URL:** `/updateTicket`
+- **URL:** `tickets/updateTicket`
 - **Method:** `PUT`
 - **Description:** Updates an existing ticket.
 - **Request Headers:**
@@ -1759,9 +1759,9 @@ Aqui está a documentação para o endpoint de cancelamento de pedido:
   - **400 Bad Request**: If the request body is invalid or missing required fields.
   - **404 Not Found**: If the ticket is not found.
 
-### Get All Statuses
+### **5. Get All Statuses**
 
-- **URL:** `/getAllStatus`
+- **URL:** `tickets/getAllStatus`
 - **Method:** `GET`
 - **Description:** Retrieves a list of all ticket statuses.
 - **Request Headers:**
@@ -1777,9 +1777,9 @@ Aqui está a documentação para o endpoint de cancelamento de pedido:
     ]
     ```
 
-### Get All Types
+### **6. Get All Types**
 
-- **URL:** `/getAllTypes`
+- **URL:** `tickets/getAllTypes`
 - **Method:** `GET`
 - **Description:** Retrieves a list of all ticket types.
 - **Request Headers:**
@@ -1824,8 +1824,13 @@ The `ErrorHandler` class centralizes error management and sends appropriate HTTP
 {
   "errors": [
     {
-      "path": "email",
-      "message": "Invalid email address"
+      "code": "invalid_type",
+      "expected": "string",
+      "received": "undefined",
+      "path": [
+          "email"
+      ],
+      "message": "Required"
     }
   ]
 }
