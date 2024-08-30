@@ -5,7 +5,6 @@ import { HashManager } from '../../../src/services/HashManager';
 import { IdGenerator } from '../../../src/services/idGenerator';
 import { ConflictError, ForbiddenError, NotFoundError } from '../../../src/errors/Errors';
 import  ErrorHandler  from '../../../src/errors/ErrorHandler';
-import { USER_ROLES } from '../../../src/models/User';
 import { UpdateUserInputDTO } from '../../../src/dtos/users/updateUser.dto';
 
 const mockUserDatabase = {

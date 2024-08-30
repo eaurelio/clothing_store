@@ -1,7 +1,6 @@
-import { ProductImageInsert } from '../../../src/dtos/products/updateProduct.dto'; import { Request, Response } from "express";
+import { Request, Response } from "express";
 import { ProductController } from "../../../src/controller/ProductController";
 import { ProductBusiness } from "../../../src/business/ProductBusiness";
-import { CreateProductInputDTO, CreateProductSchema } from "../../../src/dtos/products/createProduct.dto";
 import { UpdateProductInputDTO } from "../../../src/dtos/products/updateProduct.dto";
 import ErrorHandler from "../../../src/errors/ErrorHandler";
 import logger from "../../../src/logs/logger";

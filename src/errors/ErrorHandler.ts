@@ -9,7 +9,6 @@ import {
 } from "./Errors";
 
 export default class ErrorHandler {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public static handleError(error: any, res: Response): void {
     console.error(error);
 

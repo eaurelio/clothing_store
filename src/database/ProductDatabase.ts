@@ -36,7 +36,6 @@ export class ProductDatabase extends BaseDatabase {
     active?: boolean
   ) {
     const conditions: string[] = [];
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const params: any[] = [];
 
     if (id) {

@@ -86,7 +86,6 @@ export class UserDatabase extends BaseDatabase {
     `;
 
     const conditions: string[] = [];
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const params: any[] = [];
 
     if (q) {
@@ -202,11 +201,6 @@ export class UserDatabase extends BaseDatabase {
     const updates = Object.entries(updatedUserDB)
       .map(([key]) => `${key} = ?`)
       .join(", ");
-
-    console.log(
-      updatedUserDB,
-      "----------------------------------------------"
-    );
 
     const query = `
       UPDATE ${UserDatabase.TABLE_USERS}

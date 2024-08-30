@@ -2,9 +2,7 @@ import { Request, Response } from "express";
 import { OrderController } from "../../../src/controller/OrderController";
 import { OrderBusiness } from "../../../src/business/OrderBusiness";
 import { CreateOrderInputDTO } from "../../../src/dtos/orders/createOrder.dto";
-import { GetOrdersInputDTO } from "../../../src/dtos/orders/getOrder.dto";
 import { UpdateOrderInputDTO } from "../../../src/dtos/orders/updateOrder.dto";
-import { NotFoundError } from "../../../src/errors/Errors";
 import ErrorHandler from "../../../src/errors/ErrorHandler";
 import logger from "../../../src/logs/logger";
 
