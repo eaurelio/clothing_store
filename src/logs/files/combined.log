@@ -269,3 +269,14 @@
 {"code":"ENOTFOUND","errno":-3008,"hostname":"clothing_store","level":"error","syscall":"getaddrinfo","timestamp":"2024-08-29T23:31:08.192Z"}
 {"code":"ENOTFOUND","errno":-3008,"hostname":"clothing_store","level":"error","syscall":"getaddrinfo","timestamp":"2024-08-30T01:15:50.368Z"}
 {"code":"42P01","file":"parse_relation.c","length":109,"level":"error","line":"1449","name":"error","position":"28","routine":"parserOpenTable","severity":"ERROR","timestamp":"2024-08-30T03:01:33.985Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-30T14:40:07.213Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-30T14:40:14.423Z"}
+{"issues":[{"code":"invalid_type","expected":"array","message":"Required","path":["phones"],"received":"undefined"}],"level":"error","name":"ZodError","timestamp":"2024-08-30T14:45:43.087Z"}
+{"level":"error","statusCode":409,"timestamp":"2024-08-30T14:46:25.343Z"}
+{"level":"error","statusCode":409,"timestamp":"2024-08-30T15:02:15.449Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-30T15:03:19.408Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-30T15:07:02.081Z"}
+{"level":"error","statusCode":404,"timestamp":"2024-08-30T15:29:48.117Z"}
+{"issues":[{"code":"invalid_type","expected":"string","message":"Required","path":["ticketId"],"received":"undefined"}],"level":"error","name":"ZodError","timestamp":"2024-08-30T15:34:19.962Z"}
+{"issues":[{"code":"invalid_type","expected":"string","message":"Required","path":["ticketId"],"received":"undefined"}],"level":"error","name":"ZodError","timestamp":"2024-08-30T15:34:55.155Z"}
+{"level":"error","statusCode":400,"timestamp":"2024-08-30T16:14:27.398Z"}

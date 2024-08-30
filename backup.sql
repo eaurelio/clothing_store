@@ -1,167 +1,9 @@
 --
--- PostgreSQL database cluster dump
---
-
-SET default_transaction_read_only = off;
-
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-
---
--- Drop databases (except postgres and template1)
---
-
-DROP DATABASE clothing_db;
-
-
-
-
---
--- Drop roles
---
-
-DROP ROLE postgres;
-
-
---
--- Roles
---
-
-CREATE ROLE postgres;
-ALTER ROLE postgres WITH SUPERUSER INHERIT CREATEROLE CREATEDB LOGIN REPLICATION BYPASSRLS PASSWORD 'SCRAM-SHA-256$4096:Ux78s9fGy85uh18fMTJ1+w==$+KU/lRPELrGyNPeqOZne3BpPx2WJF9MqUkDtX231A9M=:j2+tXr2BKnbWida15NLPo3d1BnxRZJzg8fhK1QB5nwc=';
-
---
--- User Configurations
---
-
-
-
-
-
-
-
-
---
--- Databases
---
-
---
--- Database "template1" dump
---
-
---
 -- PostgreSQL database dump
 --
 
 -- Dumped from database version 16.4 (Debian 16.4-1.pgdg120+1)
 -- Dumped by pg_dump version 16.4 (Debian 16.4-1.pgdg120+1)
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
-UPDATE pg_catalog.pg_database SET datistemplate = false WHERE datname = 'template1';
-DROP DATABASE template1;
---
--- Name: template1; Type: DATABASE; Schema: -; Owner: postgres
---
-
-CREATE DATABASE template1 WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'en_US.utf8';
-
-
-ALTER DATABASE template1 OWNER TO postgres;
-
-\connect template1
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
---
--- Name: DATABASE template1; Type: COMMENT; Schema: -; Owner: postgres
---
-
-COMMENT ON DATABASE template1 IS 'default template for new databases';
-
-
---
--- Name: template1; Type: DATABASE PROPERTIES; Schema: -; Owner: postgres
---
-
-ALTER DATABASE template1 IS_TEMPLATE = true;
-
-
-\connect template1
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
---
--- Name: DATABASE template1; Type: ACL; Schema: -; Owner: postgres
---
-
-REVOKE CONNECT,TEMPORARY ON DATABASE template1 FROM PUBLIC;
-GRANT CONNECT ON DATABASE template1 TO PUBLIC;
-
-
---
--- PostgreSQL database dump complete
---
-
---
--- Database "clothing_db" dump
---
-
---
--- PostgreSQL database dump
---
-
--- Dumped from database version 16.4 (Debian 16.4-1.pgdg120+1)
--- Dumped by pg_dump version 16.4 (Debian 16.4-1.pgdg120+1)
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
---
--- Name: clothing_db; Type: DATABASE; Schema: -; Owner: postgres
---
-
-CREATE DATABASE clothing_db WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'en_US.utf8';
-
-
-ALTER DATABASE clothing_db OWNER TO postgres;
-
-\connect clothing_db
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -1067,6 +909,9 @@ b0c8d147-c83a-488c-839e-483589d42b61	c8db9d25-5a61-4f79-9b54-4544e7f46982	870d3b
 f9d0faef-652f-4f2a-9a62-1cb696754b24	22bc3950-38d8-41c2-9444-16cdd6741474	e85745de-032c-43e8-90dd-79c9d6489fb1	1	99.99
 b442fcc2-e836-4ecf-b5a6-1fa16a5cbf25	22bc3950-38d8-41c2-9444-16cdd6741474	e7f9cab3-a7a0-400b-adcc-489f6e1faa6c	1	49.99
 64c9d213-8e64-4583-b7c8-cd7c8777cc43	22bc3950-38d8-41c2-9444-16cdd6741474	870d3b1b-a6d3-4255-893c-af31839c0ca7	1	119.99
+661f9680-0a26-4308-8eba-e6d7a7e8c740	41fe0548-c7bd-402a-8000-b26ad49f5097	f4580b7c-9b9d-463d-b5d2-4dbc5ab11acb	1	199.99
+9d6718b3-7320-4e2a-87db-16a6238202e5	41fe0548-c7bd-402a-8000-b26ad49f5097	e7f9cab3-a7a0-400b-adcc-489f6e1faa6c	1	49.99
+2e35ee76-1f08-44e4-a458-ce81080e34f1	41fe0548-c7bd-402a-8000-b26ad49f5097	fa820373-7028-4c31-93e2-40751265ed1d	1	59.99
 \.
 
 
@@ -1091,6 +936,7 @@ COPY public.orders (order_id, user_id, order_date, status_id, total, tracking_co
 2dd5701a-3b98-41b7-b9a0-bb09c03feb03	e82fbc9a-fe2b-4378-a4cf-2bc719b6ae04	2024-08-29 20:11:31.182	1	349.97	\N
 c8db9d25-5a61-4f79-9b54-4544e7f46982	d1c5b5e7-ab95-4f48-b8de-c89de4eea640	2024-08-29 20:23:03.634	1	349.97	\N
 22bc3950-38d8-41c2-9444-16cdd6741474	d1c5b5e7-ab95-4f48-b8de-c89de4eea640	2024-08-29 20:24:35.397	1	349.97	\N
+41fe0548-c7bd-402a-8000-b26ad49f5097	c718a810-645b-4b9c-80c0-8c4d8a3bab43	2024-08-30 15:28:41.064	3	309.97	6546548795
 \.
 
 
@@ -1122,6 +968,10 @@ fa969f76-4d3b-4773-a5ca-ecbddcb27e84	1aa7b223-8843-4efc-9007-c0eb5763f7ff	+1-416
 87fd21a8-381b-497c-9567-709c27cb813e	8fceaae0-b3c7-4ce7-9318-20037194c05b	+86-10-2345-6789	Home
 a7c69602-91d1-49a2-9f16-f4e1b126d9b4	8fd08ce9-22de-4f21-8042-889da3820866	+48-22-123-4567	Mobile
 68f0f901-a284-44e3-a6d7-682ff9dffe9f	8fd08ce9-22de-4f21-8042-889da3820866	+48-22-234-5678	Home
+25227fbd-f54d-40de-b98c-714d1f212027	0d67e534-1f69-43d1-95ad-411dda800b43	+254-700-123-456	Mobile
+3c620700-60ca-4ea9-89a5-714fa551ab22	0d67e534-1f69-43d1-95ad-411dda800b43	+254-700-654-321	Home
+84e55f9a-b46b-4e0a-8c03-d25acb4111ba	18adc5cc-25c1-44d9-9799-bc46b97a9474	+1-408-555-1234	Mobile
+0de653ae-b9f1-450b-a85c-fa3371f5fe8f	c718a810-645b-4b9c-80c0-8c4d8a3bab43	+1-408-555-1234	Mobile
 \.
 
 
@@ -1134,6 +984,10 @@ COPY public.phones_audit (id, phone_id, user_id, number, type, operation_type, c
 6	87fd21a8-381b-497c-9567-709c27cb813e	8fceaae0-b3c7-4ce7-9318-20037194c05b	+86-10-2345-6789	Home	INSERT	2024-08-28 21:21:13.696388	\N
 7	a7c69602-91d1-49a2-9f16-f4e1b126d9b4	8fd08ce9-22de-4f21-8042-889da3820866	+48-22-123-4567	Mobile	INSERT	2024-08-29 17:47:20.435443	\N
 8	68f0f901-a284-44e3-a6d7-682ff9dffe9f	8fd08ce9-22de-4f21-8042-889da3820866	+48-22-234-5678	Home	INSERT	2024-08-29 17:47:20.454854	\N
+11	25227fbd-f54d-40de-b98c-714d1f212027	0d67e534-1f69-43d1-95ad-411dda800b43	+254-700-123-456	Mobile	INSERT	2024-08-30 14:49:52.087236	\N
+12	3c620700-60ca-4ea9-89a5-714fa551ab22	0d67e534-1f69-43d1-95ad-411dda800b43	+254-700-654-321	Home	INSERT	2024-08-30 14:49:52.093465	\N
+17	84e55f9a-b46b-4e0a-8c03-d25acb4111ba	18adc5cc-25c1-44d9-9799-bc46b97a9474	+1-408-555-1234	Mobile	INSERT	2024-08-30 15:03:38.468301	\N
+22	0de653ae-b9f1-450b-a85c-fa3371f5fe8f	c718a810-645b-4b9c-80c0-8c4d8a3bab43	+1-408-555-1234	Mobile	INSERT	2024-08-30 15:08:14.285269	\N
 \.
 
 
@@ -1152,6 +1006,9 @@ cb738840-c031-4e69-9e5a-9a54d8cb28c9	9f68db76-e2ea-4fcd-bb0b-514c93d517e3	https:
 6a28af97-76be-4283-b834-dc567f5b254c	fa820373-7028-4c31-93e2-40751265ed1d	https://example.com/images/dress_front.jpg	Front view of the elegant Winter dress
 9f4f1225-d6e4-4d5d-80e9-7b5cefc86bda	fa820373-7028-4c31-93e2-40751265ed1d	https://example.com/images/dress_back.jpg	Back view of the elegant Winter dress
 6932e494-e895-4617-93e6-9a14c90104ac	e85745de-032c-43e8-90dd-79c9d6489fb1	https://example.com/images/dress_backs12.jpg	Back view of the elegant Winter dress
+7ed25c6a-afd4-4262-b9bc-3fc8a25761f1	f4580b7c-9b9d-463d-b5d2-4dbc5ab11acb	https://example.com/images/jacket_front.jpg	Front view of the Cosmic Explorer Jacket
+a6e721ac-d430-4420-a7cc-19bacada5216	f4580b7c-9b9d-463d-b5d2-4dbc5ab11acb	https://example.com/images/jacket_back.jpg	Back view of the Cosmic Explorer Jacket
+bb21435e-88c1-4cc9-bd89-6ceebe40bf08	f4580b7c-9b9d-463d-b5d2-4dbc5ab11acb	https://example.com/images/jacket_detail.jpg	Detail view showing LED lights and temperature control
 \.
 
 
@@ -1195,6 +1052,7 @@ fd30b6b9-4531-465a-95b8-cf51a5e90c67	Elegant Winter Dress	A lightweight dress pe
 4eee4b11-a04f-419e-af7e-a3b7478328c0	Elegant Winter Dress3	A lightweight dress perfect for warm Winter days.	59.99	50	2024-08-28 21:01:46.854	3	1	2	1	t
 fa820373-7028-4c31-93e2-40751265ed1d	Elegant Winter Dress4	A lightweight dress perfect for warm Winter days.	59.99	50	2024-08-29 19:48:03.917	3	1	2	1	t
 80fb1fd0-8eb0-48c5-b893-973b991e331b	Stylish Casual Jacket	A versatile jacket perfect for casual outings and cool weather.	89.99	30	2024-08-21 20:14:21.423	2	3	4	2	f
+f4580b7c-9b9d-463d-b5d2-4dbc5ab11acb	Cosmic Explorer Jacket	A high-tech jacket designed for space enthusiasts. Features built-in LED lights and temperature control	199.99	25	2024-08-30 15:23:48.268	7	4	3	2	t
 \.
 
 
@@ -1227,6 +1085,8 @@ COPY public.products_audit (id, product_id, name, description, price, stock, cre
 27	80fb1fd0-8eb0-48c5-b893-973b991e331b	Stylish Casual Jacket	A versatile jacket perfect for casual outings and cool weather.	89.99	30	2024-08-21 20:14:21.423	2	3	4	2	f	UPDATE	2024-08-29 01:03:47.856827	\N
 28	fa820373-7028-4c31-93e2-40751265ed1d	Elegant Winter Dress4	A lightweight dress perfect for warm Winter days.	59.99	50	2024-08-29 19:48:03.917	3	1	2	1	t	INSERT	2024-08-29 19:48:03.920192	\N
 29	80fb1fd0-8eb0-48c5-b893-973b991e331b	Stylish Casual Jacket	A versatile jacket perfect for casual outings and cool weather.	89.99	30	2024-08-21 20:14:21.423	2	3	4	2	f	UPDATE	2024-08-29 21:57:15.357583	\N
+30	f4580b7c-9b9d-463d-b5d2-4dbc5ab11acb	Cosmic Explorer Jacket	A high-tech jacket designed for space enthusiasts. Features built-in LED lights and temperature control.	199.99	25	2024-08-30 15:23:48.268	7	4	3	2	t	INSERT	2024-08-30 15:23:48.269906	\N
+31	f4580b7c-9b9d-463d-b5d2-4dbc5ab11acb	Cosmic Explorer Jacket	A high-tech jacket designed for space enthusiasts. Features built-in LED lights and temperature control	199.99	25	2024-08-30 15:23:48.268	7	4	3	2	t	UPDATE	2024-08-30 15:24:32.296007	\N
 \.
 
 
@@ -1275,9 +1135,9 @@ COPY public.ticket_types (id, type_name) FROM stdin;
 --
 
 COPY public.tickets (id, user_id, type_id, user_name, user_email, user_phone_number, description, solution, analist_name, analist_email, status_id, created_at, updated_at) FROM stdin;
-7b273510-6651-4a6a-a5d6-0fa63a72e0b4	d1c5b5e7-ab95-4f48-b8de-c89de4eea640	1	Clhoe Smiwh	chloe.smith@example.ca	+1-416-123-4567	I can't access my account	\N	\N	\N	1	2024-08-23 16:09:10.207654	2024-08-23 16:09:10.207654
 6da44bb3-e881-489e-8b25-e70cee9049d9	d1c5b5e7-ab95-4f48-b8de-c89de4eea640	2	Clhoe Smiwh	chloe.smith@example.ca	+1-416-123-4567	I can't access my account	The issue has been resolved by updating the configuration.	Edson	edson.exe@outlook.com	3	2024-08-23 14:35:19.965958	2024-08-23 16:23:43.122607
 9e9dfe7d-e952-4c03-bf6f-2b84765ecc2e	d1c5b5e7-ab95-4f48-b8de-c89de4eea640	1	Clhoe Smiwh	chloe.smith@example.ca	+1-416-123-4567	I can't access my account	\N	\N	\N	1	2024-08-28 21:12:53.959771	2024-08-28 21:12:53.959771
+7b273510-6651-4a6a-a5d6-0fa63a72e0b4	d1c5b5e7-ab95-4f48-b8de-c89de4eea640	2	Clhoe Smiwh	chloe.smith@example.ca	+1-416-123-4567	I can't access my account	The issue has been resolved by updating the configuration.	Edson	edson.exe@outlook.com	3	2024-08-23 16:09:10.207654	2024-08-30 15:36:16.126995
 \.
 
 
@@ -1301,6 +1161,9 @@ b212fcc1-c5ee-4764-b1a0-ffa349daed18	9923456780	PERSONAL	Carlos Fernández	1	car
 8fd08ce9-22de-4f21-8042-889da3820866	45032219845	PERSONAL	Jakub Kowalski	1	jakub.kowalski@example.pl	$2a$12$JvpNGAQRjSHHgQa9vyVPdeRK7BHKGvjQU7.gI9vWNOgQrfDHFaQDa	CLIENT	2024-08-29 17:47:20.307	1990-07-22	123 Ulica Warszawska	15	Śródmieście	Warsaw	Poland	t	\N
 8fceaae0-b3c7-4ce7-9318-20037194c05b	31010119890	PERSONAL	Li Wei	1	li.wei@example.cn	$2a$12$AIRIjxx2f2xvIzchTfWxrOUgjQ0EttXuPqs0Q.0a5slZjIyr9F0Ae	CLIENT	2024-08-28 21:21:13.476	1990-07-22	123 Beijing Road	15	Chaoyang	Beijing	China	t	2024-08-29 17:52:38.488
 d1c5b5e7-ab95-4f48-b8de-c89de4eea640	1317599578	BUSINESS	Edson Aurélio de Oliveira Araujo	1	edson.exe@outlook.com	$2a$12$46e2TnFH3KLWwo6Ebk/FU.0dUxZ8KYlZiq3FUb.m9zOli5Z.bojeu	ADMIN	2024-08-21 20:13:02.653	2000-01-01	123 Tech Street	500	Tech Hub	San Francisco	USA	t	2024-08-29 00:56:51.909
+0d67e534-1f69-43d1-95ad-411dda800b43	67032219845	PERSONAL	Mary Wanjiku	2	mary.wanjiku@example.ke	$2a$12$SPK.bv9L1ASem.bSQLOCTu2sRu3UJscBGueyCOCvzgtvx62iauXZq	CLIENT	2024-08-30 14:49:52.077	1988-05-14	123 Nairobi Road	45	Kilimani	Nairobi	Kenya	t	\N
+18adc5cc-25c1-44d9-9799-bc46b97a9474	25414789896	PERSONAL	Solvd Client	1	client@solvd.com	$2a$12$ZHJtWpF56iinRWYD5.7lkutor3z0QVf8qdQ5JRG.TssYkSLoXF2Iq	CLIENT	2024-08-30 15:03:38.414	1990-07-22	1646 N. California Blvd., Suite 515	10	Walnut Creek	Walnut Creek	USA	t	2024-08-30 16:14:13.336
+c718a810-645b-4b9c-80c0-8c4d8a3bab43	25414789897	PERSONAL	Solvd Admin	1	admin@solvd.com	$2a$12$NcfFsV9iS85MnKIrrhPQ7.IsMKZsD.8fNb2HW7Ff/PAe6lGs/gK8G	ADMIN	2024-08-30 15:08:14.213	1990-07-22	1646 N. California Blvd., Suite 515	10	Walnut Creek	Walnut Creek	USA	t	2024-08-30 16:14:54.339
 \.
 
 
@@ -1338,6 +1201,21 @@ COPY public.users_audit (id, user_id, personal_id, entity_type, name, gender, em
 32	d1c5b5e7-ab95-4f48-b8de-c89de4eea640	1317599578	BUSINESS	Edson Aurélio de Oliveira Araujo	2	edson.exe@outlook.com	$2a$12$46e2TnFH3KLWwo6Ebk/FU.0dUxZ8KYlZiq3FUb.m9zOli5Z.bojeu	ADMIN	2024-08-21 20:13:02.653	2000-01-01	123 Tech Street	500	Tech Hub	San Francisco	USA	t	2024-08-29 00:56:51.909	UPDATE	2024-08-29 18:52:07.938727	\N
 33	d1c5b5e7-ab95-4f48-b8de-c89de4eea640	1317599578	BUSINESS	Edson Aurélio de Oliveira Araujo	1	edson.exe@outlook.com	$2a$12$46e2TnFH3KLWwo6Ebk/FU.0dUxZ8KYlZiq3FUb.m9zOli5Z.bojeu	ADMIN	2024-08-21 20:13:02.653	2000-01-01	123 Tech Street	500	Tech Hub	San Francisco	USA	t	2024-08-29 00:56:51.909	UPDATE	2024-08-29 18:52:12.866424	\N
 34	d1c5b5e7-ab95-4f48-b8de-c89de4eea640	1317599578	BUSINESS	Edson Aurélio de Oliveira Araujo	2	edson.exe@outlook.com	$2a$12$46e2TnFH3KLWwo6Ebk/FU.0dUxZ8KYlZiq3FUb.m9zOli5Z.bojeu	ADMIN	2024-08-21 20:13:02.653	2000-01-01	123 Tech Street	500	Tech Hub	San Francisco	USA	t	2024-08-29 00:56:51.909	UPDATE	2024-08-29 18:52:40.366631	\N
+35	d428ce02-2e89-46d7-af2a-4b71d130d999	25414789896	PERSONAL	Solvd Client	1	client@solvd.com	$2a$12$spAPxtaVtTIU9z2X3F152ORaVeMVjO100RJeE/fKkO9WkzPt.M/9m	CLIENT	2024-08-30 14:47:26.177	1990-07-22	1646 N. California Blvd., Suite 515	10	Walnut Creek	Walnut Creek	USA	t	\N	INSERT	2024-08-30 14:47:26.178204	\N
+36	fa93e315-4b06-476e-9de1-1dde116cc634	25414789897	PERSONAL	Solvd Admin	1	admin@solvd.com	$2a$12$CXNMXOyp/LbsJQ5lJtOBZO2qYrt6gS283luvGF8Gknv7OT3mCs4bq	CLIENT	2024-08-30 14:48:08.387	1990-07-22	1646 N. California Blvd., Suite 515	10	Walnut Creek	Walnut Creek	USA	t	\N	INSERT	2024-08-30 14:48:08.388562	\N
+37	0d67e534-1f69-43d1-95ad-411dda800b43	67032219845	PERSONAL	Mary Wanjiku	2	mary.wanjiku@example.ke	$2a$12$SPK.bv9L1ASem.bSQLOCTu2sRu3UJscBGueyCOCvzgtvx62iauXZq	CLIENT	2024-08-30 14:49:52.077	1988-05-14	123 Nairobi Road	45	Kilimani	Nairobi	Kenya	t	\N	INSERT	2024-08-30 14:49:52.07781	\N
+38	fa93e315-4b06-476e-9de1-1dde116cc634	25414789897	PERSONAL	Solvd Admin	1	admin@solvd.com	$2a$12$CXNMXOyp/LbsJQ5lJtOBZO2qYrt6gS283luvGF8Gknv7OT3mCs4bq	CLIENT	2024-08-30 14:48:08.387	1990-07-22	1646 N. California Blvd., Suite 515	10	Walnut Creek	Walnut Creek	USA	t	\N	DELETE	2024-08-30 14:55:14.162061	\N
+39	e454ec11-9bbb-4103-8149-9ee63939db43	25414789897	PERSONAL	Solvd Admin	1	admin@solvd.com	$2a$12$cSNUY5XYPFOkHJ0lnnMYCuMpotddp1KpGfORyV6mh51o4tyDl1sxi	CLIENT	2024-08-30 14:56:12.251	1990-07-22	1646 N. California Blvd., Suite 515	10	Walnut Creek	Walnut Creek	USA	t	\N	INSERT	2024-08-30 14:56:12.254898	\N
+40	d428ce02-2e89-46d7-af2a-4b71d130d999	25414789896	PERSONAL	Solvd Client	1	client@solvd.com	$2a$12$spAPxtaVtTIU9z2X3F152ORaVeMVjO100RJeE/fKkO9WkzPt.M/9m	CLIENT	2024-08-30 14:47:26.177	1990-07-22	1646 N. California Blvd., Suite 515	10	Walnut Creek	Walnut Creek	USA	t	\N	DELETE	2024-08-30 14:58:22.255835	\N
+41	e454ec11-9bbb-4103-8149-9ee63939db43	25414789897	PERSONAL	Solvd Admin	1	admin@solvd.com	$2a$12$cSNUY5XYPFOkHJ0lnnMYCuMpotddp1KpGfORyV6mh51o4tyDl1sxi	CLIENT	2024-08-30 14:56:12.251	1990-07-22	1646 N. California Blvd., Suite 515	10	Walnut Creek	Walnut Creek	USA	t	\N	DELETE	2024-08-30 15:03:15.638137	\N
+42	18adc5cc-25c1-44d9-9799-bc46b97a9474	25414789896	PERSONAL	Solvd Client	1	client@solvd.com	$2a$12$ZHJtWpF56iinRWYD5.7lkutor3z0QVf8qdQ5JRG.TssYkSLoXF2Iq	CLIENT	2024-08-30 15:03:38.414	1990-07-22	1646 N. California Blvd., Suite 515	10	Walnut Creek	Walnut Creek	USA	t	\N	INSERT	2024-08-30 15:03:38.414571	\N
+43	f3921e6e-ac05-4cb1-99d6-cf2d29e33ea9	25414789897	PERSONAL	Solvd Admin	1	admin@solvd.com	$2a$12$8w0ncWF/7d6VxHfR/j5dB.aKepaXkkhaYK61Gt3F/Kn4ftmRALAVW	CLIENT	2024-08-30 15:03:53.812	1990-07-22	1646 N. California Blvd., Suite 515	10	Walnut Creek	Walnut Creek	USA	t	\N	INSERT	2024-08-30 15:03:53.813147	\N
+44	f3921e6e-ac05-4cb1-99d6-cf2d29e33ea9	25414789897	PERSONAL	Solvd Admin	1	admin@solvd.com	$2a$12$8w0ncWF/7d6VxHfR/j5dB.aKepaXkkhaYK61Gt3F/Kn4ftmRALAVW	CLIENT	2024-08-30 15:03:53.812	1990-07-22	1646 N. California Blvd., Suite 515	10	Walnut Creek	Walnut Creek	USA	t	\N	DELETE	2024-08-30 15:05:07.159482	\N
+45	8ecb3d02-3dd4-4f12-a771-fadf6b5ca987	25414789897	PERSONAL	Solvd Admin	1	admin@solvd.com	$2a$12$tICo7FijyyIKXWvpfBHIKuWS6wb5vbaZKqbZamzeDQG/JOTQZ.55O	CLIENT	2024-08-30 15:07:13.854	1990-07-22	1646 N. California Blvd., Suite 515	10	Walnut Creek	Walnut Creek	USA	t	\N	INSERT	2024-08-30 15:07:13.858976	\N
+46	8ecb3d02-3dd4-4f12-a771-fadf6b5ca987	25414789897	PERSONAL	Solvd Admin	1	admin@solvd.com	$2a$12$tICo7FijyyIKXWvpfBHIKuWS6wb5vbaZKqbZamzeDQG/JOTQZ.55O	CLIENT	2024-08-30 15:07:13.854	1990-07-22	1646 N. California Blvd., Suite 515	10	Walnut Creek	Walnut Creek	USA	t	\N	DELETE	2024-08-30 15:08:07.200072	\N
+47	c718a810-645b-4b9c-80c0-8c4d8a3bab43	25414789897	PERSONAL	Solvd Admin	1	admin@solvd.com	$2a$12$NcfFsV9iS85MnKIrrhPQ7.IsMKZsD.8fNb2HW7Ff/PAe6lGs/gK8G	ADMIN	2024-08-30 15:08:14.213	1990-07-22	1646 N. California Blvd., Suite 515	10	Walnut Creek	Walnut Creek	USA	t	\N	INSERT	2024-08-30 15:08:14.215295	\N
+48	18adc5cc-25c1-44d9-9799-bc46b97a9474	25414789896	PERSONAL	Solvd Client	1	client@solvd.com	$2a$12$ZHJtWpF56iinRWYD5.7lkutor3z0QVf8qdQ5JRG.TssYkSLoXF2Iq	CLIENT	2024-08-30 15:03:38.414	1990-07-22	1646 N. California Blvd., Suite 515	10	Walnut Creek	Walnut Creek	USA	t	\N	UPDATE	2024-08-30 16:14:13.337563	\N
+49	c718a810-645b-4b9c-80c0-8c4d8a3bab43	25414789897	PERSONAL	Solvd Admin	1	admin@solvd.com	$2a$12$NcfFsV9iS85MnKIrrhPQ7.IsMKZsD.8fNb2HW7Ff/PAe6lGs/gK8G	ADMIN	2024-08-30 15:08:14.213	1990-07-22	1646 N. California Blvd., Suite 515	10	Walnut Creek	Walnut Creek	USA	t	\N	UPDATE	2024-08-30 16:14:54.340298	\N
 \.
 
 
@@ -1347,9 +1225,6 @@ COPY public.users_audit (id, user_id, personal_id, entity_type, name, gender, em
 
 COPY public.wishlist_items (wishlist_id, product_id) FROM stdin;
 56726c78-9276-466a-b90e-f982f600385d	63e10790-91aa-4189-9162-bd63682b560f
-56726c78-9276-466a-b90e-f982f600385d	dcc69f2e-8107-48c8-9e51-e17c8a351719
-56726c78-9276-466a-b90e-f982f600385d	dadfd34b-7761-42ff-b407-cd49b2f3f78f
-56726c78-9276-466a-b90e-f982f600385d	d4dcd5f2-9e4c-496c-8bb4-50592dced40d
 \.
 
 
@@ -1394,14 +1269,14 @@ SELECT pg_catalog.setval('public.order_status_status_id_seq', 5, true);
 -- Name: phones_audit_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.phones_audit_id_seq', 8, true);
+SELECT pg_catalog.setval('public.phones_audit_id_seq', 22, true);
 
 
 --
 -- Name: products_audit_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.products_audit_id_seq', 29, true);
+SELECT pg_catalog.setval('public.products_audit_id_seq', 31, true);
 
 
 --
@@ -1429,7 +1304,7 @@ SELECT pg_catalog.setval('public.ticket_types_id_seq', 6, true);
 -- Name: users_audit_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.users_audit_id_seq', 34, true);
+SELECT pg_catalog.setval('public.users_audit_id_seq', 49, true);
 
 
 --
@@ -1841,65 +1716,5 @@ ALTER TABLE ONLY public.wishlists
 
 --
 -- PostgreSQL database dump complete
---
-
---
--- Database "postgres" dump
---
-
---
--- PostgreSQL database dump
---
-
--- Dumped from database version 16.4 (Debian 16.4-1.pgdg120+1)
--- Dumped by pg_dump version 16.4 (Debian 16.4-1.pgdg120+1)
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
-DROP DATABASE postgres;
---
--- Name: postgres; Type: DATABASE; Schema: -; Owner: postgres
---
-
-CREATE DATABASE postgres WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE_PROVIDER = libc LOCALE = 'en_US.utf8';
-
-
-ALTER DATABASE postgres OWNER TO postgres;
-
-\connect postgres
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
-
---
--- Name: DATABASE postgres; Type: COMMENT; Schema: -; Owner: postgres
---
-
-COMMENT ON DATABASE postgres IS 'default administrative connection database';
-
-
---
--- PostgreSQL database dump complete
---
-
---
--- PostgreSQL database cluster dump complete
 --
 
