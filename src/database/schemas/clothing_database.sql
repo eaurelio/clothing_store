@@ -65,7 +65,10 @@ CREATE TABLE order_status (
 
 select * from orders;
 select * from order_items;
-delete from orders;
+
+select * from phones;
+
+
 
 -- Insert sample data for order status
 INSERT INTO order_status (status_name) VALUES ('Pending');

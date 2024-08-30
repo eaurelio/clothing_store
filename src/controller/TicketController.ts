@@ -90,8 +90,6 @@ export class TicketController {
 
   public updateTicket = async (req: Request, res: Response) => {
     try {
-        console.log("Request body:", req.body);  // Adicionado para debug
-
         const input = UpdateTicketSchema.parse({
             ticketId: req.body.ticketId,
             typeId: req.body.typeId,
@@ -101,10 +99,7 @@ export class TicketController {
             analistEmail: req.body.analistEmail
         });
 
-        console.log("Parsed input:", input);  // Adicionado para debug
-
         const output = await this.ticketBusiness.updateTicket(input);
-        console.log("Business output:", output);  // Adicionado para debug
 
         res.status(200).send(output);
     } catch (error) {

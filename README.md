@@ -5,7 +5,7 @@
 Welcome to the Clothing Store API! This RESTful API is designed to manage all aspects of a clothing store, including users, products, orders, wishlists and support tickets. Built with Node.js and TypeScript, and using Postgre for data storage, the API follows a three-layer architecture for simplicity and maintainability.
 
 ## Documentation on Postman
-1; [Documentation](https://documenter.getpostman.com/view/24823115/2sAXjKZsDM)
+1; [Documentation](https://documenter.getpostman.com/view/24823115/2sAXjKZsDM#intro)
 
 ## Table of Contents
 
@@ -18,16 +18,20 @@ Welcome to the Clothing Store API! This RESTful API is designed to manage all as
    - [Order](#order)
    - [Wishlist](#wishlist)
    - [Tickets](#tickets)
-5. [Usage](#usage)
+5. [Installation](#installation)
+6. [Testing](#testing-with-user-accounts)
+7. [Usage](#usage)
    - [Endpoints](#endpoints)
       - [Users](#user-endpoints)
       - [Products](#products-endpoints)
       - [Orders](#orders-endpoints)
       - [WishLists](#wish-list-endpoints)
       - [Tickets](#tickets-endpoints)
-6. [Error Handling](#error-handling)
-7. [Logging](#logging)
-8. [Testing](#testing)
+8. [Error Handling](#error-handling)
+9. [Logging](#logging)
+10. [Testing](#testing)
+11. [Database Documentation](database_readme.md)
+
 
 ## Features
 
@@ -96,6 +100,81 @@ The database uses PostgreSQL, and the following triggers are implemented to main
 
 - **Purpose**: Manage client requests.
 - **Operations**: Create, update and finish support requests.
+
+#### Installation
+
+To set up and run the Clothing Store API, follow these steps:
+
+1. **Start Containers and Build the Application**:
+   - Navigate to the directory containing the `docker-compose.yml` file.
+   - Run the following command to start the containers and build the application:
+
+     ```bash
+     docker-compose up -d --build
+     ```
+
+2. **Restore the Database Backup**:
+   - If a database backup (`backup.sql`) is provided, follow these steps to restore it:
+     - **Copy the backup to the PostgreSQL container**:
+
+       ```bash
+       docker cp backup.sql clothing_store_db:/backup.sql
+       ```
+
+     - **Access the PostgreSQL container**:
+
+       ```bash
+       docker exec -it clothing_store_db sh
+       ```
+
+     - **Within the container, restore the backup**:
+
+       ```sh
+       psql -U postgres -d clothing_db -f /backup.sql
+       ```
+
+3. **Verify the Application**:
+   - Ensure the application is running by visiting [http://localhost:3003](http://localhost:3003).
+
+### Testing with User Accounts
+
+To test the API, you can log in with one of the following pre-created accounts to receive a token:
+
+1. **Client Account**
+
+   - **Email:** client@solvd.com
+   - **Password:** SolvdPass#2024
+
+   **Login Request:**
+
+   ```http
+   POST /login
+   Content-Type: application/json
+
+   {
+      "email": "client@solvd.com",
+      "password": "SolvdPass#2024",
+   }
+   ```
+
+2. **Admin Account**
+
+   - **Email:** admin@solvd.com
+   - **Password:** AdminPass#2024
+
+   **Login Request:**
+
+   ```http
+   POST /login
+   Content-Type: application/json
+
+   {
+     "email": "admin@solvd.com",
+     "password": "SolvdPass#2024"
+   }
+   ```
+
+**Note:** Replace the example email and password with the ones you used during account creation.
 
 ## Usage
 
