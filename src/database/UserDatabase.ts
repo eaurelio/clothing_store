@@ -113,8 +113,6 @@ export class UserDatabase extends BaseDatabase {
       params.push(role);
     }
 
-    console.log(onlyActive);
-
     conditions.push("users.active = ?");
     params.push(onlyActive);
 

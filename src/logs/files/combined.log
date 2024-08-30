@@ -264,3 +264,7 @@
 {"code":"42703","file":"parse_target.c","length":131,"level":"error","line":"1066","name":"error","position":"37","routine":"checkInsertTargets","severity":"ERROR","timestamp":"2024-08-29T20:05:53.670Z"}
 {"code":"42703","file":"parse_target.c","length":131,"level":"error","line":"1066","name":"error","position":"37","routine":"checkInsertTargets","severity":"ERROR","timestamp":"2024-08-29T20:09:14.042Z"}
 {"issues":[{"code":"invalid_type","expected":"string","message":"Required","path":["userId"],"received":"undefined"}],"level":"error","name":"ZodError","timestamp":"2024-08-29T20:25:49.954Z"}
+{"code":"ENOTFOUND","errno":-3008,"hostname":"clothing_store","level":"error","syscall":"getaddrinfo","timestamp":"2024-08-29T23:30:30.324Z"}
+{"code":"ENOTFOUND","errno":-3008,"hostname":"clothing_store","level":"error","syscall":"getaddrinfo","timestamp":"2024-08-29T23:30:41.601Z"}
+{"code":"ENOTFOUND","errno":-3008,"hostname":"clothing_store","level":"error","syscall":"getaddrinfo","timestamp":"2024-08-29T23:31:08.192Z"}
+{"code":"ENOTFOUND","errno":-3008,"hostname":"clothing_store","level":"error","syscall":"getaddrinfo","timestamp":"2024-08-30T01:15:50.368Z"}

@@ -432,8 +432,6 @@ export class UserBusiness {
   public getAllUsers = async (input: GetAllUserInputDTO): Promise<UserDB[]> => {
     const { q, onlyActive = true, personalId, genderId, email, role } = input;
 
-    console.log(onlyActive)
-
     const usersDB = await this.userDatabase.findUsers(q, onlyActive, personalId, genderId, email, role);
 
     if (usersDB.length === 0) {
