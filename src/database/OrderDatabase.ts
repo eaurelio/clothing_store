@@ -1,15 +1,11 @@
-// Local file imports
 import { BaseDatabase } from "./connection/BaseDatabase";
 import { OrderDB } from "../models/Order";
 import { OrderItemDB } from "./../models/OrderItem";
-
 
 export class OrderDatabase extends BaseDatabase {
   public static TABLE_ORDERS = "orders";
   public static TABLE_ORDER_ITEMS = "order_items";
   public static TABLE_STATUS = "order_status";
-
-  // ORDER DATA
 
   public async findOrderById(order_id: string) {
     const result = await BaseDatabase.connection.raw(
@@ -32,8 +28,6 @@ export class OrderDatabase extends BaseDatabase {
     return result.rows[0];
   }
 
-  // --------------------------------------------------------------------
-
   public async findPureOrderById(order_id: string) {
     const result = await BaseDatabase.connection.raw(
       `
@@ -53,8 +47,6 @@ export class OrderDatabase extends BaseDatabase {
     return result.rows[0];
   }
 
-  // --------------------------------------------------------------------
-
   public async getAllStatus() {
     const result = await BaseDatabase.connection.raw(`
           SELECT * FROM ${OrderDatabase.TABLE_STATUS}
@@ -63,14 +55,10 @@ export class OrderDatabase extends BaseDatabase {
     return result.rows;
   }
 
-  // --------------------------------------------------------------------
-
   public async insertOrder(newOrderDB: OrderDB): Promise<void> {
     const columns = Object.keys(newOrderDB);
     const placeholders = columns.map(() => "?").join(", ");
     const values = Object.values(newOrderDB);
-
-    console.log(newOrderDB,'-----------------')
 
     const query = `
       INSERT INTO ${OrderDatabase.TABLE_ORDERS} (${columns.join(", ")})
@@ -79,8 +67,6 @@ export class OrderDatabase extends BaseDatabase {
 
     await BaseDatabase.connection.raw(query, values);
   }
-
-  // --------------------------------------------------------------------
 
   public async updateOrder(
     order_id: string,
@@ -100,8 +86,6 @@ export class OrderDatabase extends BaseDatabase {
     await BaseDatabase.connection.raw(query, [...values, order_id]);
   }
 
-  // --------------------------------------------------------------------
-
   public async findOrderItemsByOrderId(order_id: string) {
     const result = await BaseDatabase.connection.raw(
       `
@@ -114,8 +98,6 @@ export class OrderDatabase extends BaseDatabase {
 
     return result.rows;
   }
-
-  // --------------------------------------------------------------------
 
   public async findOrdersByUserId(userId?: string, orderId?: string) {
     let query = `
@@ -149,8 +131,6 @@ export class OrderDatabase extends BaseDatabase {
     return result.rows;
   }
 
-  // --------------------------------------------------------------------
-
   public async deleteOrderItemsByOrderId(order_id: string): Promise<void> {
     await BaseDatabase.connection.raw(
       `
@@ -160,24 +140,6 @@ export class OrderDatabase extends BaseDatabase {
       [order_id]
     );
   }
-
-  // --------------------------------------------------------------------
-
-  // public async insertOrderItem(orderItem: OrderItemDB): Promise<void> {
-  //   await BaseDatabase.connection.raw(
-  //     `
-  //     INSERT INTO order_items (id, order_id, product_id, quantity, price)
-  //     VALUES (?, ?, ?, ?, ?)
-  //     `,
-  //     [
-  //       orderItem.id,
-  //       orderItem.order_id,
-  //       orderItem.product_id,
-  //       orderItem.quantity,
-  //       orderItem.price,
-  //     ]
-  //   );
-  // }
 
   public async insertOrderItem(orderItem: OrderItemDB): Promise<void> {
     const columns = Object.keys(orderItem);
@@ -192,8 +154,6 @@ export class OrderDatabase extends BaseDatabase {
     await BaseDatabase.connection.raw(query, values);
   }
 
-  // --------------------------------------------------------------------
-
   public async deleteOrderItem(item_id: string): Promise<void> {
     const query = `
       DELETE FROM ${OrderDatabase.TABLE_ORDER_ITEMS}
@@ -201,8 +161,6 @@ export class OrderDatabase extends BaseDatabase {
     `;
     await BaseDatabase.connection.raw(query, [item_id]);
   }
-
-  // --------------------------------------------------------------------
 
   public async cancelOrderById(orderId: string): Promise<void> {
     await BaseDatabase.connection.raw(
@@ -214,8 +172,6 @@ export class OrderDatabase extends BaseDatabase {
       [orderId]
     );
   }
-
-  // --------------------------------------------------------------------
 
   public async deleteOrder(order_id: string): Promise<void> {
     const query = `

@@ -1,13 +1,10 @@
-// External library imports
 import express from "express";
 
-// Internal service imports
 import TokenService from "../services/TokenService";
 import { IdGenerator } from "../services/idGenerator";
 import { HashManager } from "../services/HashManager";
 import ErrorHandler from "../errors/ErrorHandler";
 
-// Local file imports
 import { ProductController } from "../controller/ProductController";
 import { ProductBusiness } from "../business/ProductBusiness";
 import { ProductDatabase } from './../database/ProductDatabase';

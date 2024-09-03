@@ -1,11 +1,5 @@
--- Active: 1724265540917@@127.0.0.1@5432@clothing_db
-
--- Create the main database
 CREATE DATABASE CLOTHING_DB;
 
--------------------------------------------------------------------------------
-
--- Table for storing user information
 CREATE TABLE users (
     id TEXT PRIMARY KEY UNIQUE NOT NULL,
     personal_id TEXT UNIQUE NOT NULL,
@@ -26,24 +20,18 @@ CREATE TABLE users (
     last_login TIMESTAMP
 );
 
-select * from users;
-
--- Alter column type
 ALTER TABLE users
 ALTER COLUMN gender TYPE INTEGER USING gender::INTEGER;
 
--- Add foreign key constraint
+CREATE TABLE genders (
+    gender_id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL
+);
+
 ALTER TABLE users
 ADD CONSTRAINT fk_gender
 FOREIGN KEY (gender) REFERENCES genders(gender_id);
 
--- Insert sample data for users
--- DELETE FROM users WHERE id = 'c155abc4-1fa7-44e1-a531-eab91332d9ac'; -- Uncomment if needed
-
--- Select data
-SELECT * FROM users;
-
--- Table for storing phone information
 CREATE TABLE phones (
     phone_id TEXT PRIMARY KEY UNIQUE NOT NULL,
     user_id TEXT NOT NULL,
@@ -52,71 +40,12 @@ CREATE TABLE phones (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
--- Query to check audit data (assuming it's for debugging purposes)
--- SELECT * FROM phones_audit; -- Uncomment if needed
-
--------------------------------------------------------------------------------
-
--- Table for storing order status
-CREATE TABLE order_status (
-    status_id SERIAL PRIMARY KEY,
-    status_name TEXT NOT NULL
-);
-
-select * from orders;
-select * from order_items;
-
-select * from phones;
-
-
-
--- Insert sample data for order status
-INSERT INTO order_status (status_name) VALUES ('Pending');
-INSERT INTO order_status (status_name) VALUES ('Processing');
-INSERT INTO order_status (status_name) VALUES ('Shipped');
-INSERT INTO order_status (status_name) VALUES ('Completed');
-INSERT INTO order_status (status_name) VALUES ('Canceled');
-
--- Table for storing orders
-CREATE TABLE orders (
-    order_id TEXT PRIMARY KEY UNIQUE NOT NULL,
-    user_id TEXT NOT NULL,
-    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    status_id INTEGER NOT NULL,
-    total NUMERIC(10, 2) NOT NULL,
-    tracking_code TEXT,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (status_id) REFERENCES order_status(status_id)
-);
-
--- Table for storing order items
-CREATE TABLE order_items (
-    id TEXT PRIMARY KEY UNIQUE NOT NULL,
-    order_id TEXT NOT NULL,
-    product_id TEXT NOT NULL,
-    quantity INTEGER NOT NULL,
-    price NUMERIC(10, 2) NOT NULL,
-    FOREIGN KEY (order_id) REFERENCES orders(order_id),
-    FOREIGN KEY (product_id) REFERENCES products(id)
-);
-
--- Drop table if it exists (useful for resets or debugging)
--- DROP TABLE order_items; -- Uncomment if needed
-
--- Select data
-SELECT * FROM orders;
-SELECT * FROM order_items;
-
--------------------------------------------------------------------------------
-
--- Table for storing product categories
 CREATE TABLE categories (
     category_id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     description TEXT
 );
 
--- Insert sample data for categories
 INSERT INTO categories (name, description) VALUES 
 ('T-Shirts', 'Casual shirts typically made from cotton or synthetic materials.'),
 ('Jeans', 'Denim pants available in various cuts and styles.'),
@@ -139,14 +68,12 @@ INSERT INTO categories (name, description) VALUES
 ('Pajamas', 'Comfortable clothing worn for sleeping.'),
 ('Shirts', 'Button-down shirts that can be dressed up or down.');
 
--- Table for storing colors
 CREATE TABLE colors (
     color_id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     hex_code TEXT
 );
 
--- Insert sample data for colors
 INSERT INTO colors (name, hex_code) VALUES 
 ('Red', '#FF0000'),
 ('Blue', '#0000FF'),
@@ -164,33 +91,29 @@ INSERT INTO colors (name, hex_code) VALUES
 ('Cyan', '#00FFFF'),
 ('Magenta', '#FF00FF');
 
--- Table for storing sizes
 CREATE TABLE sizes (
     size_id SERIAL PRIMARY KEY,
     name TEXT NOT NULL
 );
 
--- Insert sample data for sizes
 INSERT INTO sizes (name) VALUES 
-('S'),       -- Small
-('M'),       -- Medium
-('L'),       -- Large
-('XL'),      -- Extra Large
-('XXL');     -- Double Extra Large
+('S'),
+('M'),
+('L'),
+('XL'),
+('XXL');
 
--- Table for storing genders
-CREATE TABLE genders (
+CREATE TABLE IF NOT EXISTS genders (
     gender_id SERIAL PRIMARY KEY,
     name TEXT NOT NULL
 );
 
--- Insert sample data for genders
 INSERT INTO genders (name) VALUES 
 ('Male'),
 ('Female'),
-('Unisex');
+('Unisex'),
+('Not Aplicable');
 
--- Table for storing products
 CREATE TABLE products (
     id TEXT PRIMARY KEY UNIQUE NOT NULL,
     name TEXT NOT NULL,
@@ -209,10 +132,6 @@ CREATE TABLE products (
     FOREIGN KEY (gender_id) REFERENCES genders(gender_id)
 );
 
--- Select product data
-SELECT id, price FROM products;
-
--- Table for storing product images
 CREATE TABLE product_images (
     id TEXT PRIMARY KEY,
     product_id TEXT NOT NULL,
@@ -220,16 +139,40 @@ CREATE TABLE product_images (
     alt TEXT
 );
 
--- Drop table if it exists (useful for resets or debugging)
--- DROP TABLE product_images; -- Uncomment if needed
+CREATE TABLE order_status (
+    status_id SERIAL PRIMARY KEY,
+    status_name TEXT NOT NULL
+);
 
--------------------------------------------------------------------------------
+INSERT INTO order_status (status_name) 
+VALUES 
+  ('Pending'),
+  ('Processing'),
+  ('Shipped'),
+  ('Completed'),
+  ('Canceled');
 
--- Drop tables if they exist (useful for resets or debugging)
-DROP TABLE IF EXISTS wishlist_items;
-DROP TABLE IF EXISTS wishlists;
+CREATE TABLE orders (
+    order_id TEXT PRIMARY KEY UNIQUE NOT NULL,
+    user_id TEXT NOT NULL,
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    status_id INTEGER NOT NULL,
+    total NUMERIC(10, 2) NOT NULL,
+    tracking_code TEXT,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (status_id) REFERENCES order_status(status_id)
+);
 
--- Table for storing wishlists
+CREATE TABLE order_items (
+    id TEXT PRIMARY KEY UNIQUE NOT NULL,
+    order_id TEXT NOT NULL,
+    product_id TEXT NOT NULL,
+    quantity INTEGER NOT NULL,
+    price NUMERIC(10, 2) NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id),
+    FOREIGN KEY (product_id) REFERENCES products(id)
+);
+
 CREATE TABLE wishlists (
     wishlist_id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL,
@@ -237,7 +180,6 @@ CREATE TABLE wishlists (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
--- Table for storing items in wishlists
 CREATE TABLE wishlist_items (
     wishlist_id TEXT NOT NULL,
     product_id TEXT NOT NULL,
@@ -246,15 +188,16 @@ CREATE TABLE wishlist_items (
     PRIMARY KEY (wishlist_id, product_id)
 );
 
--- Select wishlist items
-SELECT * FROM wishlist_items;
+CREATE TABLE ticket_status (
+    id SERIAL PRIMARY KEY,
+    status VARCHAR(50) UNIQUE NOT NULL
+);
 
--------------------------------------------------------------------------------
+CREATE TABLE ticket_types (
+    id SERIAL PRIMARY KEY,
+    type_name VARCHAR(255) UNIQUE NOT NULL
+);
 
--- Drop table if it exists (useful for resets or debugging)
-DROP TABLE IF EXISTS tickets;
-
--- Table for storing tickets
 CREATE TABLE tickets (
     id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL,
@@ -279,28 +222,18 @@ CREATE TABLE tickets (
         ON DELETE SET NULL
 );
 
--- Table for storing ticket status
-CREATE TABLE ticket_status (
-    id SERIAL PRIMARY KEY,
-    status VARCHAR(50) UNIQUE NOT NULL
-);
+INSERT INTO ticket_types (type_name) 
+VALUES 
+  ('reset_password'),
+  ('order_issue'),
+  ('product_problem'),
+  ('account_issue'),
+  ('refund_request'),
+  ('general_inquiry');
 
--- Table for storing ticket types
-CREATE TABLE ticket_types (
-    id SERIAL PRIMARY KEY,
-    type_name VARCHAR(255) UNIQUE NOT NULL
-);
-
--- Insert sample data for ticket types
-INSERT INTO ticket_types (type_name) VALUES ('reset_password');
-INSERT INTO ticket_types (type_name) VALUES ('order_issue');
-INSERT INTO ticket_types (type_name) VALUES ('product_problem');
-INSERT INTO ticket_types (type_name) VALUES ('account_issue');
-INSERT INTO ticket_types (type_name) VALUES ('refund_request');
-INSERT INTO ticket_types (type_name) VALUES ('general_inquiry');
-
--- Insert sample data for ticket status
-INSERT INTO ticket_status (status) VALUES ('Pending');
-INSERT INTO ticket_status (status) VALUES ('In Progress');
-INSERT INTO ticket_status (status) VALUES ('Resolved');
-INSERT INTO ticket_status (status) VALUES ('Cancelled');
+INSERT INTO ticket_status (status) 
+VALUES 
+  ('Pending'),
+  ('In Progress'),
+  ('Resolved'),
+  ('Cancelled');

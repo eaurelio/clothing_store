@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     ports:
-      - "5433:5432"  # Porta interna do container 5432 mapeada para a porta 5433 no host
+      - "5433:5432"
     networks:
       - mynetwork
 

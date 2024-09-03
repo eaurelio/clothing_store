@@ -1,10 +1,7 @@
-// Express
 import { Request, Response } from "express";
 
-// Business Logic
 import { ProductBusiness } from "../business/ProductBusiness";
 
-// DTOs
 import {
   CreateCategorySchema,
   CreateColorSchema,
@@ -24,20 +21,33 @@ import {
 } from "../dtos/products/updateProduct.dto";
 import { GetAllProductsSchema } from "../dtos/products/getProduct.dto";
 
-// Errors
 import ErrorHandler from "../errors/ErrorHandler";
 
-// Logging
 import logger from "../logs/logger";
 
 export class ProductController {
-  constructor(private productBusiness: ProductBusiness) {}
+  constructor(private productBusiness: ProductBusiness) {
+    this.createProduct = this.createProduct.bind(this);
+    this.editProduct = this.editProduct.bind(this);
+    this.insertProductImage = this.insertProductImage.bind(this);
+    this.deleteProductImage = this.deleteProductImage.bind(this);
+    this.getProducts = this.getProducts.bind(this);
+    this.toggleProductActiveStatus = this.toggleProductActiveStatus.bind(this);
+    this.getAllCategories = this.getAllCategories.bind(this);
+    this.createCategory = this.createCategory.bind(this);
+    this.updateCategory = this.updateCategory.bind(this);
+    this.getAllColors = this.getAllColors.bind(this);
+    this.createColor = this.createColor.bind(this);
+    this.updateColor = this.updateColor.bind(this);
+    this.getAllSizes = this.getAllSizes.bind(this);
+    this.createSize = this.createSize.bind(this);
+    this.updateSize = this.updateSize.bind(this);
+    this.getAllGenders = this.getAllGenders.bind(this);
+    this.createGender = this.createGender.bind(this);
+    this.updateGender = this.updateGender.bind(this);
+  }
 
-  // --------------------------------------------------------------------
-  // PRODUCTS
-  // --------------------------------------------------------------------
-
-  public createProduct = async (req: Request, res: Response) => {
+  public async createProduct(req: Request, res: Response) {
     try {
       const input = CreateProductSchema.parse({
         token: req.headers.authorization as string,
@@ -49,7 +59,7 @@ export class ProductController {
         colorId: req.body.colorId,
         sizeId: req.body.sizeId,
         genderId: req.body.genderId,
-        images: req.body.images
+        images: req.body.images,
       });
 
       const output = await this.productBusiness.createProduct(input);
@@ -58,11 +68,9 @@ export class ProductController {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public editProduct = async (req: Request, res: Response) => {
+  public async editProduct(req: Request, res: Response) {
     try {
       const input = UpdateProductSchema.parse({
         id: req.params.id,
@@ -73,7 +81,7 @@ export class ProductController {
         categoryId: req.body.categoryId,
         colorId: req.body.colorId,
         sizeId: req.body.sizeId,
-        genderId: req.body.genderId
+        genderId: req.body.genderId,
       });
 
       const output = await this.productBusiness.editProduct(input);
@@ -83,16 +91,14 @@ export class ProductController {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public insertProductImage = async (req: Request, res: Response) => {
+  public async insertProductImage(req: Request, res: Response) {
     try {
       const input = InsertProductImageSchema.parse({
         productId: req.body.productId,
         url: req.body.url,
-        alt: req.body.alt
+        alt: req.body.alt,
       });
 
       const output = await this.productBusiness.insertProductImage(input);
@@ -102,15 +108,13 @@ export class ProductController {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public deleteProductImage = async (req: Request, res: Response) => {
+  public async deleteProductImage(req: Request, res: Response) {
     try {
       const input = DeleteProductImageSchema.parse({
         id: req.body.id,
-        productId: req.body.productId
+        productId: req.body.productId,
       });
 
       const output = await this.productBusiness.deleteProductImage(input);
@@ -120,11 +124,9 @@ export class ProductController {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public getProducts = async (req: Request, res: Response) => {
+  public async getProducts(req: Request, res: Response) {
     try {
       const input = GetAllProductsSchema.parse({
         id: req.body.id,
@@ -142,11 +144,9 @@ export class ProductController {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public toggleProductActiveStatus = async (req: Request, res: Response) => {
+  public async toggleProductActiveStatus(req: Request, res: Response) {
     try {
       const input = ToggleProductActiveStatusSchema.parse({
         productId: req.params.id,
@@ -160,13 +160,9 @@ export class ProductController {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  };
+  }
 
-  // --------------------------------------------------------------------
-  // AUX FIELDS - PRODUCTS
-  // --------------------------------------------------------------------
-
-  public getAllCategories = async (req: Request, res: Response) => {
+  public async getAllCategories(req: Request, res: Response) {
     try {
       const categories = await this.productBusiness.getAllCategories();
 
@@ -175,9 +171,9 @@ export class ProductController {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  };
+  }
 
-  public createCategory = async (req: Request, res: Response) => {
+  public async createCategory(req: Request, res: Response) {
     try {
       const input = CreateCategorySchema.parse({
         name: req.body.name,
@@ -190,9 +186,9 @@ export class ProductController {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  };
+  }
 
-  public updateCategory = async (req: Request, res: Response) => {
+  public async updateCategory(req: Request, res: Response) {
     try {
       const input = UpdateCategorySchema.parse({
         id: req.params.id,
@@ -206,13 +202,9 @@ export class ProductController {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  };
+  }
 
-  // --------------------------------------------------------------------
-  // CCOLORS
-  // --------------------------------------------------------------------
-
-  public getAllColors = async (req: Request, res: Response) => {
+  public async getAllColors(req: Request, res: Response) {
     try {
       const colors = await this.productBusiness.getAllColors();
 
@@ -221,11 +213,9 @@ export class ProductController {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public createColor = async (req: Request, res: Response) => {
+  public async createColor(req: Request, res: Response) {
     try {
       const input = CreateColorSchema.parse({
         name: req.body.name,
@@ -238,11 +228,9 @@ export class ProductController {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public updateColor = async (req: Request, res: Response) => {
+  public async updateColor(req: Request, res: Response) {
     try {
       const input = UpdateColorSchema.parse({
         id: req.params.id,
@@ -256,13 +244,9 @@ export class ProductController {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  };
+  }
 
-  // --------------------------------------------------------------------
-  // SIZES
-  // --------------------------------------------------------------------
-
-  public getAllSizes = async (req: Request, res: Response) => {
+  public async getAllSizes(req: Request, res: Response) {
     try {
       const sizes = await this.productBusiness.getAllSizes();
 
@@ -271,11 +255,9 @@ export class ProductController {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public createSize = async (req: Request, res: Response) => {
+  public async createSize(req: Request, res: Response) {
     try {
       const input = CreateSizeSchema.parse({
         name: req.body.name,
@@ -287,11 +269,9 @@ export class ProductController {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public updateSize = async (req: Request, res: Response) => {
+  public async updateSize(req: Request, res: Response) {
     try {
       const input = UpdateSizeSchema.parse({
         id: req.params.id,
@@ -304,13 +284,9 @@ export class ProductController {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  };
+  }
 
-  // --------------------------------------------------------------------
-  // GENDERS
-  // --------------------------------------------------------------------
-
-  public getAllGenders = async (req: Request, res: Response) => {
+  public async getAllGenders(req: Request, res: Response) {
     try {
       const genders = await this.productBusiness.getAllGenders();
 
@@ -319,11 +295,9 @@ export class ProductController {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public createGender = async (req: Request, res: Response) => {
+  public async createGender(req: Request, res: Response) {
     try {
       const input = CreateGenderSchema.parse({
         name: req.body.name,
@@ -335,11 +309,9 @@ export class ProductController {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public updateGender = async (req: Request, res: Response) => {
+  public async updateGender(req: Request, res: Response) {
     try {
       const input = UpdateGenderSchema.parse({
         id: req.params.id,
@@ -352,5 +324,5 @@ export class ProductController {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  };
+  }
 }

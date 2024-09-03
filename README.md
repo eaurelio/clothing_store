@@ -118,23 +118,29 @@ To set up and run the Clothing Store API, follow these steps:
      - **Copy the backup to the PostgreSQL container**:
 
        ```bash
-       docker cp backup.sql clothing_store_db:/backup.sql
+       docker cp backup.sql <your_postgres_container_name>:/backup.sql
        ```
+
+       Replace `<your_postgres_container_name>` with the name of your PostgreSQL container.
 
      - **Access the PostgreSQL container**:
 
        ```bash
-       docker exec -it clothing_store_db sh
+       docker exec -it <your_postgres_container_name> sh
        ```
+
+       Again, replace `<your_postgres_container_name>` with the name of your PostgreSQL container.
 
      - **Within the container, restore the backup**:
 
        ```sh
-       psql -U postgres -d clothing_db -f /backup.sql
+       psql -U postgres -d <your_database_name> -f /backup.sql
        ```
 
+       Replace `<your_database_name>` with the name of the database you are restoring.
+
 3. **Verify the Application**:
-   - Ensure the application is running by visiting [http://localhost:3003](http://localhost:3003).
+   - Ensure the application is running by visiting [http://localhost:<your_port>](http://localhost:<your_port>).
 
 ## Testing with User Accounts
 
@@ -189,6 +195,8 @@ The User endpoints manage user accounts, including registration, login, profile 
 - **Endpoint**: `users/createUser`
 - **Method**: `POST`
 - **Description**: Registers a new user with the provided details. By default, this route creates users with the `CLIENT` role. However, if a user with an `ADMIN` token makes the request, they can specify the `role` parameter as `ADMIN` to create an admin user.
+- **Request Headers:**
+  - `Authorization`: No needed
 
 - **Request Body**:
 
@@ -247,6 +255,8 @@ The User endpoints manage user accounts, including registration, login, profile 
 - **Endpoint**: `users/login`
 - **Method**: `POST`
 - **Description**: Authenticates a user and returns a JWT token.
+- **Request Headers:**
+  - `Authorization`: No needed
 
 - **Request Body**:
 
@@ -290,7 +300,6 @@ The User endpoints manage user accounts, including registration, login, profile 
 - **Endpoint**: `users/getUserById/:id`
 - **Method**: `POST`
 - **Description**: Retrieves detailed information for a specific user, including their phones. This endpoint allows users to obtain their own data using their authentication token.
-
 - **Request Headers**:
   - `Authorization`: Bearer token
 - **Parameters**:
@@ -352,7 +361,6 @@ The User endpoints manage user accounts, including registration, login, profile 
 - **Endpoint**: `users/getAllUsers`
 - **Method**: `POST`
 - **Description**: Retrieves a list of all users with optional query parameters for search and filtering. This endpoint is restricted to users with admin roles.
-
 - **Request Headers**:
   - `Authorization`: Bearer token (Admin token required)
 - **Query Parameters**:
@@ -514,7 +522,6 @@ The User endpoints manage user accounts, including registration, login, profile 
 - **Request Body**:
   ```json
   {
-    "phoneId": "string",
     "number": "string",
     "type": "string"
   }
@@ -665,7 +672,7 @@ The User endpoints manage user accounts, including registration, login, profile 
 - **Method:** `GET`
 - **Description:** Retrieves a list of products based on specified filters.
 - **Request Headers:**
-  - `Authorization`: Bearer token (e.g., `Bearer <token>`)
+  - `Authorization`: No needed
 - **Request Parameters:**
   - `id` (optional): Product ID
   - `name` (optional): Product name
@@ -1152,7 +1159,7 @@ The User endpoints manage user accounts, including registration, login, profile 
 - **Method:** `POST`
 - **Description:** Creates a new order with specified items and details.
 - **Request Headers:**
-  - `Authorization`: Bearer token (e.g., `Bearer <token>`)
+  - `Authorization`: Bearer token
 - **Request Body:**
   ```json
   {
@@ -1211,7 +1218,7 @@ The User endpoints manage user accounts, including registration, login, profile 
 - **Description**: Retrieves a specific order by its ID or all orders for a specific user. If `orderId` is provided, retrieves that specific order. If `orderId` is not provided, retrieves all orders for the specified `userId`.
 
 - **Request Headers**:
-  - `Authorization`: Bearer token (e.g., `Bearer <token>`)
+  - `Authorization`: Bearer token
 
 - **Request Body** (optional):
   
@@ -1377,6 +1384,8 @@ The User endpoints manage user accounts, including registration, login, profile 
 - **URL:** `orders/getAllStatus`
 - **Method:** `GET`
 - **Description:** Retrieves all possible statuses for orders.
+- **Request Headers:**
+  - `Authorization`: No needed
 - **Response:**
   - **Status Code:** `200 OK`
   - **Body:**
@@ -1395,7 +1404,7 @@ The User endpoints manage user accounts, including registration, login, profile 
 - **Method:** `PATCH`
 - **Description:** Updates an existing order with new details.
 - **Request Headers:**
-  - `Authorization`: Bearer token (e.g., `Bearer <token>`)
+  - `Authorization`: Bearer token
 - **Request Parameters:**
   - `id`: Order ID
 - **Request Body:**
@@ -1448,37 +1457,70 @@ The User endpoints manage user accounts, including registration, login, profile 
     - If `items` are provided, deletes existing items and inserts new ones.
   - **Output**: Returns a success message and details of the updated order.
 
-Aqui está a documentação para o endpoint de cancelamento de pedido:
-
 ### **6. Cancel Order**
 
 - **URL:** `orders/cancelOrder/:id`
 - **Method:** `DELETE`
-- **Description:** Cancels an existing order if its status is `1` (Pending). Orders with other statuses cannot be canceled.
+- **Description:** Cancels an existing order if its status is `1` (Pending) and if the request user is the owner of the order. Orders with other statuses cannot be canceled. Additionally, orders that have already been canceled (status `5`) cannot be canceled again.
 - **Request Headers:**
-  - `Authorization`: Bearer token (e.g., `Bearer <token>`)
+  - `Authorization`: Bearer token
+- **Request Body:**
+  - `userId`: User ID of the requester (e.g., `"user_id_123"`)
 - **Request Parameters:**
-  - `id`: Order ID
+  - `id`: Order ID (e.g., `"order_id_123"`)
 - **Responses:**
   - **200 OK**:
     ```json
     {
-      "message": "Order cancelled successfully"
+      "message": "Order canceled successfully"
     }
     ```
-  - **400 Bad Request**: If the request parameters are invalid.
-  - **401 Unauthorized**: If the token is invalid, missing, or the user is not authorized.
+  - **400 Bad Request**: If the request parameters or body are invalid.
+  - **401 Unauthorized**: If the token is invalid, missing, or the user is not authorized. This also applies if the user does not have permission to cancel the order.
   - **403 Forbidden**: If the user does not have permission to cancel the order.
   - **404 Not Found**: If the order with the specified ID does not exist.
-  - **409 Conflict**: If the order status is not `Pending` and cannot be canceled.
+  - **409 Conflict**: If the order status is not `Pending` and cannot be canceled or if the order has already been canceled.
 
 - **Controller Method Overview**:
-  - **Input**: Receives `orderId` as a parameter in the request and the token from the headers.
+  - **Input**: Receives `orderId` as a parameter in the request URL and `userId` in the request body. The `Authorization` token is provided in the request headers.
   - **Business Logic**:
     - Validates the token and checks for required permissions.
     - Checks if the order exists and whether its status is `Pending`.
-    - If valid, cancels the order.
+    - Ensures that the user requesting the cancellation is the owner of the order.
+    - Verifies that the order has not already been canceled.
+    - If all conditions are met, cancels the order.
   - **Output**: Returns a success message indicating that the order was canceled.
+
+### **7. Delete Order**
+
+- **URL:** `orders/deleteOrder/:id`
+- **Method:** `DELETE`
+- **Description:** Deletes an existing order and its associated items. This operation is only accessible to users with admin privileges. It first removes all items associated with the order and then deletes the order itself.
+- **Request Headers:**
+  - `Authorization`: Bearer token (Admin token required)
+- **Request Parameters:**
+  - `id`: Order ID (e.g., `"order_id_123"`)
+- **Responses:**
+  - **200 OK**:
+    ```json
+    {
+      "message": "Order deleted successfully"
+    }
+    ```
+  - **400 Bad Request**: If the request parameters are invalid.
+  - **401 Unauthorized**: If the token is invalid or missing.
+  - **403 Forbidden**: If the user does not have admin privileges.
+  - **404 Not Found**: If the order with the specified ID does not exist.
+  - **409 Conflict**: If there is an issue with deleting the order, possibly due to constraints or dependencies.
+
+- **Controller Method Overview**:
+  - **Input**: Receives `orderId` as a parameter in the request URL. The `Authorization` token is provided in the request headers.
+  - **Business Logic**:
+    - Validates the token and checks for admin privileges.
+    - Checks if the order exists.
+    - Deletes all items associated with the order.
+    - Deletes the order itself.
+  - **Output**: Returns a success message indicating that the order was deleted.
 
 ### Wish List Endpoints
 
@@ -1488,7 +1530,7 @@ Aqui está a documentação para o endpoint de cancelamento de pedido:
 - **Method:** `POST`
 - **Description:** Creates a new wishlist for the authenticated user.
 - **Request Headers:**
-  - `Authorization: Bearer <token>`
+  - `Authorization`: Bearer token
 - **Request Body:**
   ```json
   {
@@ -1524,7 +1566,7 @@ Aqui está a documentação para o endpoint de cancelamento de pedido:
 - **Method:** `GET`
 - **Description:** Retrieves the wishlist for the authenticated user.
 - **Request Headers:**
-  - `Authorization: Bearer <token>`
+  - `Authorization`: Bearer token
 - **Response:**
   - **Status Code:** `200 OK`
   - **Body:**
@@ -1553,7 +1595,7 @@ Aqui está a documentação para o endpoint de cancelamento de pedido:
 - **Method:** `PATCH`
 - **Description:** Updates the wishlist for the authenticated user.
 - **Request Headers:**
-  - `Authorization: Bearer <token>`
+  - `Authorization`: Bearer token
 - **Request Body:**
   ```json
   {
@@ -1594,7 +1636,7 @@ Aqui está a documentação para o endpoint de cancelamento de pedido:
 - **Method:** `DELETE`
 - **Description:** Deletes the wishlist for the authenticated user.
 - **Request Headers:**
-  - `Authorization: Bearer <token>`
+  - `Authorization`: Bearer token
 - **Response:**
   - **Status Code:** `200 OK`
   - **Body:**
@@ -1615,14 +1657,13 @@ Aqui está a documentação para o endpoint de cancelamento de pedido:
 - **Method:** `POST`
 - **Description:** Creates a new ticket with the specified details.
 - **Request Headers:**
-  - `Authorization`: Bearer token (e.g., `Bearer <token>`)
+  - `Authorization`: Bearer token
 - **Request Body:**
   ```json
   {
     "userId": "string",
     "typeId": "string",
     "description": "string",
-    "statusId": "string",
     "userName": "string",
     "userEmail": "string",
     "userPhoneNumber": "string"
@@ -1656,7 +1697,7 @@ Aqui está a documentação para o endpoint de cancelamento de pedido:
 - **Method:** `GET`
 - **Description:** Retrieves the details of a specific ticket by ID.
 - **Request Headers:**
-  - `Authorization`: Bearer token (e.g., `Bearer <token>`)
+  - `Authorization`: Bearer token
 - **Request Parameters:**
   - `id`: Ticket ID
 - **Responses:**

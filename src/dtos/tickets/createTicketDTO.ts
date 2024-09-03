@@ -4,7 +4,6 @@ export interface CreateTicketInputDTO {
   userId: string;
   typeId: number;
   description: string;
-  statusId: number;
   userName: string;
   userEmail: string;
   userPhoneNumber: string;
@@ -31,7 +30,6 @@ export const CreateTicketSchema = z
     userId: z.string().min(1),
     typeId: z.number().int(),
     description: z.string().min(5),
-    statusId: z.number().int(),
     userName: z.string().min(1),
     userEmail: z.string().email(),
     userPhoneNumber: z.string().min(1),

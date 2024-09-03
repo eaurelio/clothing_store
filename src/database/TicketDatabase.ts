@@ -1,17 +1,11 @@
-// Local file imports
 import { BaseDatabase } from "./connection/BaseDatabase";
 import { TicketDB, TicketDBOutput } from "../models/Ticket";
 import { TicketStatusDB, TicketTypeDB } from "../models/Ticket";
-
 
 export class TicketDatabase extends BaseDatabase {
   public static TABLE_TICKETS = "tickets";
   public static TABLE_TICKET_STATUS = "ticket_status";
   public static TABLE_TICKET_TYPES = "ticket_types";
-
-  // --------------------------------------------------------------------
-  // TICKET DATA
-  // --------------------------------------------------------------------
 
   public async findTickets(
     id?: string,
@@ -73,12 +67,8 @@ export class TicketDatabase extends BaseDatabase {
       params
     );
 
-    console.log(result.rows);
-
     return result.rows;
   }
-
-  // --------------------------------------------------------------------
 
   public async findTicketById(id: string): Promise<TicketDB | undefined> {
     const result = await BaseDatabase.connection.raw(
@@ -112,8 +102,6 @@ export class TicketDatabase extends BaseDatabase {
     return result.rows[0];
   }
 
-  // --------------------------------------------------------------------
-
   public async insertTicket(newTicketDB: TicketDB): Promise<void> {
     const columns = Object.keys(newTicketDB).filter(
       (key) => key !== "created_at" && key !== "updated_at"
@@ -129,13 +117,10 @@ export class TicketDatabase extends BaseDatabase {
     await BaseDatabase.connection.raw(query, values);
   }
 
-  // --------------------------------------------------------------------
-
   public async updateTicket(input: any) {
     const { id, type_id, solution, status_id, analist_name, analist_email } =
       input;
 
-    // Executa a query raw para atualizar o ticket
     await BaseDatabase.connection.raw(
       `
       UPDATE tickets
@@ -159,10 +144,6 @@ export class TicketDatabase extends BaseDatabase {
     );
   }
 
-  // --------------------------------------------------------------------
-  // STATUS DATA
-  // --------------------------------------------------------------------
-
   public async getAllStatus(): Promise<TicketStatusDB[]> {
     const result = await BaseDatabase.connection.raw(`
       SELECT *
@@ -171,10 +152,6 @@ export class TicketDatabase extends BaseDatabase {
 
     return result.rows;
   }
-
-  // --------------------------------------------------------------------
-  // TYPE DATA
-  // --------------------------------------------------------------------
 
   public async getAllTypes(): Promise<TicketTypeDB[]> {
     const result = await BaseDatabase.connection.raw(`

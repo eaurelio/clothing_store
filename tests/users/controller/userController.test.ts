@@ -51,13 +51,10 @@ describe("UserController", () => {
     req = {};
     res = {
       status: jest.fn().mockReturnThis(),
-      send: jest.fn(),
       json: jest.fn(),
     };
     jest.clearAllMocks();
   });
-
-  // --------------------------------------------------------------------
 
   test("should successfully create a user", async () => {
     const input: CreateUserInputDTO = {
@@ -94,25 +91,9 @@ describe("UserController", () => {
 
     await userController.createUser(req as Request, res as Response);
 
-    expect(mockUserBusiness.createUser).toHaveBeenCalledWith({
-      token: "some_token",
-      personalId: "1378901234",
-      entityType: "PERSONAL",
-      name: "Chloe Smith",
-      email: "chloe.smith@example.ca",
-      password: "CanadaPass",
-      birthdate: "1996-04-18",
-      role: USER_ROLES.CLIENT,
-      address: "101 Toronto Street",
-      number: "456",
-      neighborhood: "Downtown",
-      city: "Toronto",
-      country: "Canada",
-      gender: "FEMALE",
-      phones: [],
-    });
+    expect(mockUserBusiness.createUser).toHaveBeenCalledWith(input);
     expect(res.status).toHaveBeenCalledWith(201);
-    expect(res.send).toHaveBeenCalledWith({
+    expect(res.json).toHaveBeenCalledWith({
       message: "User created successfully",
       user: {
         id: "new_id",
@@ -123,8 +104,6 @@ describe("UserController", () => {
       },
     });
   });
-
-  // --------------------------------------------------------------------
 
   test("should handle errors properly in createUser", async () => {
     const error = new Error("Validation Error");
@@ -155,8 +134,6 @@ describe("UserController", () => {
     expect(ErrorHandler.handleError).toHaveBeenCalledWith(error, res);
   });
 
-  // --------------------------------------------------------------------
-
   test("should successfully login", async () => {
     const input: LoginInputDTO = {
       email: "chloe.smith@example.ca",
@@ -171,12 +148,10 @@ describe("UserController", () => {
     await userController.login(req as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.send).toHaveBeenCalledWith({
+    expect(res.json).toHaveBeenCalledWith({
       token: "new_token",
     });
   });
-
-  // --------------------------------------------------------------------
 
   test("should handle errors properly in login", async () => {
     const error = new Error("Login Error");
@@ -186,8 +161,6 @@ describe("UserController", () => {
       password: "CanadaPass",
     };
 
-    req.headers = {};
-
     mockUserBusiness.login.mockRejectedValue(error);
 
     await userController.login(req as Request, res as Response);
@@ -196,19 +169,10 @@ describe("UserController", () => {
     expect(ErrorHandler.handleError).toHaveBeenCalledWith(error, res);
   });
 
-  // --------------------------------------------------------------------
-
   test("should successfully get a user by id", async () => {
     const userId = "user_id";
 
-    const req = {
-      params: { id: userId },
-    } as Partial<Request>;
-
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-    } as Partial<Response>;
+    req.params = { id: userId };
 
     mockUserBusiness.getUserById.mockResolvedValue({
       id: "user_id",
@@ -219,15 +183,12 @@ describe("UserController", () => {
     await userController.getUserById(req as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(200);
-
     expect(res.json).toHaveBeenCalledWith({
       id: "user_id",
       name: "Chloe Smith",
       email: "chloe.smith@example.ca",
     });
   });
-
-  // --------------------------------------------------------------------
 
   test("should handle errors properly in getUserById", async () => {
     const error = new Error("User Not Found");
@@ -241,59 +202,37 @@ describe("UserController", () => {
     expect(ErrorHandler.handleError).toHaveBeenCalledWith(error, res);
   });
 
-  // --------------------------------------------------------------------
-
   test("should successfully get all users", async () => {
     mockUserBusiness.getAllUsers.mockResolvedValue([
       { id: "user_id1", name: "Chloe Smith", email: "chloe.smith@example.ca" },
       { id: "user_id2", name: "John Doe", email: "john.doe@example.ca" },
     ]);
 
-    const req = {
-      query: { q: "" },
-      body: { onlyActive: true },
-    } as Partial<Request>;
-
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      send: jest.fn(),
-    } as Partial<Response>;
+    req.query = { q: "" };
+    req.body = { onlyActive: true };
 
     await userController.getUsers(req as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(200);
-
-    expect(res.send).toHaveBeenCalledWith([
+    expect(res.json).toHaveBeenCalledWith([
       { id: "user_id1", name: "Chloe Smith", email: "chloe.smith@example.ca" },
       { id: "user_id2", name: "John Doe", email: "john.doe@example.ca" },
     ]);
   });
-
-  // --------------------------------------------------------------------
 
   test("should handle errors properly in getAllUsers", async () => {
     const error = new Error("Error Fetching Users");
 
     mockUserBusiness.getAllUsers.mockRejectedValue(error);
 
-    const req = {
-      query: { q: "" },
-      body: { onlyActive: true },
-    } as Partial<Request>;
-
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      send: jest.fn(),
-    } as Partial<Response>;
+    req.query = { q: "" };
+    req.body = { onlyActive: true };
 
     await userController.getUsers(req as Request, res as Response);
 
     expect(logger.error).toHaveBeenCalledWith(error);
-
     expect(ErrorHandler.handleError).toHaveBeenCalledWith(error, res);
   });
-
-  // --------------------------------------------------------------------
 
   test("should successfully edit a user", async () => {
     const input: UpdateUserInputDTO = {
@@ -311,12 +250,10 @@ describe("UserController", () => {
     await userController.editUser(req as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.send).toHaveBeenCalledWith({
+    expect(res.json).toHaveBeenCalledWith({
       message: "User updated successfully",
     });
   });
-
-  // --------------------------------------------------------------------
 
   test("should successfully change user password", async () => {
     const input: UpdatePasswordInputDTO = {
@@ -326,32 +263,21 @@ describe("UserController", () => {
       newPassword: "NewPassword",
     };
 
+    req.body = input;
     mockUserBusiness.changePassword.mockResolvedValue({
       message: "Password updated successfully",
     });
 
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      send: jest.fn(),
-    } as unknown as Response;
-
-    req.body = input;
-
     await userController.changePassword(req as Request, res as Response);
 
-    expect(res.status).toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.send).toHaveBeenCalled();
-    expect(res.send).toHaveBeenCalledWith({
+    expect(res.json).toHaveBeenCalledWith({
       message: "Password updated successfully",
     });
   });
 
-  // --------------------------------------------------------------------
-
   test("should handle errors properly in changePassword", async () => {
     const error = new Error("Error Changing Password");
-    mockUserBusiness.changePassword.mockRejectedValue(error);
 
     req.body = {
       userId: "user_id",
@@ -360,60 +286,52 @@ describe("UserController", () => {
       newPassword: "NewPassword",
     };
 
+    mockUserBusiness.changePassword.mockRejectedValue(error);
+
     await userController.changePassword(req as Request, res as Response);
 
     expect(logger.error).toHaveBeenCalledWith(error);
     expect(ErrorHandler.handleError).toHaveBeenCalledWith(error, res);
   });
 
-  // --------------------------------------------------------------------
-
   test("should successfully toggle user active status", async () => {
     const input: ToggleUserActiveStatusInputDTO = {
       email: "chloe.smith@example.ca",
       password: "CanadaPass",
     };
-
+  
     req.params = { id: "user_id" };
     req.body = input;
     mockUserBusiness.toggleUserActiveStatus.mockResolvedValue({
       message: "User active status updated successfully",
     });
-
-    await userController.toggleUserActiveStatus(
-      req as Request,
-      res as Response
-    );
-
+  
+    await userController.toggleUserActiveStatus(req as Request, res as Response);
+  
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.send).toHaveBeenCalledWith({
       message: "User active status updated successfully",
     });
   });
-
-  // --------------------------------------------------------------------
+  
 
   test("should handle errors properly in toggleUserActiveStatus", async () => {
-    const error = new Error("Error Updating Active Status");
-    mockUserBusiness.toggleUserActiveStatus.mockRejectedValue(error);
+    const error = new Error("Error Toggling User Status");
 
     req.body = {
-      email: "user@example.com",
-      password: "password123",
+      userId: "user_id",
+      isActive: false,
     };
 
-    await userController.toggleUserActiveStatus(
-      req as Request,
-      res as Response
-    );
+    mockUserBusiness.toggleUserActiveStatus.mockRejectedValue(error);
+
+    await userController.toggleUserActiveStatus(req as Request, res as Response);
 
     expect(logger.error).toHaveBeenCalledWith(error);
     expect(ErrorHandler.handleError).toHaveBeenCalledWith(error, res);
   });
 
-  // --------------------------------------------------------------------
-
-  test("should successfully add a phone to a user", async () => {
+  test("should successfully add a phone", async () => {
     const input: PhoneInputDTO = {
       userId: "user_id",
       number: "1234567890",
@@ -427,17 +345,14 @@ describe("UserController", () => {
 
     await userController.addPhone(req as Request, res as Response);
 
-    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith({
       message: "Phone added successfully",
     });
   });
 
-  // --------------------------------------------------------------------
-
   test("should handle errors properly in addPhone", async () => {
     const error = new Error("Error Adding Phone");
-    mockUserBusiness.addPhone.mockRejectedValue(error);
 
     req.body = {
       userId: "user_id",
@@ -445,20 +360,20 @@ describe("UserController", () => {
       type: "MOBILE",
     };
 
+    mockUserBusiness.addPhone.mockRejectedValue(error);
+
     await userController.addPhone(req as Request, res as Response);
 
     expect(logger.error).toHaveBeenCalledWith(error);
     expect(ErrorHandler.handleError).toHaveBeenCalledWith(error, res);
   });
 
-  // --------------------------------------------------------------------
-
-  test("should successfully update a phone for a user", async () => {
+  test("should successfully update a phone", async () => {
     const input: PhoneUpdateInputDTO = {
       userId: "user_id",
       phoneId: "phone_id",
       number: "0987654321",
-      type: "HOME",
+      type: "work"
     };
 
     req.body = input;
@@ -474,36 +389,24 @@ describe("UserController", () => {
     });
   });
 
-  // --------------------------------------------------------------------
-
   test("should handle errors properly in updatePhone", async () => {
-    const input: PhoneUpdateInputDTO = {
-      userId: "non_existent_user_id",
+    const error = new Error("Error Updating Phone");
+
+    req.body = {
+      userId: "user_id",
       phoneId: "phone_id",
-      number: "0987654321",
-      type: "HOME",
+      phone: "0987654321",
     };
 
-    req.body = input;
-
-    mockUserBusiness.updatePhone.mockRejectedValue(
-      new NotFoundError("User not found")
-    );
+    mockUserBusiness.updatePhone.mockRejectedValue(error);
 
     await userController.updatePhone(req as Request, res as Response);
 
-    expect(logger.error).toHaveBeenCalledWith(
-      new NotFoundError("User not found")
-    );
-    expect(ErrorHandler.handleError).toHaveBeenCalledWith(
-      new NotFoundError("User not found"),
-      res
-    );
+    expect(logger.error).toHaveBeenCalledWith(error);
+    expect(ErrorHandler.handleError).toHaveBeenCalledWith(error, res);
   });
 
-  // --------------------------------------------------------------------
-
-  test("should successfully delete a phone from a user", async () => {
+  test("should successfully delete a phone", async () => {
     const input: PhoneDeleteDTO = {
       userId: "user_id",
       phoneId: "phone_id",
@@ -522,16 +425,14 @@ describe("UserController", () => {
     });
   });
 
-  // --------------------------------------------------------------------
-
   test("should handle errors properly in deletePhone", async () => {
-    const input: PhoneDeleteDTO = {
+    const error = new Error("Error Deleting Phone");
+
+    req.body = {
       userId: "user_id",
       phoneId: "phone_id",
     };
 
-    req.body = input;
-    const error = new Error("Error Deleting Phone");
     mockUserBusiness.deletePhone.mockRejectedValue(error);
 
     await userController.deletePhone(req as Request, res as Response);
