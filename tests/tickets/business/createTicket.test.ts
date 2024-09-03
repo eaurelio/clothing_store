@@ -37,7 +37,6 @@ describe('TicketBusiness - createTicket', () => {
       userId: 'user_id_1',
       typeId: 1,
       description: 'Test ticket description',
-      statusId: 1,
       userName: 'Chloe Smith',
       userEmail: 'chloe.smith@example.ci',
       userPhoneNumber: '123456789',

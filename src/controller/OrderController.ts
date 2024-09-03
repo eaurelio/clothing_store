@@ -1,10 +1,7 @@
-// Express
 import { Request, Response } from "express";
 
-// Business Logic
 import { OrderBusiness } from "../business/OrderBusiness";
 
-// DTOs
 import {
   CreateOrderSchema,
   CreateOrderInputDTO,
@@ -18,7 +15,7 @@ import {
 } from "../dtos/orders/getOrder.dto";
 import {
   UpdateOrderSchema,
-  UpdateOrderInputDTO
+  UpdateOrderInputDTO,
 } from "../dtos/orders/updateOrder.dto";
 import {
   DeleteOrderSchema,
@@ -27,14 +24,20 @@ import {
   CancelOrderSchema,
 } from "../dtos/orders/deleteOrder.dto";
 
-// Errors
 import ErrorHandler from "../errors/ErrorHandler";
 
-// Logging
 import logger from "../logs/logger";
 
 export class OrderController {
-  constructor(private orderBusiness: OrderBusiness) {}
+  constructor(private orderBusiness: OrderBusiness) {
+    this.createOrder = this.createOrder.bind(this);
+    this.getUserOrders = this.getUserOrders.bind(this);
+    this.getAllOrders = this.getAllOrders.bind(this);
+    this.getAllStatus = this.getAllStatus.bind(this);
+    this.updateOrder = this.updateOrder.bind(this);
+    this.cancelOrder = this.cancelOrder.bind(this);
+    this.deleteOrder = this.deleteOrder.bind(this);
+  }
 
   public createOrder = async (req: Request, res: Response) => {
     try {
@@ -54,8 +57,6 @@ export class OrderController {
     }
   };
 
-  // --------------------------------------------------------------------
-
   public getUserOrders = async (req: Request, res: Response) => {
     try {
       const input = GetOrdersSchema.parse({
@@ -72,8 +73,6 @@ export class OrderController {
     }
   };
 
-  // --------------------------------------------------------------------
-
   public getAllOrders = async (req: Request, res: Response) => {
     try {
       const input = GetAllOrdersSchema.parse({
@@ -88,7 +87,6 @@ export class OrderController {
       ErrorHandler.handleError(error, res);
     }
   };
-  // --------------------------------------------------------------------
 
   public getAllStatus = async (req: Request, res: Response) => {
     try {
@@ -99,8 +97,6 @@ export class OrderController {
       ErrorHandler.handleError(error, res);
     }
   };
-
-  // --------------------------------------------------------------------
 
   public updateOrder = async (req: Request, res: Response) => {
     try {
@@ -120,23 +116,22 @@ export class OrderController {
     }
   };
 
-  // --------------------------------------------------------------------
-
   public cancelOrder = async (req: Request, res: Response) => {
     try {
       const input: CancelOrderInputDTO = CancelOrderSchema.parse({
         orderId: req.params.id,
+        userId: req.body.userId,
       });
 
-      await this.orderBusiness.cancelOrder(input);
-      res.status(200).send({ message: "Order deleted successfully" });
+      const token = req.headers.authorization;
+
+      const output = await this.orderBusiness.cancelOrder(input);
+      res.status(200).send(output);
     } catch (error) {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
   };
-
-  // --------------------------------------------------------------------
 
   public deleteOrder = async (req: Request, res: Response) => {
     try {
@@ -144,8 +139,8 @@ export class OrderController {
         orderId: req.params.id,
       });
 
-      await this.orderBusiness.deleteOrder(input);
-      res.status(200).send({ message: "Order deleted successfully" });
+      const output = await this.orderBusiness.deleteOrder(input);
+      res.status(200).send(output);
     } catch (error) {
       logger.error(error);
       ErrorHandler.handleError(error, res);

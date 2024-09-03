@@ -1,5 +1,3 @@
-// Interfaces
-
 import { ProductImageDBOutput } from "./ProductImage";
 
 export interface CategoryDB {
@@ -60,18 +58,16 @@ export interface ProductDBOutput {
   price: number;
   stock: number;
   created_at: string | number;
-  category_id: number,
+  category_id: number;
   category: string | number;
-  color_id: number,
+  color_id: number;
   color: string | number;
-  size_id: number,
+  size_id: number;
   size: string | number;
   gender_id: GenderDB;
   gender: string | number;
   images?: ProductImageDBOutput[];
 }
-
-// Product Class
 
 export class Product {
   constructor(

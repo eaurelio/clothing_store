@@ -1,14 +1,10 @@
-// Services
 import { IdGenerator } from "../services/idGenerator";
 
-// Database
 import { TicketDatabase } from "../database/TicketDatabase";
 
-// Models
 import { Ticket, TicketDB } from "../models/Ticket";
 import { TicketStatusDB, TicketTypeDB } from "../models/Ticket";
 
-// DTOs
 import {
   CreateTicketInputDTO,
   CreateTicketOutputDTO,
@@ -24,7 +20,6 @@ import {
   GetAllTicketsOutputDTO,
 } from "../dtos/tickets/getTicketDTO";
 
-// Errors
 import { NotFoundError } from "../errors/Errors";
 import { UserDatabase } from "../database/UserDatabase";
 import TokenService from "../services/TokenService";
@@ -41,18 +36,13 @@ export class TicketBusiness {
     private errorHandler: ErrorHandler
   ) {}
 
-  // --------------------------------------------------------------------
-  // TICKETS
-  // --------------------------------------------------------------------
-
-  public createTicket = async (
+  public async createTicket(
     input: CreateTicketInputDTO
-  ): Promise<CreateTicketOutputDTO> => {
+  ): Promise<CreateTicketOutputDTO> {
     const {
       userId,
       typeId,
       description,
-      statusId,
       userName,
       userEmail,
       userPhoneNumber,
@@ -61,6 +51,7 @@ export class TicketBusiness {
     const id = this.idGenerator.generate();
     const created_at = new Date().toISOString();
     const updated_at = created_at;
+    const statusId = 1;
 
     const newTicket = new Ticket(
       id,
@@ -96,13 +87,11 @@ export class TicketBusiness {
     };
 
     return output;
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public getTicket = async (
+  public async getTicket(
     input: GetTicketInputDTO
-  ): Promise<GetTicketOutputDTO> => {
+  ): Promise<GetTicketOutputDTO> {
     const { ticketId } = input;
 
     const ticketDB = await this.ticketDatabase.findTicketById(ticketId);
@@ -124,13 +113,11 @@ export class TicketBusiness {
     };
 
     return output;
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public getAllTickets = async (
+  public async getAllTickets(
     input: GetAllTicketsInputDTO
-  ): Promise<GetAllTicketsOutputDTO> => {
+  ): Promise<GetAllTicketsOutputDTO> {
     const { id, userId, typeId, statusId } = input;
 
     const ticketsDB = await this.ticketDatabase.findTickets(
@@ -163,9 +150,7 @@ export class TicketBusiness {
     };
 
     return output;
-  };
-
-  // --------------------------------------------------------------------
+  }
 
   public async updateTicket(
     input: UpdateTicketInputDTO
@@ -198,19 +183,13 @@ export class TicketBusiness {
     return output;
   }
 
-  // --------------------------------------------------------------------
-  // AUX FIELDS - TICKETS
-  // --------------------------------------------------------------------
-
-  public getAllStatus = async (): Promise<TicketStatusDB[]> => {
+  public async getAllStatus(): Promise<TicketStatusDB[]> {
     const statuses = await this.ticketDatabase.getAllStatus();
     return statuses;
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public getAllTypes = async (): Promise<TicketTypeDB[]> => {
+  public async getAllTypes(): Promise<TicketTypeDB[]> {
     const types = await this.ticketDatabase.getAllTypes();
     return types;
-  };
+  }
 }

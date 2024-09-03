@@ -1,10 +1,7 @@
-// Express
 import { Request, Response } from "express";
 
-// Business Logic
 import { UserBusiness } from "../business/UserBusiness";
 
-// DTOs
 import { CreateUserSchema } from "../dtos/users/createUser.dto";
 import { LoginSchema } from "../dtos/users/login";
 import {
@@ -20,20 +17,26 @@ import {
   PhoneUpdtateInputSchema,
 } from "../dtos/users/phone";
 
-// Errors
 import ErrorHandler from "../errors/ErrorHandler";
 
-// Logging
 import logger from "../logs/logger";
 
 export class UserController {
-  constructor(private userBusiness: UserBusiness) {}
+  constructor(private userBusiness: UserBusiness) {
+    this.createUser = this.createUser.bind(this);
+    this.login = this.login.bind(this);
+    this.getUserById = this.getUserById.bind(this);
+    this.getUsers = this.getUsers.bind(this);
+    this.editUser = this.editUser.bind(this);
+    this.changePassword = this.changePassword.bind(this);
+    this.resetPassword = this.resetPassword.bind(this);
+    this.toggleUserActiveStatus = this.toggleUserActiveStatus.bind(this);
+    this.addPhone = this.addPhone.bind(this);
+    this.updatePhone = this.updatePhone.bind(this);
+    this.deletePhone = this.deletePhone.bind(this);
+  }
 
-  // --------------------------------------------------------------------
-  // USER DATA
-  // --------------------------------------------------------------------
-
-  public createUser = async (req: Request, res: Response) => {
+  public async createUser(req: Request, res: Response) {
     try {
       const input = CreateUserSchema.parse({
         token: req.headers.authorization,
@@ -59,11 +62,9 @@ export class UserController {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public login = async (req: Request, res: Response) => {
+  public async login(req: Request, res: Response) {
     try {
       const input = LoginSchema.parse({
         email: req.body.email,
@@ -76,11 +77,9 @@ export class UserController {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public getUserById = async (req: Request, res: Response) => {
+  public async getUserById(req: Request, res: Response) {
     try {
       const input = GetUserSchema.parse({
         userId: req.params.id as string,
@@ -92,48 +91,28 @@ export class UserController {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  // public getUsers = async (req: Request, res: Response) => {
-  //   try {
-  //     const input = GetAllUserSchema.parse({
-  //       q: req.query.q as string,
-  //       onlyActive: req.body.onlyActive,
-  //     });
-
-  //     const output = await this.userBusiness.getAllUsers(input);
-  //     res.status(200).send(output);
-  //   } catch (error) {
-  //     logger.error(error);
-  //     ErrorHandler.handleError(error, res);
-  //   }
-  // };
-
-  public getUsers = async (req: Request, res: Response) => {
+  public async getUsers(req: Request, res: Response) {
     try {
-        const input = GetAllUserSchema.parse({
-            q: req.query.q as string,
-            onlyActive: req.body.onlyActive,
-            personalId: req.body.personalId,
-            genderId: req.body.genderId,
-            email: req.body.email,
-            role: req.body.role
-        });
+      const input = GetAllUserSchema.parse({
+        q: req.query.q as string,
+        onlyActive: req.body.onlyActive,
+        personalId: req.body.personalId,
+        genderId: req.body.genderId,
+        email: req.body.email,
+        role: req.body.role,
+      });
 
-        const output = await this.userBusiness.getAllUsers(input);
-        res.status(200).send(output);
+      const output = await this.userBusiness.getAllUsers(input);
+      res.status(200).send(output);
     } catch (error) {
-        logger.error(error);
-        ErrorHandler.handleError(error, res);
+      logger.error(error);
+      ErrorHandler.handleError(error, res);
     }
-};
+  }
 
-
-  // --------------------------------------------------------------------
-
-  public editUser = async (req: Request, res: Response) => {
+  public async editUser(req: Request, res: Response) {
     try {
       const input = UpdateUserSchema.parse({
         userId: req.params.id,
@@ -158,11 +137,9 @@ export class UserController {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public changePassword = async (req: Request, res: Response) => {
+  public async changePassword(req: Request, res: Response) {
     try {
       const input = UpdatePasswordSchema.parse({
         userId: req.body.userId,
@@ -177,11 +154,9 @@ export class UserController {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  };
+  }
 
-   // --------------------------------------------------------------------
-
-   public resetPassword = async (req: Request, res: Response) => {
+  public async resetPassword(req: Request, res: Response) {
     try {
       const input = ResetPasswordSchema.parse({
         userId: req.body.userId,
@@ -195,11 +170,9 @@ export class UserController {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public toggleUserActiveStatus = async (req: Request, res: Response) => {
+  public async toggleUserActiveStatus(req: Request, res: Response) {
     try {
       const input = ToggleUserActiveStatusSchema.parse({
         email: req.body.email,
@@ -212,16 +185,12 @@ export class UserController {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  };
+  }
 
-  // --------------------------------------------------------------------
-  // USER PHONE
-  // --------------------------------------------------------------------
-
-  public addPhone = async (req: Request, res: Response) => {
+  public async addPhone(req: Request, res: Response) {
     try {
       const input = PhoneInputSchema.parse({
-        userId: req.body.userId,
+        userId: req.params.id,
         number: req.body.number,
         type: req.body.type,
       });
@@ -232,14 +201,12 @@ export class UserController {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public updatePhone = async (req: Request, res: Response) => {
+  public async updatePhone(req: Request, res: Response) {
     try {
       const input = PhoneUpdtateInputSchema.parse({
-        userId: req.body.userId,
+        userId: req.params.id,
         phoneId: req.body.phoneId,
         number: req.body.number,
         type: req.body.type,
@@ -251,14 +218,12 @@ export class UserController {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public deletePhone = async (req: Request, res: Response) => {
+  public async deletePhone(req: Request, res: Response) {
     try {
       const input = PhoneDeleteSchema.parse({
-        userId: req.body.userId,
+        userId: req.params.id,
         phoneId: req.body.phoneId,
       });
 
@@ -268,5 +233,5 @@ export class UserController {
       logger.error(error);
       ErrorHandler.handleError(error, res);
     }
-  };
+  }
 }

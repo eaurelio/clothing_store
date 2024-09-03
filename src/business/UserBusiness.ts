@@ -1,4 +1,3 @@
-// User DTOs
 import {
   CreateUserInputDTO,
   CreateUserOutputDTO,
@@ -27,7 +26,6 @@ import {
 
 import { GetAllUserInputDTO, GetUserInputDTO } from "../dtos/users/getUser.dto";
 
-// Models
 import {
   User,
   UserDB,
@@ -38,15 +36,12 @@ import {
 
 import { PhoneDB } from "../models/Phones";
 
-// Database
 import { UserDatabase } from "../database/UserDatabase";
 
-// Services
 import TokenService from "../services/TokenService";
 import { IdGenerator } from "../services/idGenerator";
 import { HashManager } from "../services/HashManager";
 
-// Errors
 import {
   ConflictError,
   ForbiddenError,
@@ -64,13 +59,9 @@ export class UserBusiness {
     private errorHandler: ErrorHandler
   ) {}
 
-  // --------------------------------------------------------------------
-  // USER DATA
-  // --------------------------------------------------------------------
-
-  public createUser = async (
+  public async createUser(
     input: CreateUserInputDTO
-  ): Promise<CreateUserOutputDTO> => {
+  ): Promise<CreateUserOutputDTO> {
     const {
       token,
       personalId,
@@ -186,11 +177,9 @@ export class UserBusiness {
     };
 
     return output;
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public login = async (input: LoginInputDTO): Promise<LoginOutputDTO> => {
+  public async login(input: LoginInputDTO): Promise<LoginOutputDTO> {
     const { email, password } = input;
 
     const userDB = await this.userDatabase.findUserByEmail(email);
@@ -229,13 +218,11 @@ export class UserBusiness {
     };
 
     return output;
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public editUser = async (
+  public async editUser(
     input: UpdateUserInputDTO
-  ): Promise<UpdateUserOutputDTO> => {
+  ): Promise<UpdateUserOutputDTO> {
     const { userId, personalId, password, ...rest } = input;
 
     const userDB = await this.userDatabase.findUserById(userId);
@@ -302,13 +289,11 @@ export class UserBusiness {
     };
 
     return output;
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public changePassword = async (
+  public async changePassword(
     input: UpdatePasswordInputDTO
-  ): Promise<UpdatePasswordOutputDTO> => {
+  ): Promise<UpdatePasswordOutputDTO> {
     const { userId, email, oldPassword, newPassword } = input;
 
     const user = await this.userDatabase.findUserById(userId);
@@ -350,13 +335,11 @@ export class UserBusiness {
     return {
       message: "Password updated successfully",
     };
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public resetPassword = async (
+  public async resetPassword(
     input: ResetPasswordInputDTO
-  ): Promise<ResetPasswordOutputDTO> => {
+  ): Promise<ResetPasswordOutputDTO> {
     const { userId, email, newPassword } = input;
 
     const user = await this.userDatabase.findUserById(userId);
@@ -380,13 +363,9 @@ export class UserBusiness {
     return {
       message: "Password updated successfully",
     };
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public getUserById = async (
-    input: GetUserInputDTO
-  ): Promise<UserDBOutput> => {
+  public async getUserById(input: GetUserInputDTO): Promise<UserDBOutput> {
     const { userId } = input;
 
     const userFromDatabase = await this.userDatabase.findUserById(userId);
@@ -400,17 +379,14 @@ export class UserBusiness {
     }
 
     const phonesFromDatabase = await this.userDatabase.getPhones(userId);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...userOutput } = userFromDatabase as UserDB;
 
     userOutput.phones = phonesFromDatabase;
 
     return userOutput;
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public getAllUsers = async (input: GetAllUserInputDTO): Promise<UserDB[]> => {
+  public async getAllUsers(input: GetAllUserInputDTO): Promise<UserDB[]> {
     const { q, onlyActive = true, personalId, genderId, email, role } = input;
 
     const usersDB = await this.userDatabase.findUsers(
@@ -429,7 +405,6 @@ export class UserBusiness {
     const usersOutput = await Promise.all(
       usersDB.map(async (userDB) => {
         const phonesFromDatabase = await this.userDatabase.getPhones(userDB.id);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { password, ...userWithoutPassword } = userDB;
         userWithoutPassword.phones = phonesFromDatabase;
         return userWithoutPassword as UserDB;
@@ -437,9 +412,7 @@ export class UserBusiness {
     );
 
     return usersOutput;
-  };
-
-  // --------------------------------------------------------------------
+  }
 
   public async toggleUserActiveStatus(
     input: ToggleUserActiveStatusInputDTO
@@ -469,11 +442,7 @@ export class UserBusiness {
     };
   }
 
-  // --------------------------------------------------------------------
-  // PHONES
-  // --------------------------------------------------------------------
-
-  public addPhone = async (input: PhoneInputDTO): Promise<PhoneOutputDTO> => {
+  public async addPhone(input: PhoneInputDTO): Promise<PhoneOutputDTO> {
     const { userId, number, type } = input;
 
     const userDB = await this.userDatabase.findUserById(userId);
@@ -509,13 +478,11 @@ export class UserBusiness {
     };
 
     return output;
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public updatePhone = async (
+  public async updatePhone(
     input: PhoneUpdateInputDTO
-  ): Promise<PhoneUpdateOutputDTO> => {
+  ): Promise<PhoneUpdateOutputDTO> {
     const { userId, phoneId, number, type } = input;
 
     const userDB = await this.userDatabase.findUserById(userId);
@@ -546,13 +513,9 @@ export class UserBusiness {
     };
 
     return output;
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public deletePhone = async (
-    input: PhoneDeleteDTO
-  ): Promise<PhoneOutputDTO> => {
+  public async deletePhone(input: PhoneDeleteDTO): Promise<PhoneOutputDTO> {
     const { userId, phoneId } = input;
 
     const userDB = await this.userDatabase.findUserById(userId);
@@ -580,5 +543,5 @@ export class UserBusiness {
     };
 
     return output;
-  };
+  }
 }

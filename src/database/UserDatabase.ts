@@ -1,4 +1,3 @@
-// Local file imports
 import { BaseDatabase } from "./connection/BaseDatabase";
 import { PhoneDB } from "../models/Phones";
 import { UserDB } from "../models/User";
@@ -6,52 +5,6 @@ import { UserDB } from "../models/User";
 export class UserDatabase extends BaseDatabase {
   public static TABLE_USERS = "users";
   public static TABLE_PHONES = "phones";
-
-  // --------------------------------------------------------------------
-  // USER DATA
-  // --------------------------------------------------------------------
-
-  // public async findUsers(
-  //   q: string | undefined,
-  //   onlyActive: boolean
-  // ): Promise<UserDB[]> {
-  //   let query = `
-  //     SELECT
-  //         users.id,
-  //         users.personal_id,
-  //         users.entity_type,
-  //         users.name,
-  //         genders.gender_id,
-  //         genders.name AS gender,
-  //         users.email,
-  //         users.password,
-  //         users.role,
-  //         users.created_at,
-  //         users.birthdate,
-  //         users.address,
-  //         users.number,
-  //         users.neighborhood,
-  //         users.city,
-  //         users.country,
-  //         users.active,
-  //         users.last_login
-  //     FROM ${UserDatabase.TABLE_USERS} users
-  //     LEFT JOIN genders ON users.gender = genders.gender_id
-  // `;
-
-  //   const params: any[] = [];
-
-  //   if (q) {
-  //     query += ` WHERE users.name ILIKE ?`;
-  //     params.push(`%${q}%`);
-  //   }
-
-  //   query += (q ? ` AND` : ` WHERE`) + ` users.active = ${onlyActive}`;
-
-  //   const result = await BaseDatabase.connection.raw(query, params);
-
-  //   return result.rows;
-  // }
 
   public async findUsers(
     q?: string,
@@ -127,8 +80,6 @@ export class UserDatabase extends BaseDatabase {
     return result.rows;
   }
 
-  // --------------------------------------------------------------------
-
   public async findUserById(id: string): Promise<UserDB | undefined> {
     const result = await BaseDatabase.connection.raw(
       `
@@ -142,8 +93,6 @@ export class UserDatabase extends BaseDatabase {
     return result.rows[0];
   }
 
-  // --------------------------------------------------------------------
-
   public async findUserByEmail(email: string): Promise<UserDB | undefined> {
     const result = await BaseDatabase.connection.raw(
       `
@@ -156,8 +105,6 @@ export class UserDatabase extends BaseDatabase {
 
     return result.rows[0];
   }
-
-  // --------------------------------------------------------------------
 
   public async findUserByPersonalId(
     personal_id: string
@@ -174,8 +121,6 @@ export class UserDatabase extends BaseDatabase {
     return result.rows[0];
   }
 
-  // --------------------------------------------------------------------
-
   public async insertUser(newUserDB: UserDB): Promise<void> {
     const keys = Object.keys(newUserDB);
     const values = keys.map((key) => newUserDB[key as keyof UserDB]);
@@ -191,8 +136,6 @@ export class UserDatabase extends BaseDatabase {
       values
     );
   }
-
-  // --------------------------------------------------------------------
 
   public async updateUser(
     idToEdit: string,
@@ -212,8 +155,6 @@ export class UserDatabase extends BaseDatabase {
     await BaseDatabase.connection.raw(query, values);
   }
 
-  // --------------------------------------------------------------------
-
   public async updateLastLogin(id: string, updatedAt: string): Promise<void> {
     await BaseDatabase.connection.raw(
       `
@@ -225,8 +166,6 @@ export class UserDatabase extends BaseDatabase {
     );
   }
 
-  // --------------------------------------------------------------------
-
   public async updatePassword(id: string, newPassword: string): Promise<void> {
     await BaseDatabase.connection.raw(
       `
@@ -237,8 +176,6 @@ export class UserDatabase extends BaseDatabase {
       [newPassword, id]
     );
   }
-
-  // --------------------------------------------------------------------
 
   public async updateUserActiveStatus(
     id: string,
@@ -254,10 +191,6 @@ export class UserDatabase extends BaseDatabase {
     );
   }
 
-  // --------------------------------------------------------------------
-  // PHONE USER
-  // --------------------------------------------------------------------
-
   public async getPhones(user_id: string): Promise<PhoneDB[]> {
     const result = await BaseDatabase.connection.raw(
       `
@@ -270,8 +203,6 @@ export class UserDatabase extends BaseDatabase {
 
     return result.rows;
   }
-
-  // --------------------------------------------------------------------
 
   public async findPhoneById(phone_id: string): Promise<PhoneDB | undefined> {
     const result = await BaseDatabase.connection.raw(
@@ -286,8 +217,6 @@ export class UserDatabase extends BaseDatabase {
     return result.rows[0] as PhoneDB | undefined;
   }
 
-  // --------------------------------------------------------------------
-
   public async insertPhone(phoneData: PhoneDB): Promise<void> {
     const columns = Object.keys(phoneData);
     const placeholders = columns.map(() => "?").join(", ");
@@ -300,8 +229,6 @@ export class UserDatabase extends BaseDatabase {
 
     await BaseDatabase.connection.raw(query, values);
   }
-
-  // --------------------------------------------------------------------
 
   public async updatePhone(
     phoneId: string,
@@ -320,8 +247,6 @@ export class UserDatabase extends BaseDatabase {
 
     await BaseDatabase.connection.raw(query, [...values, phoneId]);
   }
-
-  // --------------------------------------------------------------------
 
   public async deletePhoneById(phone_id: string): Promise<void> {
     await BaseDatabase.connection.raw(

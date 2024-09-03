@@ -1,18 +1,14 @@
-// Services
 import { HashManager } from "../services/HashManager";
 import { IdGenerator } from "../services/idGenerator";
 import TokenService from "../services/TokenService";
 
-// Database
 import { OrderDatabase } from "../database/OrderDatabase";
 import { ProductDatabase } from "../database/ProductDatabase";
 import { UserDatabase } from "../database/UserDatabase";
 
-// Models
 import { Order, OrderDB, OrderDBOutput } from "../models/Order";
 import { OrderItemDB, OrderItemDOutput } from "../models/OrderItem";
 
-// DTOs
 import {
   CreateOrderInputDTO,
   CreateOrderOutputDTO,
@@ -34,10 +30,12 @@ import {
   DeleteOrderOutputDTO,
 } from "../dtos/orders/deleteOrder.dto";
 
-// Errors
-import { UnauthorizedError, ForbiddenError, NotFoundError } from "../errors/Errors";
+import {
+  UnauthorizedError,
+  ForbiddenError,
+  NotFoundError,
+} from "../errors/Errors";
 import ErrorHandler from "../errors/ErrorHandler";
-
 
 export class OrderBusiness {
   constructor(
@@ -46,17 +44,13 @@ export class OrderBusiness {
     private userDatabase: UserDatabase,
     private idGenerator: IdGenerator,
     private tokenService: TokenService,
-    private hashmanager: HashManager,
+    private hashManager: HashManager,
     private errorHandler: ErrorHandler
   ) {}
 
-  // --------------------------------------------------------------------
-  // ORDERS
-  // --------------------------------------------------------------------
-
-  public createOrder = async (
+  public async createOrder(
     input: CreateOrderInputDTO
-  ): Promise<CreateOrderOutputDTO> => {
+  ): Promise<CreateOrderOutputDTO> {
     const { items, total, userId } = input;
 
     const orderId = this.idGenerator.generate();
@@ -137,13 +131,11 @@ export class OrderBusiness {
     };
 
     return output;
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public getUserOrders = async (
+  public async getUserOrders(
     input: GetOrdersInputDTO
-  ): Promise<GetOrdersOutputDTO | GetAllOrdersOutputDTO> => {
+  ): Promise<GetOrdersOutputDTO | GetAllOrdersOutputDTO> {
     const { userId, orderId } = input;
 
     if (orderId) {
@@ -170,7 +162,7 @@ export class OrderBusiness {
           total: orderDB.total,
           orderDate: orderDB.order_date,
           trackingCode: orderDB.tracking_code,
-          items: items
+          items: items,
         },
       };
     } else {
@@ -204,20 +196,16 @@ export class OrderBusiness {
         orders: ordersWithItems,
       };
     }
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public getAllStatus = async () => {
+  public async getAllStatus() {
     const status = await this.orderDatabase.getAllStatus();
     return status;
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public getAllOrders = async (
+  public async getAllOrders(
     input: GetAllOrdersInputDTO
-  ): Promise<GetAllOrdersOutputDTO> => {
+  ): Promise<GetAllOrdersOutputDTO> {
     const { userId } = input;
 
     const ordersDB = await this.orderDatabase.findOrdersByUserId(
@@ -253,45 +241,45 @@ export class OrderBusiness {
     };
 
     return output;
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public updateOrder = async (
+  public async updateOrder(
     input: UpdateOrderInputDTO
-  ): Promise<UpdateOrderOutputDTO> => {
+  ): Promise<UpdateOrderOutputDTO> {
     const { orderId, statusId, total, items, trackingCode } = input;
 
     const orderDB = await this.orderDatabase.findPureOrderById(orderId);
     if (!orderDB) {
       throw new NotFoundError("Order not found");
     }
-  
+
     const updatedOrderDB: OrderDB = {
       ...orderDB,
       status_id: statusId ?? orderDB.status_id,
       total: total ?? orderDB.total,
       tracking_code: trackingCode ?? orderDB.tracking_code,
     };
-  
+
     await this.orderDatabase.updateOrder(orderId, updatedOrderDB);
-  
+
     if (items) {
       await this.orderDatabase.deleteOrderItemsByOrderId(orderId);
-  
+
       for (const item of items) {
-        const productDB = await this.productDatabase.findPureProductById(item.productId);
-  
+        const productDB = await this.productDatabase.findPureProductById(
+          item.productId
+        );
+
         if (!productDB) {
           console.log(`Product with ID ${item.productId} not found`);
           continue;
         }
-  
+
         if (!productDB.active) {
           console.log(`Product with ID ${item.productId} is deactivated`);
           continue;
         }
-  
+
         const newOrderItemDB: OrderItemDB = {
           id: this.idGenerator.generate(),
           order_id: orderId,
@@ -299,19 +287,21 @@ export class OrderBusiness {
           quantity: item.quantity,
           price: item.price,
         };
-  
+
         await this.orderDatabase.insertOrderItem(newOrderItemDB);
       }
     }
-  
-    const updatedItemsDB = await this.orderDatabase.findOrderItemsByOrderId(orderId);
+
+    const updatedItemsDB = await this.orderDatabase.findOrderItemsByOrderId(
+      orderId
+    );
     const updatedItems = updatedItemsDB.map((item: OrderItemDOutput) => ({
       itemId: item.item_id,
       productId: item.product_id,
       quantity: item.quantity,
       price: item.price,
     }));
-  
+
     const output: UpdateOrderOutputDTO = {
       message: "Order updated successfully",
       order: {
@@ -324,38 +314,53 @@ export class OrderBusiness {
         items: updatedItems,
       },
     };
-  
+
     return output;
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public cancelOrder = async (
+  public async cancelOrder(
     input: CancelOrderInputDTO
-  ): Promise<CancelOrderOutputDTO> => {
-    const { orderId } = input;
+  ): Promise<CancelOrderOutputDTO> {
+    const { orderId, userId } = input;
 
     const orderDB = await this.orderDatabase.findPureOrderById(orderId);
     if (!orderDB) {
       throw new NotFoundError("Order not found");
     }
 
-    if (orderDB.status_id !== 1) {
+    if (orderDB.user_id !== userId) {
       throw new UnauthorizedError(
-        "Order cannot be canceled as its status is not 'Pending'"
+        "You do not have permission to cancel this order"
       );
     }
 
-    await this.orderDatabase.cancelOrderById(orderId);
+    if (orderDB.status_id === 5) {
+      throw new UnauthorizedError("Order has already been cancelled");
+    }
 
-    return {
-      message: "Order Cancelled successfully",
+    if (orderDB.status_id !== 1) {
+      throw new UnauthorizedError(
+        "Order cannot be canceled because its status is not Pending"
+      );
+    }
+
+    await this.orderDatabase.updateOrder(orderId, {
+      ...orderDB,
+      status_id: 5,
+    });
+
+    console.log("here");
+
+    const output: CancelOrderOutputDTO = {
+      message: "Order canceled successfully",
     };
-  };
 
-  public deleteOrder = async (
+    return output;
+  }
+
+  public async deleteOrder(
     input: DeleteOrderInputDTO
-  ): Promise<DeleteOrderOutputDTO> => {
+  ): Promise<DeleteOrderOutputDTO> {
     const { orderId } = input;
 
     const orderDB = await this.orderDatabase.findOrderById(orderId);
@@ -366,8 +371,10 @@ export class OrderBusiness {
     await this.orderDatabase.deleteOrderItemsByOrderId(orderId);
     await this.orderDatabase.deleteOrder(orderId);
 
-    return {
-      message: "Order deleted sussesfully",
+    const output: DeleteOrderOutputDTO = {
+      message: "Order deleted successfully",
     };
-  };
+
+    return output;
+  }
 }

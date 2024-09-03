@@ -1,13 +1,10 @@
-// External library imports
 import express from "express";
 
-// Internal service imports
 import TokenService from "../services/TokenService";
 import { IdGenerator } from "../services/idGenerator";
 import { HashManager } from "../services/HashManager";
 import ErrorHandler from "../errors/ErrorHandler";
 
-// Local file imports
 import { UserController } from "../controller/UserController";
 import { UserBusiness } from "../business/UserBusiness";
 import { UserDatabase } from "../database/UserDatabase";
@@ -38,6 +35,6 @@ userRouter.patch("/changePassword", authMiddleware([USER_ROLES.CLIENT, USER_ROLE
 userRouter.patch("/resetPassword", ensureAdmin(USER_ROLES.ADMIN), userController.resetPassword);
 userRouter.patch("/toggleUserActiveStatus", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), userController.toggleUserActiveStatus);
 
-userRouter.post("/addPhone", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), userController.addPhone);
-userRouter.patch("/updatePhone", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), userController.updatePhone);
-userRouter.delete("/deletePhone", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), userController.deletePhone);
+userRouter.post("/addPhone/:id", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), userController.addPhone);
+userRouter.patch("/updatePhone/:id", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), userController.updatePhone);
+userRouter.delete("/deletePhone/:id", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), userController.deletePhone);

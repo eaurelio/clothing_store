@@ -1,4 +1,3 @@
-// DTOs
 import {
   CreateWishListInputDTO,
   CreateWishListOutputDTO,
@@ -19,23 +18,16 @@ import {
   DeleteWishListOutputDTO,
 } from "../dtos/wishlist/deleteWishList.dto";
 
-// Models
-import {
-  WishlistDBInput,
-  WishlistItemDB,
-} from "../models/WishList";
+import { WishlistDBInput, WishlistItemDB } from "../models/WishList";
 
-// Database
 import { WishlistDatabase } from "../database/WishListDatabase";
 import { UserDatabase } from "../database/UserDatabase";
 import { ProductDatabase } from "../database/ProductDatabase";
 
-// Services
 import TokenService from "../services/TokenService";
 import { IdGenerator } from "../services/idGenerator";
 import { HashManager } from "../services/HashManager";
 
-// Errors
 import { NotFoundError } from "../errors/Errors";
 import ErrorHandler from "../errors/ErrorHandler";
 
@@ -50,13 +42,9 @@ export class WishlistBusiness {
     private errorHandler: ErrorHandler
   ) {}
 
-  // --------------------------------------------------------------------
-  // WISHLIST
-  // --------------------------------------------------------------------
-
-  public createWishlist = async (
+  public async createWishlist(
     input: CreateWishListInputDTO
-  ): Promise<CreateWishListOutputDTO> => {
+  ): Promise<CreateWishListOutputDTO> {
     const { userId, items } = input;
 
     const existingWishlist = await this.wishlistDatabase.findWishlistByUserId(
@@ -118,13 +106,11 @@ export class WishlistBusiness {
     };
 
     return output;
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public getWishlist = async (
+  public async getWishlist(
     input: GetWishListInputDTO
-  ): Promise<GetWishListOutputDTO> => {
+  ): Promise<GetWishListOutputDTO> {
     const { userId } = input;
 
     const wishlistDB = await this.wishlistDatabase.findWishlistByUserId(userId);
@@ -163,13 +149,11 @@ export class WishlistBusiness {
     };
 
     return output;
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public updateWishlist = async (
+  public async updateWishlist(
     input: UpdateWishListInputDTO
-  ): Promise<UpdateWishListOutputDTO> => {
+  ): Promise<UpdateWishListOutputDTO> {
     const { userId, items } = input;
 
     const wishlistDB = await this.wishlistDatabase.findWishlistByUserId(userId);
@@ -218,13 +202,11 @@ export class WishlistBusiness {
     };
 
     return output;
-  };
+  }
 
-  // --------------------------------------------------------------------
-
-  public deleteWishlist = async (
+  public async deleteWishlist(
     input: DeleteWishListInputDTO
-  ): Promise<DeleteWishListOutputDTO> => {
+  ): Promise<DeleteWishListOutputDTO> {
     const { userId } = input;
 
     const wishlistDB = await this.wishlistDatabase.findWishlistByUserId(userId);
@@ -240,5 +222,5 @@ export class WishlistBusiness {
     return {
       message: "Wish List deleted sussessfully",
     };
-  };
+  }
 }

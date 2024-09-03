@@ -1,15 +1,12 @@
-// External library imports
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
-// Local file imports
 import { userRouter } from './router/userRouter';
 import { productRouter } from './router/productRouter';
 import { orderRouter } from './router/orderRouter';
 import { wishListRouter } from './router/wishListRouter';
 import { ticketRouter } from './router/TicketRouter';
-
 
 dotenv.config()
 
