@@ -1,17 +1,19 @@
-import { TicketBusiness } from '../../../src/business/TicketBusiness';
-import { TicketDatabase } from '../../../src/database/TicketDatabase';
-import { IdGenerator } from '../../../src/services/idGenerator';
-import { CreateTicketInputDTO, CreateTicketOutputDTO } from '../../../src/dtos/tickets/createTicketDTO';
-import { TicketDB } from '../../../src/models/Ticket';
+import { TicketBusiness } from "../../../src/business/TicketBusiness";
+import { TicketDatabase } from "../../../src/database/TicketDatabase";
+import { IdGenerator } from "../../../src/services/idGenerator";
+import {
+  CreateTicketInputDTO,
+  CreateTicketOutputDTO,
+} from "../../../src/dtos/tickets/createTicketDTO";
+import { TicketDB } from "../../../src/models/Ticket";
 
-// Mocks
 const mockTicketDatabase = {
   insertTicket: jest.fn(),
 };
 
 const mockUserDatabase = {};
 const mockIdGenerator = {
-  generate: jest.fn(() => 'new_ticket_id'),
+  generate: jest.fn(() => "new_ticket_id"),
 };
 
 const mockTokenService = {};
@@ -27,36 +29,36 @@ const ticketBusiness = new TicketBusiness(
   mockErrorHandler as any
 );
 
-describe('TicketBusiness - createTicket', () => {
+describe("TicketBusiness - createTicket", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  test('should create a ticket successfully', async () => {
+  test("should create a ticket successfully", async () => {
     const input: CreateTicketInputDTO = {
-      userId: 'user_id_1',
+      userId: "user_id_1",
       typeId: 1,
-      description: 'Test ticket description',
-      userName: 'Chloe Smith',
-      userEmail: 'chloe.smith@example.ci',
-      userPhoneNumber: '123456789',
+      description: "Test ticket description",
+      userName: "Chloe Smith",
+      userEmail: "chloe.smith@example.ci",
+      userPhoneNumber: "123456789",
     };
 
     const expectedTicketDB: TicketDB = {
-      id: 'new_ticket_id',
-      user_id: 'user_id_1',
+      id: "new_ticket_id",
+      user_id: "user_id_1",
       type_id: 1,
-      description: 'Test ticket description',
+      description: "Test ticket description",
       status_id: 1,
-      user_name: 'Chloe Smith',
-      user_email: 'chloe.smith@example.ci',
-      user_phone_number: '123456789',
+      user_name: "Chloe Smith",
+      user_email: "chloe.smith@example.ci",
+      user_phone_number: "123456789",
       created_at: expect.any(String),
       updated_at: expect.any(String),
     };
 
     const expectedOutput: CreateTicketOutputDTO = {
-      message: 'Ticket created successfully',
+      message: "Ticket created successfully",
       ticket: expectedTicketDB,
     };
 
@@ -64,6 +66,8 @@ describe('TicketBusiness - createTicket', () => {
 
     expect(result).toEqual(expectedOutput);
     expect(mockIdGenerator.generate).toHaveBeenCalledTimes(1);
-    expect(mockTicketDatabase.insertTicket).toHaveBeenCalledWith(expectedTicketDB);
+    expect(mockTicketDatabase.insertTicket).toHaveBeenCalledWith(
+      expectedTicketDB
+    );
   });
 });
