@@ -14,6 +14,7 @@ export interface UserDB {
   city: string;
   country: string;
   gender: string;
+  last_login?: string;
   phones?: {
     number: string;
     type: string;
@@ -26,21 +27,53 @@ export interface UserDBOutput {
   personal_id: string;
   entity_type: EntityType;
   name: string;
+  gender_id?: number;
+  gender: string;
   email: string;
-  birthdate: string;
   role: USER_ROLES;
   created_at: string;
+  birthdate: string;
   address: string;
   number: string;
   neighborhood: string;
   city: string;
   country: string;
-  gender: string;
+  active: boolean;
+  last_login?: string | null;
   phones?: {
+    phone_id: string;
+    user_id: string;
     number: string;
     type: string;
   }[];
 }
+
+export interface UsersDBOutput {
+  id: string;
+  personal_id: string;
+  entity_type: EntityType;
+  name: string;
+  gender_id: number;
+  gender: string;
+  email: string;
+  role: USER_ROLES;
+  created_at: string;
+  birthdate: string;
+  address: string;
+  number: string;
+  neighborhood: string;
+  city: string;
+  country: string;
+  active: boolean;
+  last_login: string | null;
+  phones?: {
+    phone_id: string;
+    user_id: string;
+    number: string;
+    type: string;
+  }[];
+}
+
 
 export interface Phone {
   number: string;

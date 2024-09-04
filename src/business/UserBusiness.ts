@@ -32,6 +32,7 @@ import {
   USER_ROLES,
   EntityType,
   UserDBOutput,
+  UsersDBOutput,
 } from "../models/User";
 
 import { PhoneDB } from "../models/Phones";
@@ -379,44 +380,35 @@ export class UserBusiness {
     }
 
     const phonesFromDatabase = await this.userDatabase.getPhones(userId);
-    const { password, ...userOutput } = userFromDatabase as UserDB;
 
-    userOutput.phones = phonesFromDatabase;
+    const userOutput: UserDBOutput = {
+      id: userFromDatabase.id,
+      personal_id: userFromDatabase.personal_id,
+      entity_type: userFromDatabase.entity_type,
+      name: userFromDatabase.name,
+      gender: userFromDatabase.gender,
+      email: userFromDatabase.email,
+      role: userFromDatabase.role,
+      created_at: userFromDatabase.created_at,
+      birthdate: userFromDatabase.birthdate,
+      address: userFromDatabase.address,
+      number: userFromDatabase.number,
+      neighborhood: userFromDatabase.neighborhood,
+      city: userFromDatabase.city,
+      country: userFromDatabase.country,
+      active: userFromDatabase.active,
+      last_login: userFromDatabase.last_login,
+      phones: phonesFromDatabase,
+    };
 
     return userOutput;
   }
 
-  // public async getAllUsers(input: GetAllUserInputDTO): Promise<UserDB[]> {
-  //   const { q, onlyActive = true, personalId, genderId, email, role } = input;
-
-  //   const usersDB = await this.userDatabase.findUsers(
-  //     q,
-  //     onlyActive,
-  //     personalId,
-  //     genderId,
-  //     email,
-  //     role
-  //   );
-
-  //   if (usersDB.length === 0) {
-  //     throw new NotFoundError("No users found");
-  //   }
-
-  //   const usersOutput = await Promise.all(
-  //     usersDB.map(async (userDB) => {
-  //       const phonesFromDatabase = await this.userDatabase.getPhones(userDB.id);
-  //       const { password, ...userWithoutPassword } = userDB;
-  //       userWithoutPassword.phones = phonesFromDatabase;
-  //       return userWithoutPassword as UserDB;
-  //     })
-  //   );
-
-  //   return usersOutput;
-  // }
-
-  public async getAllUsers(input: GetAllUserInputDTO): Promise<UserDB[]> {
+  public async getAllUsers(
+    input: GetAllUserInputDTO
+  ): Promise<UsersDBOutput[]> {
     const { q, onlyActive = true, personalId, genderId, email, role } = input;
-  
+
     const usersDB = await this.userDatabase.findUsers(
       q,
       onlyActive,
@@ -425,27 +417,42 @@ export class UserBusiness {
       email,
       role
     );
-  
+
     if (usersDB.length === 0) {
       throw new NotFoundError("No users found");
     }
-  
-    const usersOutput = await Promise.all(
+
+    const usersOutput: UsersDBOutput[] = await Promise.all(
       usersDB.map(async (userDB) => {
         const phonesFromDatabase = await this.userDatabase.getPhones(userDB.id);
-        
-        // Criando um novo objeto sem a propriedade 'password'
-        const { password, ...userWithoutPassword } = { ...userDB };
-        
-        userWithoutPassword.phones = phonesFromDatabase;
-        return userWithoutPassword as UserDB;
+
+        const userWithoutPassword: UsersDBOutput = {
+          id: userDB.id,
+          personal_id: userDB.personal_id,
+          entity_type: userDB.entity_type,
+          name: userDB.name,
+          gender_id: userDB.gender_id,
+          gender: userDB.gender,
+          email: userDB.email,
+          role: userDB.role,
+          created_at: userDB.created_at,
+          birthdate: userDB.birthdate,
+          address: userDB.address,
+          number: userDB.number,
+          neighborhood: userDB.neighborhood,
+          city: userDB.city,
+          country: userDB.country,
+          active: userDB.active,
+          last_login: userDB.last_login,
+          phones: phonesFromDatabase,
+        };
+
+        return userWithoutPassword;
       })
     );
-  
+
     return usersOutput;
   }
-  
-  
 
   public async toggleUserActiveStatus(
     input: ToggleUserActiveStatusInputDTO
