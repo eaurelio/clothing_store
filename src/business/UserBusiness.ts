@@ -379,7 +379,8 @@ export class UserBusiness {
     }
 
     const phonesFromDatabase = await this.userDatabase.getPhones(userId);
-    const { password, ...userOutput } = userFromDatabase as UserDB; // eslint-disable-line no-unused-vars
+    // eslint-disable-next-line no-unused-vars
+    const { password, ...userOutput } = userFromDatabase as UserDB;
 
     userOutput.phones = phonesFromDatabase;
 
@@ -405,7 +406,8 @@ export class UserBusiness {
     const usersOutput = await Promise.all(
       usersDB.map(async (userDB) => {
         const phonesFromDatabase = await this.userDatabase.getPhones(userDB.id);
-        const { password, ...userWithoutPassword } = userDB; // eslint-disable-line no-unused-vars
+        // eslint-disable-next-line no-unused-vars
+        const { password, ...userWithoutPassword } = userDB;
         userWithoutPassword.phones = phonesFromDatabase;
         return userWithoutPassword as UserDB;
       })
