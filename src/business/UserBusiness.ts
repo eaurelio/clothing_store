@@ -386,9 +386,37 @@ export class UserBusiness {
     return userOutput;
   }
 
+  // public async getAllUsers(input: GetAllUserInputDTO): Promise<UserDB[]> {
+  //   const { q, onlyActive = true, personalId, genderId, email, role } = input;
+
+  //   const usersDB = await this.userDatabase.findUsers(
+  //     q,
+  //     onlyActive,
+  //     personalId,
+  //     genderId,
+  //     email,
+  //     role
+  //   );
+
+  //   if (usersDB.length === 0) {
+  //     throw new NotFoundError("No users found");
+  //   }
+
+  //   const usersOutput = await Promise.all(
+  //     usersDB.map(async (userDB) => {
+  //       const phonesFromDatabase = await this.userDatabase.getPhones(userDB.id);
+  //       const { password, ...userWithoutPassword } = userDB;
+  //       userWithoutPassword.phones = phonesFromDatabase;
+  //       return userWithoutPassword as UserDB;
+  //     })
+  //   );
+
+  //   return usersOutput;
+  // }
+
   public async getAllUsers(input: GetAllUserInputDTO): Promise<UserDB[]> {
     const { q, onlyActive = true, personalId, genderId, email, role } = input;
-
+  
     const usersDB = await this.userDatabase.findUsers(
       q,
       onlyActive,
@@ -397,22 +425,27 @@ export class UserBusiness {
       email,
       role
     );
-
+  
     if (usersDB.length === 0) {
       throw new NotFoundError("No users found");
     }
-
+  
     const usersOutput = await Promise.all(
       usersDB.map(async (userDB) => {
         const phonesFromDatabase = await this.userDatabase.getPhones(userDB.id);
-        const { password, ...userWithoutPassword } = userDB;
+        
+        // Criando um novo objeto sem a propriedade 'password'
+        const { password, ...userWithoutPassword } = { ...userDB };
+        
         userWithoutPassword.phones = phonesFromDatabase;
         return userWithoutPassword as UserDB;
       })
     );
-
+  
     return usersOutput;
   }
+  
+  
 
   public async toggleUserActiveStatus(
     input: ToggleUserActiveStatusInputDTO
