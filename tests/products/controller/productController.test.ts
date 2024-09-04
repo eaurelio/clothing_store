@@ -162,9 +162,6 @@ describe("ProductController", () => {
     expect(logger.error).toHaveBeenCalledWith(error);
     expect(ErrorHandler.handleError).toHaveBeenCalledWith(error, res);
   });
-  
-
-  // // -------------------------------------------------------------------- 
 
   test("should successfully edit a product", async () => {
     const input: UpdateProductInputDTO = {
@@ -194,7 +191,6 @@ describe("ProductController", () => {
     });
   });
 
-  // // --------------------------------------------------------------------
 
   test("should handle errors properly in editProduct", async () => {
     const error = new Error("Error Updating Product");
@@ -219,7 +215,6 @@ describe("ProductController", () => {
     expect(ErrorHandler.handleError).toHaveBeenCalledWith(error, res);
   });
 
-  // // --------------------------------------------------------------------
 
   test("should successfully insert a product image", async () => {
     const input = {
@@ -262,7 +257,6 @@ describe("ProductController", () => {
     expect(ErrorHandler.handleError).toHaveBeenCalledWith(error, res);
   });
 
-  // // --------------------------------------------------------------------
 
   test("should successfully delete a product image", async () => {
     const imageId = "image_id";
@@ -287,7 +281,6 @@ describe("ProductController", () => {
     });
   });
 
-  // // --------------------------------------------------------------------
 
   test("should handle errors properly in deleteProductImage", async () => {
     const error = new Error("Error Deleting Product Image");
@@ -325,7 +318,6 @@ describe("ProductController", () => {
     });
   });
 
-  // // -------------------------------------------------------------------- 
 
   test("should handle errors properly in toggleProductActiveStatus", async () => {
     const error = new Error("Error Toggling Product Active Status");

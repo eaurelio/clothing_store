@@ -17,9 +17,9 @@ const mockIdGenerator = {
 const userBusiness = new UserBusiness(
   mockUserDatabase as unknown as UserDatabase,
   mockIdGenerator as unknown as IdGenerator,
-  {} as any, // Mock for TokenService if needed
-  {} as any, // Mock for HashManager if needed
-  {} as any  // Mock for ErrorHandler if needed
+  {} as any,
+  {} as any,
+  {} as any 
 );
 
 describe('UserBusiness - deletePhone', () => {

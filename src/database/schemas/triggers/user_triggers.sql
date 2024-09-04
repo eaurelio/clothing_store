@@ -155,4 +155,3 @@ CREATE TRIGGER phone_delete_trigger
 AFTER DELETE ON phones
 FOR EACH ROW
 EXECUTE FUNCTION audit_phone_delete();
-

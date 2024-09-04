@@ -39,8 +39,6 @@ describe("OrderController", () => {
     jest.clearAllMocks();
   });
 
-  // --------------------------------------------------------------------
-
   test("should successfully create an order", async () => {
     const input: CreateOrderInputDTO = {
       userId: "user_id",
@@ -58,9 +56,9 @@ describe("OrderController", () => {
       ],
       total: 250,
     };
-  
+
     req.body = input;
-  
+
     mockOrderBusiness.createOrder.mockResolvedValue({
       message: "Order created successfully",
       order: {
@@ -85,9 +83,9 @@ describe("OrderController", () => {
         ],
       },
     });
-  
+
     await orderController.createOrder(req as Request, res as Response);
-  
+
     expect(mockOrderBusiness.createOrder).toHaveBeenCalledWith({
       userId: "user_id",
       items: [
@@ -130,8 +128,6 @@ describe("OrderController", () => {
       },
     });
   });
-  
-  // --------------------------------------------------------------------
 
   test("should handle errors properly in createOrder", async () => {
     const error = new Error("Validation Error");
@@ -156,8 +152,6 @@ describe("OrderController", () => {
     expect(logger.error).toHaveBeenCalledWith(error);
     expect(ErrorHandler.handleError).toHaveBeenCalledWith(error, res);
   });
-
-  // --------------------------------------------------------------------
 
   test("should successfully update an order", async () => {
     const input: UpdateOrderInputDTO = {
@@ -188,7 +182,7 @@ describe("OrderController", () => {
     });
   });
 
-  // // --------------------------------------------------------------------
+  //
 
   test("should handle errors properly in updateOrder", async () => {
     const error = new Error("Error Updating Order");
@@ -214,7 +208,7 @@ describe("OrderController", () => {
     expect(ErrorHandler.handleError).toHaveBeenCalledWith(error, res);
   });
 
-  // // --------------------------------------------------------------------
+  //
 
   test("should successfully delete an order", async () => {
     const orderId = "order_id";
@@ -233,7 +227,7 @@ describe("OrderController", () => {
     });
   });
 
-  // // --------------------------------------------------------------------
+  //
 
   test("should handle errors properly in deleteOrder", async () => {
     const error = new Error("Error Deleting Order");

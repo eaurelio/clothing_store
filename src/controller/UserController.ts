@@ -196,7 +196,7 @@ export class UserController {
       });
 
       const output = await this.userBusiness.addPhone(input);
-      res.status(200).json(output);
+      res.status(201).send(output);
     } catch (error) {
       logger.error(error);
       ErrorHandler.handleError(error, res);
@@ -213,7 +213,7 @@ export class UserController {
       });
 
       const output = await this.userBusiness.updatePhone(input);
-      res.status(200).json(output);
+      res.status(200).send(output);
     } catch (error) {
       logger.error(error);
       ErrorHandler.handleError(error, res);
@@ -228,7 +228,7 @@ export class UserController {
       });
 
       const output = await this.userBusiness.deletePhone(input);
-      res.status(200).json(output);
+      res.status(200).send(output);
     } catch (error) {
       logger.error(error);
       ErrorHandler.handleError(error, res);

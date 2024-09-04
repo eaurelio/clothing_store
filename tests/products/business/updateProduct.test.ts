@@ -1,12 +1,15 @@
-import { ProductBusiness } from '../../../src/business/ProductBusiness';
-import { ProductDatabase } from '../../../src/database/ProductDatabase';
-import { IdGenerator } from '../../../src/services/idGenerator';
-import TokenService from '../../../src/services/TokenService';
-import { UserDatabase } from '../../../src/database/UserDatabase';
-import ErrorHandler from '../../../src/errors/ErrorHandler';
-import { HashManager } from '../../../src/services/HashManager';
-import { UpdateProductInputDTO, UpdateProductOutputDTO } from '../../../src/dtos/products/updateProduct.dto'
-import { NotFoundError } from '../../../src/errors/Errors';
+import { ProductBusiness } from "../../../src/business/ProductBusiness";
+import { ProductDatabase } from "../../../src/database/ProductDatabase";
+import { IdGenerator } from "../../../src/services/idGenerator";
+import TokenService from "../../../src/services/TokenService";
+import { UserDatabase } from "../../../src/database/UserDatabase";
+import ErrorHandler from "../../../src/errors/ErrorHandler";
+import { HashManager } from "../../../src/services/HashManager";
+import {
+  UpdateProductInputDTO,
+  UpdateProductOutputDTO,
+} from "../../../src/dtos/products/updateProduct.dto";
+import { NotFoundError } from "../../../src/errors/Errors";
 
 const mockProductDatabase = {
   findPureProductById: jest.fn(),
@@ -43,16 +46,16 @@ const productBusiness = new ProductBusiness(
   mockErrorHandler as unknown as ErrorHandler
 );
 
-describe('ProductBusiness - editProduct', () => {
+describe("ProductBusiness - editProduct", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  test('should successfully edit a product', async () => {
+  test("should successfully edit a product", async () => {
     const input: UpdateProductInputDTO = {
-      id: 'product_id',
-      name: 'Updated Product Name',
-      description: 'Updated Description',
+      id: "product_id",
+      name: "Updated Product Name",
+      description: "Updated Description",
       price: 79.99,
       stock: 60,
       categoryId: 2,
@@ -60,20 +63,20 @@ describe('ProductBusiness - editProduct', () => {
       sizeId: 4,
       genderId: 5,
     };
-  
+
     const existingProductDB = {
-      id: 'product_id',
-      name: 'Old Product Name',
-      description: 'Old Description',
+      id: "product_id",
+      name: "Old Product Name",
+      description: "Old Description",
       price: 99.99,
       stock: 100,
       category_id: 1,
       color_id: 2,
       size_id: 3,
       gender_id: 4,
-      created_at: '2024-01-01T00:00:00Z',
+      created_at: "2024-01-01T00:00:00Z",
     };
-  
+
     const updatedProductDB = {
       ...existingProductDB,
       name: input.name,
@@ -85,39 +88,41 @@ describe('ProductBusiness - editProduct', () => {
       size_id: input.sizeId,
       gender_id: input.genderId,
     };
-  
+
     mockProductDatabase.findPureProductById
       .mockResolvedValueOnce(existingProductDB)
-      .mockResolvedValueOnce(updatedProductDB); // Retorna o produto atualizado na segunda chamada
-  
+      .mockResolvedValueOnce(updatedProductDB);
+
     mockProductDatabase.updateProduct.mockResolvedValue({});
     mockProductDatabase.getImagesByProductId.mockResolvedValue([]);
-  
-    const result: UpdateProductOutputDTO = await productBusiness.editProduct(input);
-  
+
+    const result: UpdateProductOutputDTO = await productBusiness.editProduct(
+      input
+    );
+
     expect(result).toEqual({
-      message: 'Editing completed successfully',
+      message: "Editing completed successfully",
       product: {
-        id: 'product_id',
-        name: 'Updated Product Name',
-        description: 'Updated Description',
+        id: "product_id",
+        name: "Updated Product Name",
+        description: "Updated Description",
         price: 79.99,
         stock: 60,
-        createdAt: '2024-01-01T00:00:00Z', // Ajuste o nome do campo para `createdAt`
-        categoryId: 2, // Ajuste o nome dos campos
+        createdAt: "2024-01-01T00:00:00Z",
+        categoryId: 2,
         colorId: 3,
         sizeId: 4,
         genderId: 5,
-        images: [], // Certifique-se de que o formato das imagens está correto
+        images: [],
       },
     });
   });
-  
-  test('should throw NotFoundError if product does not exist', async () => {
+
+  test("should throw NotFoundError if product does not exist", async () => {
     const input: UpdateProductInputDTO = {
-      id: 'non_existent_product_id',
-      name: 'Updated Product Name',
-      description: 'Updated Description',
+      id: "non_existent_product_id",
+      name: "Updated Product Name",
+      description: "Updated Description",
       price: 79.99,
       stock: 60,
       categoryId: 2,
@@ -125,17 +130,19 @@ describe('ProductBusiness - editProduct', () => {
       sizeId: 4,
       genderId: 5,
     };
-  
+
     mockProductDatabase.findPureProductById.mockResolvedValue(null);
-  
-    await expect(productBusiness.editProduct(input)).rejects.toThrow(NotFoundError);
+
+    await expect(productBusiness.editProduct(input)).rejects.toThrow(
+      NotFoundError
+    );
   });
-  
-  test('should throw NotFoundError if unable to find updated product data', async () => {
+
+  test("should throw NotFoundError if unable to find updated product data", async () => {
     const input: UpdateProductInputDTO = {
-      id: 'product_id',
-      name: 'Updated Product Name',
-      description: 'Updated Description',
+      id: "product_id",
+      name: "Updated Product Name",
+      description: "Updated Description",
       price: 79.99,
       stock: 60,
       categoryId: 2,
@@ -143,25 +150,28 @@ describe('ProductBusiness - editProduct', () => {
       sizeId: 4,
       genderId: 5,
     };
-  
+
     const existingProductDB = {
-      id: 'product_id',
-      name: 'Old Product Name',
-      description: 'Old Description',
+      id: "product_id",
+      name: "Old Product Name",
+      description: "Old Description",
       price: 99.99,
       stock: 100,
       category_id: 1,
       color_id: 2,
       size_id: 3,
       gender_id: 4,
-      created_at: '2024-01-01T00:00:00Z',
+      created_at: "2024-01-01T00:00:00Z",
     };
-  
-    mockProductDatabase.findPureProductById.mockResolvedValue(existingProductDB);
+
+    mockProductDatabase.findPureProductById.mockResolvedValue(
+      existingProductDB
+    );
     mockProductDatabase.updateProduct.mockResolvedValue({});
     mockProductDatabase.findPureProductById.mockResolvedValue(null);
-  
-    await expect(productBusiness.editProduct(input)).rejects.toThrow(NotFoundError);
+
+    await expect(productBusiness.editProduct(input)).rejects.toThrow(
+      NotFoundError
+    );
   });
-  
 });

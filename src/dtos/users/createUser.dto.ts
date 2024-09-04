@@ -1,10 +1,10 @@
 import z from "zod";
-import { USER_ROLES } from "../../models/User";
+import { EntityType, USER_ROLES } from "../../models/User";
 
 export interface CreateUserInputDTO {
   token?: string;
   personalId: string;
-  entityType: string;
+  entityType: EntityType;
   name: string;
   gender: string;
   email: string;
@@ -13,7 +13,7 @@ export interface CreateUserInputDTO {
   role?: USER_ROLES;
   address: string;
   number: string;
-  neighborhood: string;
+  neighborhood: string,
   city: string;
   country: string;
   phones?: {
@@ -33,7 +33,7 @@ export interface CreateUserOutputDTO {
     birthdate?: string;
     address?: string;
     number?: string;
-    neighborhood?: string;
+    neighborhood?: string,
     city?: string;
     country?: string;
     gender?: string;

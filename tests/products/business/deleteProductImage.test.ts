@@ -1,15 +1,14 @@
-import { ProductBusiness } from '../../../src/business/ProductBusiness';
-import { ProductDatabase } from '../../../src/database/ProductDatabase';
-import { IdGenerator } from '../../../src/services/idGenerator';
-import TokenService from '../../../src/services/TokenService';
-import { UserDatabase } from '../../../src/database/UserDatabase';
-import ErrorHandler from '../../../src/errors/ErrorHandler';
-import { HashManager } from '../../../src/services/HashManager';
-import { ProductImageOutput } from '../../../src/models/ProductImage';
-import { ProductImageDelete } from '../../../src/dtos/products/updateProduct.dto'
-import { NotFoundError, ForbiddenError } from '../../../src/errors/Errors';
+import { ProductBusiness } from "../../../src/business/ProductBusiness";
+import { ProductDatabase } from "../../../src/database/ProductDatabase";
+import { IdGenerator } from "../../../src/services/idGenerator";
+import TokenService from "../../../src/services/TokenService";
+import { UserDatabase } from "../../../src/database/UserDatabase";
+import ErrorHandler from "../../../src/errors/ErrorHandler";
+import { HashManager } from "../../../src/services/HashManager";
+import { ProductImageOutput } from "../../../src/models/ProductImage";
+import { ProductImageDelete } from "../../../src/dtos/products/updateProduct.dto";
+import { NotFoundError, ForbiddenError } from "../../../src/errors/Errors";
 
-// Mocks
 const mockProductDatabase = {
   getImageById: jest.fn(),
   deleteProductImage: jest.fn(),
@@ -45,66 +44,77 @@ const productBusiness = new ProductBusiness(
   mockErrorHandler as unknown as ErrorHandler
 );
 
-describe('ProductBusiness - deleteProductImage', () => {
+describe("ProductBusiness - deleteProductImage", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  test('should successfully delete a product image', async () => {
+  test("should successfully delete a product image", async () => {
     const input: ProductImageDelete = {
-      id: 'image_id',
-      productId: 'product_id',
+      id: "image_id",
+      productId: "product_id",
     };
 
     const existingImage = {
-      id: 'image_id',
-      product_id: 'product_id',
-      url: 'http://example.com/old_image.jpg',
-      alt: 'Old Image',
+      id: "image_id",
+      product_id: "product_id",
+      url: "http://example.com/old_image.jpg",
+      alt: "Old Image",
     };
 
     const remainingImages = [
-      { id: 'another_image_id', product_id: 'product_id', url: 'http://example.com/another_image.jpg', alt: 'Another Image' },
+      {
+        id: "another_image_id",
+        product_id: "product_id",
+        url: "http://example.com/another_image.jpg",
+        alt: "Another Image",
+      },
     ];
 
     mockProductDatabase.getImageById.mockResolvedValue(existingImage);
     mockProductDatabase.deleteProductImage.mockResolvedValue({});
     mockProductDatabase.getImagesByProductId.mockResolvedValue(remainingImages);
 
-    const result: ProductImageOutput = await productBusiness.deleteProductImage(input);
+    const result: ProductImageOutput = await productBusiness.deleteProductImage(
+      input
+    );
 
     expect(result).toEqual({
-      message: 'Image deleted successfully',
+      message: "Image deleted successfully",
       images: remainingImages,
     });
   });
 
-  test('should throw NotFoundError if image does not exist', async () => {
+  test("should throw NotFoundError if image does not exist", async () => {
     const input: ProductImageDelete = {
-      id: 'non_existent_image_id',
-      productId: 'product_id',
+      id: "non_existent_image_id",
+      productId: "product_id",
     };
 
     mockProductDatabase.getImageById.mockResolvedValue(null);
 
-    await expect(productBusiness.deleteProductImage(input)).rejects.toThrow(NotFoundError);
+    await expect(productBusiness.deleteProductImage(input)).rejects.toThrow(
+      NotFoundError
+    );
   });
 
-  test('should throw ForbiddenError if image does not belong to the specified product', async () => {
+  test("should throw ForbiddenError if image does not belong to the specified product", async () => {
     const input: ProductImageDelete = {
-      id: 'image_id',
-      productId: 'wrong_product_id',
+      id: "image_id",
+      productId: "wrong_product_id",
     };
 
     const existingImage = {
-      id: 'image_id',
-      product_id: 'product_id',
-      url: 'http://example.com/old_image.jpg',
-      alt: 'Old Image',
+      id: "image_id",
+      product_id: "product_id",
+      url: "http://example.com/old_image.jpg",
+      alt: "Old Image",
     };
 
     mockProductDatabase.getImageById.mockResolvedValue(existingImage);
 
-    await expect(productBusiness.deleteProductImage(input)).rejects.toThrow(ForbiddenError);
+    await expect(productBusiness.deleteProductImage(input)).rejects.toThrow(
+      ForbiddenError
+    );
   });
 });

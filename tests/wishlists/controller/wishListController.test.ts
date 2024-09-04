@@ -40,8 +40,6 @@ describe("WishlistController", () => {
     jest.clearAllMocks();
   });
 
-  // --------------------------------------------------------------------
-
   test("should successfully create a wishlist", async () => {
     const input: CreateWishListInputDTO = {
       userId: "user_id",
@@ -74,8 +72,6 @@ describe("WishlistController", () => {
     expect(res.send).toHaveBeenCalledWith(output);
   });
 
-  // --------------------------------------------------------------------
-
   test("should handle errors properly in createWishlist", async () => {
     const error = new Error("Validation Error");
 
@@ -91,8 +87,6 @@ describe("WishlistController", () => {
     expect(logger.error).toHaveBeenCalledWith(error);
     expect(ErrorHandler.handleError).toHaveBeenCalledWith(error, res);
   });
-
-  // // --------------------------------------------------------------------
 
   test("should successfully get a wishlist", async () => {
     const input: GetWishListInputDTO = {
@@ -125,8 +119,6 @@ describe("WishlistController", () => {
     expect(res.send).toHaveBeenCalledWith(output);
   });
 
-  // // --------------------------------------------------------------------
-
   test("should handle errors properly in getWishlist", async () => {
     const error = new Error("Error Getting Wishlist");
 
@@ -145,8 +137,6 @@ describe("WishlistController", () => {
     expect(logger.error).toHaveBeenCalledWith(error);
     expect(ErrorHandler.handleError).toHaveBeenCalledWith(error, res);
   });
-
-  // // --------------------------------------------------------------------
 
   test("should successfully update a wishlist", async () => {
     const input: UpdateWishListInputDTO = {
@@ -178,8 +168,6 @@ describe("WishlistController", () => {
     expect(res.send).toHaveBeenCalledWith(output);
   });
 
-  // // --------------------------------------------------------------------
-
   test("should handle errors properly in updateWishlist", async () => {
     const error = new Error("Error Updating Wishlist");
 
@@ -195,8 +183,6 @@ describe("WishlistController", () => {
     expect(logger.error).toHaveBeenCalledWith(error);
     expect(ErrorHandler.handleError).toHaveBeenCalledWith(error, res);
   });
-
-  // // --------------------------------------------------------------------
 
   test("should successfully delete a wishlist", async () => {
     const input = {
@@ -219,8 +205,6 @@ describe("WishlistController", () => {
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.send).toHaveBeenCalledWith(output);
   });
-
-  // // --------------------------------------------------------------------
 
   test("should handle errors properly in deleteWishlist", async () => {
     const error = new Error("Error Deleting Wishlist");

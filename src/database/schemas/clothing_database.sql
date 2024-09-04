@@ -1,3 +1,4 @@
+-- Active: 1724265540917@@127.0.0.1@5433@postgres
 CREATE DATABASE CLOTHING_DB;
 
 CREATE TABLE users (
@@ -14,6 +15,8 @@ CREATE TABLE users (
     address TEXT NOT NULL,
     number TEXT NOT NULL,
     neighborhood TEXT NOT NULL,
+    state TEXT NOT NULL,
+    zip_code TEXT NOT NULL,
     city TEXT NOT NULL,
     country TEXT NOT NULL,
     active BOOLEAN DEFAULT TRUE,
@@ -102,11 +105,6 @@ INSERT INTO sizes (name) VALUES
 ('L'),
 ('XL'),
 ('XXL');
-
-CREATE TABLE IF NOT EXISTS genders (
-    gender_id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL
-);
 
 INSERT INTO genders (name) VALUES 
 ('Male'),
