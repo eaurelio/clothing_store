@@ -123,8 +123,6 @@ export class OrderController {
         userId: req.body.userId,
       });
 
-      const token = req.headers.authorization;
-
       const output = await this.orderBusiness.cancelOrder(input);
       res.status(200).send(output);
     } catch (error) {
