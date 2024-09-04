@@ -1,6 +1,6 @@
 import { BaseDatabase } from "./connection/BaseDatabase";
 import { PhoneDB } from "../models/Phones";
-import { UserDB } from "../models/User";
+import { UserDB, UsersDBOutput } from "../models/User";
 
 export class UserDatabase extends BaseDatabase {
   public static TABLE_USERS = "users";
@@ -13,7 +13,7 @@ export class UserDatabase extends BaseDatabase {
     genderId?: number,
     email?: string,
     role?: string
-  ): Promise<UserDB[]> {
+  ): Promise<UsersDBOutput[]> {
     const query = `
       SELECT 
           users.id,
