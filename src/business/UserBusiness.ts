@@ -379,7 +379,7 @@ export class UserBusiness {
     }
 
     const phonesFromDatabase = await this.userDatabase.getPhones(userId);
-    const { password: _passwprd, ...userOutput } = userFromDatabase as UserDB;
+    const { password: _password, ...userOutput } = userFromDatabase as UserDB;
 
     userOutput.phones = phonesFromDatabase;
 
@@ -405,7 +405,7 @@ export class UserBusiness {
     const usersOutput = await Promise.all(
       usersDB.map(async (userDB) => {
         const phonesFromDatabase = await this.userDatabase.getPhones(userDB.id);
-        const { password: _passwprd, ...userWithoutPassword } = userDB;
+        const { password: _password, ...userWithoutPassword } = userDB;
         userWithoutPassword.phones = phonesFromDatabase;
         return userWithoutPassword as UserDB;
       })
