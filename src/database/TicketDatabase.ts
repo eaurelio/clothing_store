@@ -7,6 +7,70 @@ export class TicketDatabase extends BaseDatabase {
   public static TABLE_TICKET_STATUS = "ticket_status";
   public static TABLE_TICKET_TYPES = "ticket_types";
 
+  public async findTicketById(id: string): Promise<TicketDB | undefined> {
+    const result = await BaseDatabase.connection.raw(
+      `
+      SELECT 
+        tickets.id,
+        tickets.user_id,
+        tickets.type_id,
+        ticket_types.type_name,
+        tickets.description,
+        tickets.status_id,
+        ticket_status.status AS status_name,
+        tickets.user_name,
+        tickets.user_email,
+        tickets.user_phone_number,
+        tickets.created_at,
+        tickets.updated_at,
+        tickets.solution,
+        tickets.analist_name,
+        tickets.analist_email
+      FROM ${TicketDatabase.TABLE_TICKETS} tickets
+      LEFT JOIN ticket_types
+        ON tickets.type_id = ticket_types.id
+      LEFT JOIN ticket_status
+        ON tickets.status_id = ticket_status.id
+      WHERE tickets.id = ?
+    `,
+      [id]
+    );
+
+    return result.rows[0];
+  }
+
+  public async findTicketsByUserId(userId: string): Promise<TicketDBOutput[]> {
+    const result = await BaseDatabase.connection.raw(
+      `
+      SELECT 
+        tickets.id,
+        tickets.user_id,
+        tickets.type_id,
+        ticket_types.type_name,
+        tickets.description,
+        tickets.status_id,
+        ticket_status.status AS status_name,
+        tickets.user_name,
+        tickets.user_email,
+        tickets.user_phone_number,
+        tickets.created_at,
+        tickets.updated_at,
+        tickets.solution,
+        tickets.analist_name,
+        tickets.analist_email
+      FROM ${TicketDatabase.TABLE_TICKETS} tickets
+      LEFT JOIN ticket_types
+        ON tickets.type_id = ticket_types.id
+      LEFT JOIN ticket_status
+        ON tickets.status_id = ticket_status.id
+      WHERE tickets.user_id = ?
+      `,
+      [userId]
+    );
+
+    return result.rows;
+  }
+
   public async findTickets(
     id?: string,
     userId?: string,
@@ -15,6 +79,8 @@ export class TicketDatabase extends BaseDatabase {
   ): Promise<TicketDBOutput[]> {
     const conditions: string[] = [];
     const params: any[] = [];
+
+    console.log(userId);
 
     if (id) {
       conditions.push("tickets.id = ?");
@@ -68,38 +134,6 @@ export class TicketDatabase extends BaseDatabase {
     );
 
     return result.rows;
-  }
-
-  public async findTicketById(id: string): Promise<TicketDB | undefined> {
-    const result = await BaseDatabase.connection.raw(
-      `
-      SELECT 
-        tickets.id,
-        tickets.user_id,
-        tickets.type_id,
-        ticket_types.type_name,
-        tickets.description,
-        tickets.status_id,
-        ticket_status.status AS status_name,
-        tickets.user_name,
-        tickets.user_email,
-        tickets.user_phone_number,
-        tickets.created_at,
-        tickets.updated_at,
-        tickets.solution,
-        tickets.analist_name,
-        tickets.analist_email
-      FROM ${TicketDatabase.TABLE_TICKETS} tickets
-      LEFT JOIN ticket_types
-        ON tickets.type_id = ticket_types.id
-      LEFT JOIN ticket_status
-        ON tickets.status_id = ticket_status.id
-      WHERE tickets.id = ?
-    `,
-      [id]
-    );
-
-    return result.rows[0];
   }
 
   public async insertTicket(newTicketDB: TicketDB): Promise<void> {

@@ -5,7 +5,8 @@
 Welcome to the Clothing Store API! This RESTful API is designed to manage all aspects of a clothing store, including users, products, orders, wishlists and support tickets. Built with Node.js and TypeScript, and using Postgre for data storage, the API follows a three-layer architecture for simplicity and maintainability.
 
 ## Documentation on Postman
-1; [Documentation](https://documenter.getpostman.com/view/24823115/2sAXjKZsDM#intro)
+
+1; [Postman Documentation](https://documenter.getpostman.com/view/24823115/2sAXjKZsDM#intro)
 
 ## Table of Contents
 
@@ -22,16 +23,15 @@ Welcome to the Clothing Store API! This RESTful API is designed to manage all as
 6. [Testing](#testing-with-user-accounts)
 7. [Usage](#usage)
    - [Endpoints](#endpoints)
-      - [Users](#user-endpoints)
-      - [Products](#products-endpoints)
-      - [Orders](#orders-endpoints)
-      - [WishLists](#wish-list-endpoints)
-      - [Tickets](#tickets-endpoints)
+     - [Users](#user-endpoints)
+     - [Products](#products-endpoints)
+     - [Orders](#orders-endpoints)
+     - [WishLists](#wish-list-endpoints)
+     - [Tickets](#tickets-endpoints)
 8. [Error Handling](#error-handling)
 9. [Logging](#logging)
 10. [Testing](#testing)
 11. [Database Documentation](database_readme.md)
-
 
 ## Features
 
@@ -47,8 +47,9 @@ Welcome to the Clothing Store API! This RESTful API is designed to manage all as
 
 - **Node.js**: JavaScript runtime for building the server.
 - **TypeScript**: Adds type safety and clarity to the code.
+- **Express**: Web framework for Node.js, used to build RESTful APIs by defining routes and managing HTTP requests.
 - **Knex.js**: SQL query builder for database interactions.
-- **Postgre**: Powerful database engine.
+- **PostgreSQL**: Powerful database engine.
 - **Zod**: Data validation library.
 - **Winston**: Logger for tracking and debugging.
 
@@ -58,7 +59,7 @@ The API is organized into three main layers:
 
 1. **Controller**: Handles HTTP requests and responses, and uses Zod for data validation.
 2. **Business Logic**: Contains the core application logic and data transformation.
-3. **Database**: Manages direct interactions with the SQLite database.
+3. **Database**: Manages direct interactions with the Postgre database.
 
 ### Security Middlewares
 
@@ -106,6 +107,7 @@ The database uses PostgreSQL, and the following triggers are implemented to main
 To set up and run the Clothing Store API, follow these steps:
 
 1. **Start Containers and Build the Application**:
+
    - Navigate to the directory containing the `docker-compose.yml` file.
    - Run the following command to start the containers and build the application:
 
@@ -114,7 +116,9 @@ To set up and run the Clothing Store API, follow these steps:
      ```
 
 2. **Restore the Database Backup**:
+
    - Since the backup file (`backup.sql`) is located in the root of the project, follow these steps to restore it:
+
      - **Copy the backup to the PostgreSQL container**:
 
        ```bash
@@ -180,8 +184,6 @@ To test the API, you can log in with one of the following pre-created accounts t
    }
    ```
 
-**Note:** Replace the example email and password with the ones you used during account creation.
-
 ## Usage
 
 ### Endpoints
@@ -196,6 +198,7 @@ The User endpoints manage user accounts, including registration, login, profile 
 - **Method**: `POST`
 - **Description**: Registers a new user with the provided details. By default, this route creates users with the `CLIENT` role. However, if a user with an `ADMIN` token makes the request, they can specify the `role` parameter as `ADMIN` to create an admin user.
 - **Request Headers:**
+
   - `Authorization`: No needed
 
 - **Request Body**:
@@ -256,6 +259,7 @@ The User endpoints manage user accounts, including registration, login, profile 
 - **Method**: `POST`
 - **Description**: Authenticates a user and returns a JWT token.
 - **Request Headers:**
+
   - `Authorization`: No needed
 
 - **Request Body**:
@@ -303,8 +307,9 @@ The User endpoints manage user accounts, including registration, login, profile 
 - **Request Headers**:
   - `Authorization`: Bearer token
 - **Parameters**:
-  - `id`: The ID of the user whose data is being requested.
+  - `id`: User ID (path parameter)
 - **Responses**:
+
   - **200 OK**:
 
     ```json
@@ -358,13 +363,19 @@ The User endpoints manage user accounts, including registration, login, profile 
 
 #### **4. Get All Users**
 
-- **Endpoint**: `users/getAllUsers`
+- **Endpoint**: `users/getUsers`
 - **Method**: `POST`
 - **Description**: Retrieves a list of all users with optional query parameters for search and filtering. This endpoint is restricted to users with admin roles.
 - **Request Headers**:
   - `Authorization`: Bearer token (Admin token required)
 - **Query Parameters**:
-  - `q`: Optional search query (string) to filter by name or other criteria.
+  - `q`: Optional search query (string) to filter by name.
+- **Request Parameters:**
+  - `onlyActive` (optional)
+  - `personalId` (optional)
+  - `genderId` (optional)
+  - `email` (optional)
+  - `role` (optional)
 - **Request Body** (all optional parameters):
 
   ```json
@@ -462,7 +473,7 @@ The User endpoints manage user accounts, including registration, login, profile 
 
 - **Endpoint**: `users/changePassword`
 - **Method**: `PATCH`
-- **Description**: Changes the password for the specified user.
+- **Description**: Changes the password for the user.
 - **Request Headers**:
   - `Authorization`: Bearer token
 - **Request Body**:
@@ -510,7 +521,31 @@ The User endpoints manage user accounts, including registration, login, profile 
   - **400 Bad Request**: If the email does not match, or if the request has invalid data.
   - **404 Not Found**: If the user does not exist.
 
-#### **8. Add Phone**
+#### **8. Toggle User Active Status**
+
+- **Endpoint**: `users/toggleActiveStatus`
+- **Method**: `PATCH`
+- **Description**: Toggles the active status of a user.
+- **Request Headers**:
+  - `Authorization`: No needed
+- **Request Body**:
+  ```json
+  {
+    "email": "string",
+    "password": "string"
+  }
+  ```
+- **Responses**:
+  - **200 OK**:
+    ```json
+    {
+      "message": "User activated successfully"
+    }
+    ```
+  - **400 Bad Request**: If the password is incorrect.
+  - **404 Not Found**: If the user does not exist.
+
+#### **9. Add Phone**
 
 - **Endpoint**: `users/addPhone/:id`
 - **Method**: `POST`
@@ -518,7 +553,7 @@ The User endpoints manage user accounts, including registration, login, profile 
 - **Request Headers**:
   - `Authorization`: Bearer token
 - **Parameters**:
-  - `id`: User ID
+  - `id`: User ID (path parameter)
 - **Request Body**:
   ```json
   {
@@ -543,7 +578,7 @@ The User endpoints manage user accounts, including registration, login, profile 
   - **401 Unauthorized**: If the token is invalid or the user does not have access.
   - **404 Not Found**: If the user does not exist.
 
-#### **9. Update Phone**
+#### **10. Update Phone**
 
 - **Endpoint**: `users/updatePhone/:id`
 - **Method**: `PATCH`
@@ -551,7 +586,7 @@ The User endpoints manage user accounts, including registration, login, profile 
 - **Request Headers**:
   - `Authorization`: Bearer token
 - **Parameters**:
-  - `id`: User ID
+  - `id`: User ID (path parameter)
 - **Request Body**:
   ```json
   {
@@ -577,7 +612,7 @@ The User endpoints manage user accounts, including registration, login, profile 
   - **401 Unauthorized**: If the token is invalid or the user does not have access.
   - **404 Not Found**: If the phone does not exist or does not belong to the user.
 
-#### **10. Delete Phone**
+#### **11. Delete Phone**
 
 - **Endpoint**: `users/deletePhone/:id`
 - **Method**: `DELETE`
@@ -585,7 +620,7 @@ The User endpoints manage user accounts, including registration, login, profile 
 - **Request Headers**:
   - `Authorization`: Bearer token
 - **Parameters**:
-  - `id`: User ID
+  - `id`: User ID (path parameter)
 - **Request Body**:
   ```json
   {
@@ -721,6 +756,16 @@ The User endpoints manage user accounts, including registration, login, profile 
 - **Description:** Updates an existing product.
 - **Request Headers:**
   - `Authorization`: Bearer token (Admin token required)
+- **Request Parameters:**
+  - `id` (optional)
+  - `name` (optional)
+  - `description` (optional)
+  - `price` (optional)
+  - `stock` (optional)
+  - `categoryId` (optional)
+  - `colorId` (optional)
+  - `sizeId` (optional)
+  - `genderId` (optional)
 - **Request Body:**
   ```json
   {
@@ -830,17 +875,15 @@ The User endpoints manage user accounts, including registration, login, profile 
 
 ### **6. Toggle Product Active Status**
 
-- **URL:** `products/toggleProductActiveStatus`
+- **URL:** `products/toggleProductActiveStatus/:id`
 - **Method:** `PATCH`
 - **Description:** Toggles the active status of a product.
 - **Request Headers:**
   - `Authorization`: Bearer token (Admin token required)
-- **Request Body:**
-  ```json
-  {
-    "productId": "string"
-  }
-  ```
+- **Parameters**:
+
+  - `id`: ProductID (path parameter)
+
 - **Responses:**
   - **200 OK**:
     ```json
@@ -900,11 +943,13 @@ The User endpoints manage user accounts, including registration, login, profile 
 
 ### **9. Update Category**
 
-- **URL:** `products/updateCategory`
+- **URL:** `products/updateCategory/:id`
 - **Method:** `PUT`
 - **Description:** Updates an existing product category.
 - **Request Headers:**
   - `Authorization`: Bearer token (Admin token required)
+  - **Parameters**:
+  - `id`: Category ID (path parameter)
 - **Request Body:**
   ```json
   {
@@ -936,18 +981,17 @@ The User endpoints manage user accounts, including registration, login, profile 
 - **Request Headers:**
   - `Authorization`: No needed
 - **Responses:**
-  - **200
+  - **200 OK**:
 
- OK**:
-    ```json
-    [
-      {
-        "id": "string",
-        "name": "string",
-        "hex_code": "string"
-      }
-    ]
-    ```
+```json
+[
+  {
+    "id": "string",
+    "name": "string",
+    "hex_code": "string"
+  }
+]
+```
 
 ### **11. Create Color**
 
@@ -979,11 +1023,13 @@ The User endpoints manage user accounts, including registration, login, profile 
 
 ### **12. Update Color**
 
-- **URL:** `products/updateColor`
+- **URL:** `products/updateColor/:id`
 - **Method:** `PUT`
 - **Description:** Updates an existing product color.
 - **Request Headers:**
   - `Authorization`: Bearer token (Admin token required)
+- **Parameters**:
+- `id`: color ID (path parameter)
 - **Request Body:**
   ```json
   {
@@ -1053,11 +1099,13 @@ The User endpoints manage user accounts, including registration, login, profile 
 
 ### **15. Update Size**
 
-- **URL:** `products/updateSize`
+- **URL:** `products/updateSize/:id`
 - **Method:** `PUT`
 - **Description:** Updates an existing product size.
 - **Request Headers:**
   - `Authorization`: Bearer token (Admin token required)
+- **Parameters**:
+- `id`: Size ID (path parameter)
 - **Request Body:**
   ```json
   {
@@ -1125,11 +1173,13 @@ The User endpoints manage user accounts, including registration, login, profile 
 
 ### **18 .Update Gender**
 
-- **URL:** `products/updateGender`
+- **URL:** `products/updateGender/:id`
 - **Method:** `PUT`
 - **Description:** Updates an existing product gender.
 - **Request Headers:**
   - `Authorization`: Bearer token (Admin token required)
+- **Parameters**:
+- `id`: Gender ID (path parameter)
 - **Request Body:**
   ```json
   {
@@ -1138,6 +1188,7 @@ The User endpoints manage user accounts, including registration, login, profile 
   }
   ```
 - **Responses:**
+
   - **200 OK**:
     ```json
     {
@@ -1171,12 +1222,13 @@ The User endpoints manage user accounts, including registration, login, profile 
         "price": "number"
       }
     ],
-    "status_id": "string",
     "total": "number"
   }
   ```
 - **Responses:**
+
   - **201 Created**:
+
     ```json
     {
       "message": "Order created successfully",
@@ -1204,7 +1256,7 @@ The User endpoints manage user accounts, including registration, login, profile 
   - **404 Not Found**: If any of the specified products are not found or inactive.
 
 - **Controller Method Overview**:
-  - **Input**: Receives `userId`, `items`, `status_id`, and `total` from the request body and the token from the headers.
+  - **Input**: Receives `userId`, `items`, and `total` from the request body and the token from the headers.
   - **Business Logic**:
     - Validates the token and checks for required permissions.
     - Validates the items, ensuring all products are found and active.
@@ -1216,26 +1268,20 @@ The User endpoints manage user accounts, including registration, login, profile 
 - **Endpoint**: `orders/getUserOrders/`
 - **Method**: `GET`
 - **Description**: Retrieves a specific order by its ID or all orders for a specific user. If `orderId` is provided, retrieves that specific order. If `orderId` is not provided, retrieves all orders for the specified `userId`.
-
 - **Request Headers**:
   - `Authorization`: Bearer token
-
-- **Request Body** (optional):
-  
+- **Request Body**
   ```json
   {
     "userId": "d1c5b5e7-ab95-4f48-b8de-c89de4eea640",
     "orderId": "c8db9d25-5a61-4f79-9b54-4544e7f46982"
   }
   ```
-  
   - **userId** (required): User ID to retrieve orders for.
   - **orderId** (optional): Specific Order ID to retrieve a particular order. If omitted, retrieves all orders for the user.
 
 - **Responses**:
-
   - **200 OK**:
-  
     **For a specific order:**
     ```json
     {
@@ -1266,7 +1312,6 @@ The User endpoints manage user accounts, including registration, login, profile 
       }
     }
     ```
-
     **For all orders:**
     ```json
     {
@@ -1316,25 +1361,19 @@ The User endpoints manage user accounts, including registration, login, profile 
 
 - **Endpoint**: `orders/getAllOrders`
 - **Method**: `GET`
-- **Description**: Retrieves all orders for the authenticated user. If `userId` is provided, retrieves orders for that specific user; otherwise, retrieves all orders from the database.
+- **Description**: Retrieves all orders for the user. If `userId` is provided, retrieves orders for that specific user; otherwise, retrieves all orders from the database.
 
 - **Request Headers**:
   - `Authorization`: Bearer token (Admin token required)
-
 - **Request Body** (opcional):
-  
   ```json
   {
     "userId": "e82fbc9a-fe2b-4378-a4cf-2bc719b6ae04"
   }
   ```
-  
   - **userId** (optional): If provided, retrieves orders for the specified user. If omitted, retrieves all orders.
-
 - **Responses**:
-
   - **200 OK**:
-
     ```json
     {
       "orders": [
@@ -1366,7 +1405,6 @@ The User endpoints manage user accounts, including registration, login, profile 
       ]
     }
     ```
-
   - **401 Unauthorized**: If the token is invalid or missing.
   - **403 Forbidden**: If the user does not have administrative privileges.
   - **404 Not Found**: If no orders are found based on the `userId` provided.
@@ -1404,9 +1442,9 @@ The User endpoints manage user accounts, including registration, login, profile 
 - **Method:** `PATCH`
 - **Description:** Updates an existing order with new details.
 - **Request Headers:**
-  - `Authorization`: Bearer token
+  - `Authorization`: Bearer token (Admin token required)
 - **Request Parameters:**
-  - `id`: Order ID
+  - `id`: Order ID (path parameter)
 - **Request Body:**
   ```json
   {
@@ -1422,7 +1460,9 @@ The User endpoints manage user accounts, including registration, login, profile 
   }
   ```
 - **Responses:**
+
   - **200 OK**:
+
     ```json
     {
       "message": "Order updated successfully",
@@ -1432,9 +1472,9 @@ The User endpoints manage user accounts, including registration, login, profile 
         "orderDate": "string",
         "status": "string",
         "total": "number",
+        "trackingCode": "string",
         "items": [
           {
-            "itemId": "string",
             "productId": "string",
             "quantity": "number",
             "price": "number"
@@ -1460,15 +1500,16 @@ The User endpoints manage user accounts, including registration, login, profile 
 ### **6. Cancel Order**
 
 - **URL:** `orders/cancelOrder/:id`
-- **Method:** `DELETE`
+- **Method:** `PATCH`
 - **Description:** Cancels an existing order if its status is `1` (Pending) and if the request user is the owner of the order. Orders with other statuses cannot be canceled. Additionally, orders that have already been canceled (status `5`) cannot be canceled again.
 - **Request Headers:**
   - `Authorization`: Bearer token
 - **Request Body:**
-  - `userId`: User ID of the requester (e.g., `"user_id_123"`)
+  - `userId`: User ID of the requester
 - **Request Parameters:**
-  - `id`: Order ID (e.g., `"order_id_123"`)
+  - `id`: Order ID (path parameter)
 - **Responses:**
+
   - **200 OK**:
     ```json
     {
@@ -1499,8 +1540,9 @@ The User endpoints manage user accounts, including registration, login, profile 
 - **Request Headers:**
   - `Authorization`: Bearer token (Admin token required)
 - **Request Parameters:**
-  - `id`: Order ID (e.g., `"order_id_123"`)
+  - `id`: Order ID (path parameter)
 - **Responses:**
+
   - **200 OK**:
     ```json
     {
@@ -1534,6 +1576,7 @@ The User endpoints manage user accounts, including registration, login, profile 
 - **Request Body:**
   ```json
   {
+    "userId": "string",
     "items": [
       {
         "productId": "string"
@@ -1562,11 +1605,13 @@ The User endpoints manage user accounts, including registration, login, profile 
 
 ### **2. Get Wishlist**
 
-- **URL:** `wishlist/getWishList`
+- **URL:** `wishlist/getWishList/:id`
 - **Method:** `GET`
 - **Description:** Retrieves the wishlist for the authenticated user.
 - **Request Headers:**
   - `Authorization`: Bearer token
+- **Request Parameters:**
+  - `id`: user ID (path parameter)
 - **Response:**
   - **Status Code:** `200 OK`
   - **Body:**
@@ -1591,11 +1636,13 @@ The User endpoints manage user accounts, including registration, login, profile 
 
 ### **3. Update Wishlist**
 
-- **URL:** `wishlist/updateWishList`
+- **URL:** `wishlist/updateWishList/:id`
 - **Method:** `PATCH`
 - **Description:** Updates the wishlist for the authenticated user.
 - **Request Headers:**
   - `Authorization`: Bearer token
+- **Request Parameters:**
+  - `id`: user ID (path parameter)
 - **Request Body:**
   ```json
   {
@@ -1632,11 +1679,13 @@ The User endpoints manage user accounts, including registration, login, profile 
 
 ### **4 Delete Wishlist**
 
-- **URL:** `wishlist/deleteWishList`
+- **URL:** `wishlist/deleteWishList/:id`
 - **Method:** `DELETE`
 - **Description:** Deletes the wishlist for the authenticated user.
 - **Request Headers:**
   - `Authorization`: Bearer token
+- **Request Parameters:**
+  - `id`: user ID (path parameter)
 - **Response:**
   - **Status Code:** `200 OK`
   - **Body:**
@@ -1691,15 +1740,15 @@ The User endpoints manage user accounts, including registration, login, profile 
   - **400 Bad Request**: If the request body is invalid.
   - **409 Conflict**: If the ticket already exists.
 
-### **2. Get Ticket**
+### **2. Get Ticket By Id**
 
-- **URL:** `tickets/getTicket/:id`
+- **URL:** `tickets/getTicketById/:id`
 - **Method:** `GET`
-- **Description:** Retrieves the details of a specific ticket by ID.
+- **Description:** Retrieves the details of a specific ticket by ticketID.
 - **Request Headers:**
   - `Authorization`: Bearer token
 - **Request Parameters:**
-  - `id`: Ticket ID
+  - `id`: Ticket ID (path parameter)
 - **Responses:**
   - **200 OK**:
     ```json
@@ -1718,13 +1767,48 @@ The User endpoints manage user accounts, including registration, login, profile 
     ```
   - **404 Not Found**: If the ticket is not found.
 
-### **3. Get All Tickets**
+### **3. Get Tickets By User Id**
+
+- **URL:** `tickets/getTicketsByUserId/:id`
+- **Method:** `GET`
+- **Description:** Retrieves the details of all tickets from a user.
+- **Request Headers:**
+  - `Authorization`: Bearer token
+- **Request Parameters:**
+  - `id`: User ID (path parameter)
+- **Responses:**
+
+  - **200 OK**:
+
+    ```json
+    {
+      "tickets": [
+        {
+          "ticketId": "string",
+          "userId": "string",
+          "typeId": "string",
+          "statusId": "string",
+          "description": "string",
+          "solution": "string",
+          "analistName": "string",
+          "analistEmail": "string",
+          "createdAt": "string",
+          "updatedAt": "string"
+        }
+      ],
+      "total": "number"
+    }
+    ```
+
+  - **404 Not Found**: If the ticket is not found.
+
+### **4. Get All Tickets**
 
 - **URL:** `tickets/getAllTickets`
 - **Method:** `POST`
-- **Description:** Retrieves a list of tickets based on specified filters, for admin users only.
+- **Description:** Retrieves a list of tickets based on specified optional filters.
 - **Request Headers:**
-  - `Authorization`: Bearer token (Admin token required)
+  - `Authorization`: Bearer token
 - **Request Body:**
   ```json
   {
@@ -1760,7 +1844,7 @@ The User endpoints manage user accounts, including registration, login, profile 
     }
     ```
 
-### **4. Update Ticket**
+### **5. Update Ticket**
 
 - **URL:** `tickets/updateTicket`
 - **Method:** `PUT`
@@ -1800,7 +1884,7 @@ The User endpoints manage user accounts, including registration, login, profile 
   - **400 Bad Request**: If the request body is invalid or missing required fields.
   - **404 Not Found**: If the ticket is not found.
 
-### **5. Get All Statuses**
+### **6. Get All Statuses**
 
 - **URL:** `tickets/getAllStatus`
 - **Method:** `GET`
@@ -1818,7 +1902,7 @@ The User endpoints manage user accounts, including registration, login, profile 
     ]
     ```
 
-### **6. Get All Types**
+### **7. Get All Types**
 
 - **URL:** `tickets/getAllTypes`
 - **Method:** `GET`
@@ -1868,9 +1952,7 @@ The `ErrorHandler` class centralizes error management and sends appropriate HTTP
       "code": "invalid_type",
       "expected": "string",
       "received": "undefined",
-      "path": [
-          "email"
-      ],
+      "path": ["email"],
       "message": "Required"
     }
   ]
@@ -1898,73 +1980,13 @@ Winston is configured to capture logs at various levels and formats, allowing fo
 
 #### Logger Configuration
 
-- **Log Levels**: 
+- **Log Levels**:
+
   - `error`: For error messages and critical issues.
   - `info`: For general informational messages.
 
 - **Formats**:
-  - **JSON Format**: Logs include timestamps and are structured as JSON objects, ideal for centralized logging systems.
-  - **Simple Format**: In non-production environments, logs are displayed in a human-readable format on the console.
 
-- **Transports**:
-  - **File Transports**:
-    - `error.log`: Logs critical issues and errors.
-    - `combined.log`: Logs all messages, including both informational and error messages.
-  - **Console Transport**:
-    - Used only in non-production environments for easy debugging.
-
-#### Example Log Entries
-
-**Error Log Entry (error.log)**
-
-```json
-{
-  "level": "error",
-  "message": "Error occurred while processing request",
-  "timestamp": "2024-08-29T12:00:00.000Z"
-}
-```
-
-**Informational Log Entry (combined.log)**
-
-```json
-{
-  "level": "info",
-  "message": "User successfully created",
-  "timestamp": "2024-08-29T12:00:00.000Z"
-}
-```
-
-#### Log Path
-
-Logs are stored in the `files` directory within the project's root:
-
-- `error.log`
-- `combined.log`
-
-#### Benefits
-
-- **Improved Debugging**: Structured logging helps quickly identify issues and their context.
-- **Monitoring**: Track application behavior and performance over time.
-- **Audit Trails**: Maintain records of significant events and errors for compliance and analysis.
-
-By leveraging Winston, the API ensures robust logging practices, enhancing both development and operational efficiency.
-
-### Logging
-
-Effective logging is essential for monitoring, debugging, and maintaining your application. The Clothing Store API uses Winston for structured and configurable logging.
-
-#### Logging Overview
-
-Winston is configured to capture logs at various levels and formats, allowing for detailed and accessible logging information.
-
-#### Logger Configuration
-
-- **Log Levels**: 
-  - `error`: For error messages and critical issues.
-  - `info`: For general informational messages.
-
-- **Formats**:
   - **JSON Format**: Logs include timestamps and are structured as JSON objects, ideal for centralized logging systems.
   - **Simple Format**: In non-production environments, logs are displayed in a human-readable format on the console.
 

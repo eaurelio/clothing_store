@@ -18,6 +18,7 @@ import {
   GetTicketOutputDTO,
   GetAllTicketsInputDTO,
   GetAllTicketsOutputDTO,
+  GetTicketsByUserIdInputDTO,
 } from "../dtos/tickets/getTicketDTO";
 
 import { NotFoundError } from "../errors/Errors";
@@ -50,7 +51,7 @@ export class TicketBusiness {
 
     const id = this.idGenerator.generate();
     const created_at = new Date().toISOString();
-    const updated_at = created_at;
+    const updated_at = '';
     const statusId = 1;
 
     const newTicket = new Ticket(
@@ -89,7 +90,7 @@ export class TicketBusiness {
     return output;
   }
 
-  public async getTicket(
+  public async getTicketById(
     input: GetTicketInputDTO
   ): Promise<GetTicketOutputDTO> {
     const { ticketId } = input;
@@ -114,6 +115,41 @@ export class TicketBusiness {
 
     return output;
   }
+
+  public async getTicketsByUserId(
+    input: GetTicketsByUserIdInputDTO
+  ): Promise<GetAllTicketsOutputDTO> {
+    const { userId } = input;
+  
+    const ticketsDB = await this.ticketDatabase.findTicketsByUserId(userId);
+    if (!ticketsDB || ticketsDB.length === 0) {
+      throw new NotFoundError("No tickets found for this user");
+    }
+  
+    const tickets = ticketsDB.map((ticket) => ({
+      ticketId: ticket.id,
+      userId: ticket.user_id,
+      typeId: ticket.type_id,
+      typeName: ticket.type_name,
+      statusId: ticket.status_id,
+      statusName: ticket.status_name,
+      description: ticket.description,
+      name: ticket.name,
+      email: ticket.email,
+      solution: ticket.solution,
+      analist_name: ticket.analist_name,
+      analist_email: ticket.analist_email,
+      createdAt: ticket.created_at,
+      updatedAt: ticket.updated_at,
+    }));
+  
+    const output: GetAllTicketsOutputDTO = {
+      tickets,
+      total: ticketsDB.length,
+    };
+  
+    return output;
+  }  
 
   public async getAllTickets(
     input: GetAllTicketsInputDTO
