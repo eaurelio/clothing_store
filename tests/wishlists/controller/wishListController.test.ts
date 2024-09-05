@@ -3,7 +3,6 @@ import { WishlistController } from "../../../src/controller/WishListController";
 import { WishlistBusiness } from "../../../src/business/WishListBusiness";
 import { CreateWishListInputDTO } from "../../../src/dtos/wishlist/createWishList.dto";
 import { GetWishListInputDTO } from "../../../src/dtos/wishlist/getWishList.dto";
-import { UpdateWishListInputDTO } from "../../../src/dtos/wishlist/updateWishList.dto";
 import ErrorHandler from "../../../src/errors/ErrorHandler";
 import logger from "../../../src/logs/logger";
 
