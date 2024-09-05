@@ -158,7 +158,7 @@ To test the API, you can log in with one of the following pre-created accounts t
    **Login Request:**
 
    ```http
-   POST /login
+   POST users/login
    Content-Type: application/json
 
    {
@@ -175,7 +175,7 @@ To test the API, you can log in with one of the following pre-created accounts t
    **Login Request:**
 
    ```http
-   POST /login
+   POST users/login
    Content-Type: application/json
 
    {
