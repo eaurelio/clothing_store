@@ -20,7 +20,7 @@ import logger from "../../../src/logs/logger";
 
 const mockTicketBusiness = {
   createTicket: jest.fn(),
-  getTicket: jest.fn(),
+  getTicketById: jest.fn(),
   updateTicket: jest.fn(),
   getAllTickets: jest.fn(),
 };
@@ -122,15 +122,15 @@ describe("TicketController", () => {
       userId: "user_id",
       typeId: 1,
       statusId: 2,
+      description: "Ticket Description",
       solution: "Solution Description",
       analistName: "Analist Name",
       analistEmail: "analist@example.com",
       createdAt: "2024-08-21T23:22:27.898Z",
       updatedAt: "2024-08-22T23:22:27.898Z",
-      description: "Ticket Description",
     };
 
-    mockTicketBusiness.getTicket.mockResolvedValue(output);
+    mockTicketBusiness.getTicketById.mockResolvedValue(output);
 
     req.params = {
       id: "ticket_id",
@@ -140,9 +140,9 @@ describe("TicketController", () => {
       authorization: "Bearer some-token",
     };
 
-    await ticketController.getTicket(req as Request, res as Response);
+    await ticketController.getTicketById(req as Request, res as Response);
 
-    expect(mockTicketBusiness.getTicket).toHaveBeenCalledWith(input);
+    expect(mockTicketBusiness.getTicketById).toHaveBeenCalledWith(input);
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.send).toHaveBeenCalledWith(output);
   });
@@ -150,7 +150,7 @@ describe("TicketController", () => {
   test("should handle errors properly in getTicket", async () => {
     const error = new Error("Error Getting Ticket");
 
-    mockTicketBusiness.getTicket.mockRejectedValue(error);
+    mockTicketBusiness.getTicketById.mockRejectedValue(error);
 
     req.params = {
       id: "ticket_id",
@@ -160,7 +160,7 @@ describe("TicketController", () => {
       authorization: "Bearer some-token",
     };
 
-    await ticketController.getTicket(req as Request, res as Response);
+    await ticketController.getTicketById(req as Request, res as Response);
 
     expect(logger.error).toHaveBeenCalledWith(error);
     expect(ErrorHandler.handleError).toHaveBeenCalledWith(error, res);

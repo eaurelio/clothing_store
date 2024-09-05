@@ -51,7 +51,7 @@ export class WishlistController {
   public async updateWishlist(req: Request, res: Response) {
     try {
       const input = UpdateWishListSchema.parse({
-        userId: req.body.userId,
+        userId: req.params.id,
         items: req.body.items,
       });
 
@@ -66,7 +66,7 @@ export class WishlistController {
   public async deleteWishlist(req: Request, res: Response) {
     try {
       const input = DeleteWishListSchema.parse({
-        userId: req.body.userId,
+        userId: req.params.userId,
       });
 
       await this.wishlistBusiness.deleteWishlist(input);

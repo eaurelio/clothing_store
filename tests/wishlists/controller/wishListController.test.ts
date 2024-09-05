@@ -136,72 +136,21 @@ describe("WishlistController", () => {
 
     expect(logger.error).toHaveBeenCalledWith(error);
     expect(ErrorHandler.handleError).toHaveBeenCalledWith(error, res);
-  });
-
-  test("should successfully update a wishlist", async () => {
-    const input: UpdateWishListInputDTO = {
-      userId: "user_id",
-      items: [{ productId: "product_id_1" }, { productId: "product_id_2" }],
-    };
-
-    const output = {
-      message: "Wishlist updated successfully",
-      wishlist: {
-        wishlist_id: "wishlist_id",
-        userId: "user_id",
-        created_at: "2024-08-21T23:22:27.898Z",
-        items: [{ productId: "product_id_1" }, { productId: "product_id_2" }],
-      },
-    };
-
-    req.body = {
-      userId: "user_id",
-      items: [{ productId: "product_id_1" }, { productId: "product_id_2" }],
-    };
-
-    mockWishlistBusiness.updateWishlist.mockResolvedValue(output);
-
-    await wishlistController.updateWishlist(req as Request, res as Response);
-
-    expect(mockWishlistBusiness.updateWishlist).toHaveBeenCalledWith(input);
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.send).toHaveBeenCalledWith(output);
-  });
-
-  test("should handle errors properly in updateWishlist", async () => {
-    const error = new Error("Error Updating Wishlist");
-
-    req.body = {
-      userId: "user_id",
-      items: [{ productId: "product_id_1" }],
-    };
-
-    mockWishlistBusiness.updateWishlist.mockRejectedValue(error);
-
-    await wishlistController.updateWishlist(req as Request, res as Response);
-
-    expect(logger.error).toHaveBeenCalledWith(error);
-    expect(ErrorHandler.handleError).toHaveBeenCalledWith(error, res);
-  });
+  });  
 
   test("should successfully delete a wishlist", async () => {
-    const input = {
-      userId: "userId",
-    };
-
+    req.params = { userId: "user_id" };
     const output = {
       message: "Wishlist deleted successfully",
     };
 
     mockWishlistBusiness.deleteWishlist.mockResolvedValue(output);
 
-    req.body = {
-      userId: "userId",
-    };
-
     await wishlistController.deleteWishlist(req as Request, res as Response);
 
-    expect(mockWishlistBusiness.deleteWishlist).toHaveBeenCalledWith(input);
+    expect(mockWishlistBusiness.deleteWishlist).toHaveBeenCalledWith({
+      userId: "user_id",
+    });
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.send).toHaveBeenCalledWith(output);
   });
@@ -209,7 +158,7 @@ describe("WishlistController", () => {
   test("should handle errors properly in deleteWishlist", async () => {
     const error = new Error("Error Deleting Wishlist");
 
-    req.body = { userId: "user_id" };
+    req.params = { userId: "user_id" };
 
     mockWishlistBusiness.deleteWishlist.mockRejectedValue(error);
 

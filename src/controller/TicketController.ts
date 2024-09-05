@@ -6,6 +6,7 @@ import { CreateTicketSchema } from "../dtos/tickets/createTicketDTO";
 import {
   GetTicketSchema,
   GetAllTicketsSchema,
+  GetTicketsByUserIdSchema,
 } from "../dtos/tickets/getTicketDTO";
 import { UpdateTicketSchema } from "../dtos/tickets/updateTicketDTO";
 
@@ -16,7 +17,8 @@ import logger from "../logs/logger";
 export class TicketController {
   constructor(private ticketBusiness: TicketBusiness) {
     this.createTicket = this.createTicket.bind(this);
-    this.getTicket = this.getTicket.bind(this);
+    this.getTicketById = this.getTicketById.bind(this);
+    this.getTicketsByUserId = this.getTicketsByUserId.bind(this);
     this.getAllTickets = this.getAllTickets.bind(this);
     this.updateTicket = this.updateTicket.bind(this);
     this.getAllStatus = this.getAllStatus.bind(this);
@@ -42,13 +44,27 @@ export class TicketController {
     }
   }
 
-  public async getTicket(req: Request, res: Response) {
+  public async getTicketById(req: Request, res: Response) {
     try {
       const input = GetTicketSchema.parse({
         ticketId: req.params.id,
       });
 
-      const output = await this.ticketBusiness.getTicket(input);
+      const output = await this.ticketBusiness.getTicketById(input);
+      res.status(200).send(output);
+    } catch (error) {
+      logger.error(error);
+      ErrorHandler.handleError(error, res);
+    }
+  }
+
+  public async getTicketsByUserId(req: Request, res: Response) {
+    try {
+      const input = GetTicketsByUserIdSchema.parse({
+        userId: req.params.id
+      });
+
+      const output = await this.ticketBusiness.getTicketsByUserId(input);
       res.status(200).send(output);
     } catch (error) {
       logger.error(error);

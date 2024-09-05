@@ -30,5 +30,5 @@ const wishListController = new WishlistController(
 
 wishListRouter.get('/getWishList/:id', authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), wishListController.getWishlist)
 wishListRouter.post('/createWishList', authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), wishListController.createWishlist)
-wishListRouter.patch('/updateWishList', authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), wishListController.updateWishlist)
-wishListRouter.delete('/deleteWishList', authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), wishListController.deleteWishlist)
+wishListRouter.patch('/updateWishList/:id', authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), wishListController.updateWishlist)
+wishListRouter.delete('/deleteWishList/:id', authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), wishListController.deleteWishlist)
