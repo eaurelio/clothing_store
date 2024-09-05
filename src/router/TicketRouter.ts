@@ -27,7 +27,7 @@ const ticketController = new TicketController(
   )
 );
 
-ticketRouter.post("/createTicket", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), ticketController.createTicket);
+ticketRouter.post("/createTicket", ticketController.createTicket);
 ticketRouter.get("/getTicketById/:id", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), ticketController.getTicketById);
 ticketRouter.get("/getTicketsByUserId/:id", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), ticketController.getTicketsByUserId);
 ticketRouter.post("/getAllTickets", authMiddleware([USER_ROLES.CLIENT, USER_ROLES.ADMIN]), ticketController.getAllTickets);

@@ -1706,7 +1706,7 @@ The User endpoints manage user accounts, including registration, login, profile 
 - **Method:** `POST`
 - **Description:** Creates a new ticket with the specified details.
 - **Request Headers:**
-  - `Authorization`: Bearer token
+  - `Authorization`: No needed
 - **Request Body:**
   ```json
   {
